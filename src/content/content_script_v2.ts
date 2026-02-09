@@ -3,6 +3,15 @@
  * Uses iframe isolation, capture-phase detection, and multi-strategy field discovery
  */
 
+// Simple inline logger for content script (avoid import issues)
+const IS_DEV = import.meta.env.DEV
+const logger = {
+  debug: (...args: any[]) => IS_DEV && console.log('[content_script_v2]', ...args),
+  info: (...args: any[]) => console.info('[content_script_v2]', ...args),
+  warn: (...args: any[]) => console.warn('[content_script_v2]', ...args),
+  error: (...args: any[]) => console.error('[content_script_v2]', ...args),
+}
+
 import type { FieldRef } from '../shared/types'
 import {
   createAssistantButton,
@@ -15,9 +24,6 @@ import { extractContext } from './context-extractor'
 import { applyChanges } from './field-applier'
 import { FieldDetector, type DetectedField } from './field-detector'
 import { closeInlineChat, openInlineChat } from './iframe-chat'
-import { createLogger } from '../shared/logger';
-
-const logger = createLogger('content_script_v2');
 
 logger.debug('[Sireno] Content script initializing')
 

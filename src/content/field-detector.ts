@@ -3,9 +3,15 @@
  */
 
 import type { FieldRef } from '../shared/types'
-import { createLogger } from '../shared/logger';
 
-const logger = createLogger('field-detector');
+// Simple inline logger for content script (avoid import issues)
+const IS_DEV = import.meta.env.DEV
+const logger = {
+  debug: (...args: any[]) => IS_DEV && console.log('[field-detector]', ...args),
+  info: (...args: any[]) => console.info('[field-detector]', ...args),
+  warn: (...args: any[]) => console.warn('[field-detector]', ...args),
+  error: (...args: any[]) => console.error('[field-detector]', ...args),
+}
 
 export interface DetectedField {
   element: HTMLElement

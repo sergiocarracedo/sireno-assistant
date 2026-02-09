@@ -2,9 +2,14 @@
  * IFrame-based inline chat for strong isolation
  */
 
-import { createLogger } from '../shared/logger';
-
-const logger = createLogger('iframe-chat');
+// Simple inline logger for content script (avoid import issues)
+const IS_DEV = import.meta.env.DEV
+const logger = {
+  debug: (...args: any[]) => IS_DEV && console.log('[iframe-chat]', ...args),
+  info: (...args: any[]) => console.info('[iframe-chat]', ...args),
+  warn: (...args: any[]) => console.warn('[iframe-chat]', ...args),
+  error: (...args: any[]) => console.error('[iframe-chat]', ...args),
+}
 
 interface ActiveSkill {
   name: string
