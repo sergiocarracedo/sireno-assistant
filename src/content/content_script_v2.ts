@@ -15,8 +15,11 @@ import { extractContext } from './context-extractor'
 import { applyChanges } from './field-applier'
 import { FieldDetector, type DetectedField } from './field-detector'
 import { closeInlineChat, openInlineChat } from './iframe-chat'
+import { createLogger } from '../shared/logger';
 
-console.log('[Sireno] Content script initializing')
+const logger = createLogger('content_script_v2');
+
+logger.debug('[Sireno] Content script initializing')
 
 // Field detector instance
 const fieldDetector = new FieldDetector()
@@ -47,7 +50,7 @@ function isExtensionContextValid(): boolean {
  */
 async function safeSendMessage(message: any): Promise<any> {
   if (!isExtensionContextValid()) {
-    console.warn('[Sireno] Extension context invalidated')
+    logger.warn('[Sireno] Extension context invalidated')
     return null
   }
 
@@ -55,7 +58,7 @@ async function safeSendMessage(message: any): Promise<any> {
     return await chrome.runtime.sendMessage(message)
   } catch (error: any) {
     if (error.message?.includes('Extension context invalidated')) {
-      console.warn('[Sireno] Extension was reloaded')
+      logger.warn('[Sireno] Extension was reloaded')
       showReloadNotification()
       return null
     }
@@ -105,13 +108,13 @@ async function loadConfig() {
     if (response?.type === 'CONFIG_RESPONSE') {
       showButtonOnHover = response.config.showSparkOnHover !== false
       showButtonOnFocus = response.config.showSparkOnFocus !== false
-      console.log('[Sireno] Config loaded:', {
+      logger.debug('[Sireno] Config loaded:', {
         showButtonOnHover,
         showButtonOnFocus,
       })
     }
   } catch (error) {
-    console.error('[Sireno] Failed to load config:', error)
+    logger.error('[Sireno] Failed to load config:', error)
   }
 }
 
@@ -121,7 +124,7 @@ async function loadConfig() {
 async function handleFieldDetected(detectedField: DetectedField) {
   const { element, fieldRef, wrapper } = detectedField
 
-  console.log('[Sireno] Field detected:', fieldRef.id, element)
+  logger.debug('[Sireno] Field detected:', fieldRef.id, element)
 
   // Check if field is excluded
   try {
@@ -132,11 +135,11 @@ async function handleFieldDetected(detectedField: DetectedField) {
     })
 
     if (response?.type === 'FIELD_EXCLUDED_RESPONSE' && response.isExcluded) {
-      console.log('[Sireno] Field excluded, skipping button:', fieldRef.id)
+      logger.debug('[Sireno] Field excluded, skipping button:', fieldRef.id)
       return // Don't create button
     }
   } catch (error) {
-    console.error('[Sireno] Failed to check if field is excluded:', error)
+    logger.error('[Sireno] Failed to check if field is excluded:', error)
     // Continue to create button on error
   }
 
@@ -146,7 +149,7 @@ async function handleFieldDetected(detectedField: DetectedField) {
       element,
       wrapper || element,
       (field) => {
-        console.log('[Sireno] Button clicked for field:', fieldRef.id)
+        logger.debug('[Sireno] Button clicked for field:', fieldRef.id)
         openInlineChat(fieldRef.id, field, fieldRef.labelHint)
       },
     )
@@ -165,7 +168,7 @@ async function handleFieldDetected(detectedField: DetectedField) {
  * Handle field removed
  */
 function handleFieldRemoved(element: HTMLElement) {
-  console.log('[Sireno] Field removed:', element)
+  logger.debug('[Sireno] Field removed:', element)
 
   const button = fieldButtons.get(element)
   if (button) {
@@ -249,7 +252,7 @@ function updateDiscoveredFields() {
  * Initialize
  */
 async function init() {
-  console.log('[Sireno] Initializing...')
+  logger.debug('[Sireno] Initializing...')
 
   // Wait for DOM to be ready
   if (document.readyState === 'loading') {
@@ -277,7 +280,7 @@ async function init() {
   // Start field detection
   fieldDetector.start(handleFieldDetected, handleFieldRemoved)
 
-  console.log('[Sireno] Initialization complete')
+  logger.debug('[Sireno] Initialization complete')
 }
 
 /**
@@ -285,28 +288,28 @@ async function init() {
  */
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   if (message.type === 'CONFIG_UPDATED') {
-    console.log('[Sireno] Config updated, reloading')
+    logger.debug('[Sireno] Config updated, reloading')
     loadConfig()
     sendResponse({ success: true })
     return false
   }
 
   if (message.type === 'SCAN_FIELDS') {
-    console.log('[Sireno] Manual field scan requested')
+    logger.debug('[Sireno] Manual field scan requested')
     updateDiscoveredFields()
     sendResponse({ fields: discoveredFields })
     return false
   }
 
   if (message.type === 'APPLY_CHANGES') {
-    console.log('[Sireno] Applying changes to fields')
+    logger.debug('[Sireno] Applying changes to fields')
     applyChanges(message.changes, discoveredFields)
     sendResponse({ success: true })
     return false
   }
 
   if (message.type === 'GET_CONTEXT' || message.type === 'EXTRACT_CONTEXT') {
-    console.log('[Sireno] Context extraction requested')
+    logger.debug('[Sireno] Context extraction requested')
     const context = extractContext(
       message.level,
       message.selectedFieldIds || [],
@@ -318,35 +321,35 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   }
 
   if (message.type === 'FIELD_UNEXCLUDED') {
-    console.log('[Sireno] Field un-excluded, recreating button:', message.fieldId)
+    logger.debug('[Sireno] Field un-excluded, recreating button:', message.fieldId)
     
     // Find the field
     const fields = fieldDetector.getFields()
     const field = fields.find((f) => f.fieldRef.id === message.fieldId)
     
     if (field) {
-      console.log('[Sireno] Found field, checking if button exists:', field.fieldRef.id)
+      logger.debug('[Sireno] Found field, checking if button exists:', field.fieldRef.id)
       
       // Only create button if it doesn't already exist
       if (!fieldButtons.has(field.element)) {
-        console.log('[Sireno] Creating button for un-excluded field:', field.fieldRef.id)
+        logger.debug('[Sireno] Creating button for un-excluded field:', field.fieldRef.id)
         const button = createAssistantButton(
           field.element,
           field.wrapper || field.element,
           (fieldElement) => {
-            console.log('[Sireno] Button clicked for field:', field.fieldRef.id)
+            logger.debug('[Sireno] Button clicked for field:', field.fieldRef.id)
             openInlineChat(field.fieldRef.id, fieldElement, field.fieldRef.labelHint)
           },
         )
         
         fieldButtons.set(field.element, button)
         setupFieldInteraction(field.element, button)
-        console.log('[Sireno] Button created for un-excluded field:', field.fieldRef.id)
+        logger.debug('[Sireno] Button created for un-excluded field:', field.fieldRef.id)
       } else {
-        console.log('[Sireno] Button already exists for field:', field.fieldRef.id)
+        logger.debug('[Sireno] Button already exists for field:', field.fieldRef.id)
       }
     } else {
-      console.warn('[Sireno] Could not find field with ID:', message.fieldId)
+      logger.warn('[Sireno] Could not find field with ID:', message.fieldId)
     }
     
     sendResponse({ success: true })
@@ -354,7 +357,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   }
 
   if (message.type === 'FOCUS_FIELD') {
-    console.log('[Sireno] Focus field requested:', message.fieldId)
+    logger.debug('[Sireno] Focus field requested:', message.fieldId)
     
     // Find the field
     const fields = fieldDetector.getFields()
@@ -367,10 +370,10 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       // Focus the field
       field.element.focus()
       
-      console.log('[Sireno] Field focused and scrolled into view:', message.fieldId)
+      logger.debug('[Sireno] Field focused and scrolled into view:', message.fieldId)
       sendResponse({ success: true })
     } else {
-      console.warn('[Sireno] Could not find field with ID:', message.fieldId)
+      logger.warn('[Sireno] Could not find field with ID:', message.fieldId)
       sendResponse({ success: false, error: 'Field not found' })
     }
     
@@ -378,7 +381,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   }
 
   if (message.type === 'HIGHLIGHT_FIELD') {
-    console.log('[Sireno] Highlight field requested:', message.fieldId)
+    logger.debug('[Sireno] Highlight field requested:', message.fieldId)
     
     // Find the field
     const fields = fieldDetector.getFields()
@@ -409,10 +412,10 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
         }, 500)
       }, duration)
       
-      console.log('[Sireno] Field highlighted for', duration, 'ms:', message.fieldId)
+      logger.debug('[Sireno] Field highlighted for', duration, 'ms:', message.fieldId)
       sendResponse({ success: true })
     } else {
-      console.warn('[Sireno] Could not find field with ID:', message.fieldId)
+      logger.warn('[Sireno] Could not find field with ID:', message.fieldId)
       sendResponse({ success: false, error: 'Field not found' })
     }
     
@@ -426,40 +429,40 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
  * Listen for field exclusion events from iframe-chat
  */
 window.addEventListener('message', (event) => {
-  console.log('[Sireno] Window message received:', event.data)
+  logger.debug('[Sireno] Window message received:', event.data)
   
   if (event.data?.type === 'FIELD_EXCLUDED') {
     const excludedFieldId = event.data.fieldId
-    console.log('[Sireno] Field excluded, removing button:', excludedFieldId)
-    console.log('[Sireno] Current field buttons:', fieldButtons)
-    console.log('[Sireno] Current detected fields:', fieldDetector.getFields())
+    logger.debug('[Sireno] Field excluded, removing button:', excludedFieldId)
+    logger.debug('[Sireno] Current field buttons:', fieldButtons)
+    logger.debug('[Sireno] Current detected fields:', fieldDetector.getFields())
 
     // Find and remove button for this field
     const fields = fieldDetector.getFields()
     const excludedField = fields.find((f) => f.fieldRef.id === excludedFieldId)
     
-    console.log('[Sireno] Found excluded field:', excludedField)
+    logger.debug('[Sireno] Found excluded field:', excludedField)
 
     if (excludedField) {
       const button = fieldButtons.get(excludedField.element)
-      console.log('[Sireno] Found button:', button)
+      logger.debug('[Sireno] Found button:', button)
       
       if (button) {
         removeButton(button)
         fieldButtons.delete(excludedField.element)
-        console.log('[Sireno] Button removed for excluded field:', excludedFieldId)
+        logger.debug('[Sireno] Button removed for excluded field:', excludedFieldId)
       } else {
-        console.warn('[Sireno] No button found for field element')
+        logger.warn('[Sireno] No button found for field element')
       }
     } else {
-      console.warn('[Sireno] No field found with ID:', excludedFieldId)
+      logger.warn('[Sireno] No field found with ID:', excludedFieldId)
     }
   }
 })
 
 // Start initialization
 init().catch((error) => {
-  console.error('[Sireno] Initialization failed:', error)
+  logger.error('[Sireno] Initialization failed:', error)
 })
 
 // Export for debugging

@@ -15,6 +15,9 @@ import { Button, Label } from '../../../shared/components/ui';
 import { skillMatchesDomain } from '../../../shared/skill-utils';
 import type { ContextLevel, FieldRef, LLMResponse } from '../../../shared/types';
 import FieldChangesMessage from './components/FieldChangesMessage';
+import { createLogger } from '../../../shared/logger';
+
+const logger = createLogger('ChatView');
 
 interface Message {
   role: 'user' | 'assistant';
@@ -91,7 +94,7 @@ export default function ChatTab({ onNavigate, initData }: ChatTabProps) {
 
     // Listen for tab changes
     const handleTabActivated = () => {
-      console.log('[ChatTab] Tab activated, reloading data...');
+      logger.debug('Tab activated, reloading data...');
       loadChatHistory();
       loadSelectedFieldIds();
       scanFields();
@@ -101,7 +104,7 @@ export default function ChatTab({ onNavigate, initData }: ChatTabProps) {
     const handleTabUpdated = (tabId: number, changeInfo: chrome.tabs.TabChangeInfo) => {
       // Only reload if URL changed (page navigation)
       if (changeInfo.url) {
-        console.log('[ChatTab] Tab URL changed, reloading data...');
+        logger.debug('Tab URL changed, reloading data...');
         chrome.tabs.query({ active: true, currentWindow: true }).then(([tab]) => {
           if (tab.id === tabId) {
             loadChatHistory();
@@ -133,7 +136,7 @@ export default function ChatTab({ onNavigate, initData }: ChatTabProps) {
         setSelectedFieldIds(result[`selectedFields_${tab.id}`]);
       }
     } catch (err) {
-      console.error('Failed to load selected field IDs:', err);
+      logger.error('Failed to load selected field IDs:', err);
     }
   };
 
@@ -143,17 +146,17 @@ export default function ChatTab({ onNavigate, initData }: ChatTabProps) {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
       if (!tab.id) return;
       
-      console.log('[ChatTab] Scanning fields for tab', tab.id);
+      logger.debug('Scanning fields for tab', tab.id);
       const response = await chrome.tabs.sendMessage(tab.id, {
         type: 'SCAN_FIELDS',
       });
       
       if (response?.fields) {
-        console.log('[ChatTab] Found', response.fields.length, 'fields');
+        logger.debug('Found', response.fields.length, 'fields');
         setTotalFields(response.fields.length);
       }
     } catch (err) {
-      console.error('[ChatTab] Failed to scan fields:', err);
+      logger.error('Failed to scan fields:', err);
     }
   };
 
@@ -178,7 +181,7 @@ export default function ChatTab({ onNavigate, initData }: ChatTabProps) {
       setActiveSkillsCount(activeSkills.length);
       setActiveSkillNames(activeSkills.map((s: any) => s.name));
     } catch (err) {
-      console.error('[ChatTab] Failed to load active skills:', err);
+      logger.error('Failed to load active skills:', err);
     }
   };
 
@@ -205,7 +208,7 @@ export default function ChatTab({ onNavigate, initData }: ChatTabProps) {
         setMessages(response.messages);
       }
     } catch (err) {
-      console.error('Failed to load chat history:', err);
+      logger.error('Failed to load chat history:', err);
     }
   };
 
@@ -219,7 +222,7 @@ export default function ChatTab({ onNavigate, initData }: ChatTabProps) {
         messages,
       });
     } catch (err) {
-      console.error('Failed to save chat history:', err);
+      logger.error('Failed to save chat history:', err);
     }
   };
 
@@ -235,7 +238,7 @@ export default function ChatTab({ onNavigate, initData }: ChatTabProps) {
           tabId: currentTabId,
         });
       } catch (err) {
-        console.error('Failed to clear chat history:', err);
+        logger.error('Failed to clear chat history:', err);
       }
     }
   };
@@ -250,15 +253,15 @@ export default function ChatTab({ onNavigate, initData }: ChatTabProps) {
     setError(null);
 
     try {
-      console.log('[ChatTab] Starting LLM request...');
+      logger.debug('Starting LLM request...');
       
       // Get current tab
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
       if (!tab.id) throw new Error('No active tab');
-      console.log('[ChatTab] Current tab ID:', tab.id);
+      logger.debug('Current tab ID:', tab.id);
 
       // Scan fields
-      console.log('[ChatTab] Scanning fields...');
+      logger.debug('Scanning fields...');
       let fieldsResponse: any;
       try {
         fieldsResponse = await chrome.tabs.sendMessage(tab.id, {
@@ -272,14 +275,14 @@ export default function ChatTab({ onNavigate, initData }: ChatTabProps) {
         }
         throw err;
       }
-      console.log('[ChatTab] Fields response:', fieldsResponse);
+      logger.debug('Fields response:', fieldsResponse);
 
       if (!fieldsResponse?.fields || fieldsResponse.fields.length === 0) {
         throw new Error('No fields found on this page. Try refreshing the page or selecting a page with input fields.');
       }
 
       // Extract context
-      console.log('[ChatTab] Extracting context with level:', contextLevel);
+      logger.debug('Extracting context with level:', contextLevel);
       let contextResponse: any;
       try {
         contextResponse = await chrome.tabs.sendMessage(tab.id, {
@@ -300,7 +303,7 @@ export default function ChatTab({ onNavigate, initData }: ChatTabProps) {
         throw new Error('Failed to extract context from page');
       }
       
-      console.log('[ChatTab] Context extracted:', contextResponse);
+      logger.debug('Context extracted:', contextResponse);
 
       // Load active skills for this domain
       let activeSkills: any[] = [];
@@ -315,13 +318,13 @@ export default function ChatTab({ onNavigate, initData }: ChatTabProps) {
           );
           
           if (activeSkills.length > 0) {
-            console.log('[ChatTab] Using active skills:', activeSkills.map(s => s.name).join(', '));
+            logger.debug('Using active skills:', activeSkills.map(s => s.name).join(', '));
           }
         }
       }
 
       // Run LLM
-      console.log('[ChatTab] Running LLM...');
+      logger.debug('Running LLM...');
       const llmResponse = await chrome.runtime.sendMessage({
         type: 'RUN_LLM',
         request: {
@@ -331,7 +334,7 @@ export default function ChatTab({ onNavigate, initData }: ChatTabProps) {
           skills: activeSkills,
         },
       });
-      console.log('[ChatTab] LLM response:', llmResponse);
+      logger.debug('LLM response:', llmResponse);
 
       if (llmResponse.type === 'LLM_ERROR') {
         throw new Error(llmResponse.error);
@@ -350,7 +353,7 @@ export default function ChatTab({ onNavigate, initData }: ChatTabProps) {
         ]);
       }
     } catch (err) {
-      console.error('[ChatTab] Error during LLM request:', err);
+      logger.error('Error during LLM request:', err);
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
       setError(errorMessage);
       setMessages((prev) => [

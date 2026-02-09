@@ -2,6 +2,10 @@
  * IFrame-based inline chat for strong isolation
  */
 
+import { createLogger } from '../shared/logger';
+
+const logger = createLogger('iframe-chat');
+
 interface ActiveSkill {
   name: string
   description: string
@@ -31,7 +35,7 @@ function isExtensionContextValid(): boolean {
  */
 async function safeSendMessage(message: any): Promise<any> {
   if (!isExtensionContextValid()) {
-    console.warn('[IFrame Chat] Extension context invalidated')
+    logger.warn('[IFrame Chat] Extension context invalidated')
     return null
   }
 
@@ -39,7 +43,7 @@ async function safeSendMessage(message: any): Promise<any> {
     return await chrome.runtime.sendMessage(message)
   } catch (error: any) {
     if (error.message?.includes('Extension context invalidated')) {
-      console.warn('[IFrame Chat] Extension was reloaded')
+      logger.warn('[IFrame Chat] Extension was reloaded')
       return null
     }
     throw error
@@ -61,9 +65,9 @@ async function saveDraft(fieldId: string, content: string) {
   try {
     const key = getDraftKey(fieldId)
     await chrome.storage.local.set({ [key]: content })
-    console.log('[IFrame Chat] Draft saved for field:', fieldId)
+    logger.debug('[IFrame Chat] Draft saved for field:', fieldId)
   } catch (error) {
-    console.error('[IFrame Chat] Failed to save draft:', error)
+    logger.error('[IFrame Chat] Failed to save draft:', error)
   }
 }
 
@@ -76,11 +80,11 @@ async function loadDraft(fieldId: string): Promise<string | null> {
     const result = await chrome.storage.local.get(key)
     const draft = result[key] || null
     if (draft) {
-      console.log('[IFrame Chat] Draft loaded for field:', fieldId)
+      logger.debug('[IFrame Chat] Draft loaded for field:', fieldId)
     }
     return draft
   } catch (error) {
-    console.error('[IFrame Chat] Failed to load draft:', error)
+    logger.error('[IFrame Chat] Failed to load draft:', error)
     return null
   }
 }
@@ -92,9 +96,9 @@ async function clearDraft(fieldId: string) {
   try {
     const key = getDraftKey(fieldId)
     await chrome.storage.local.remove(key)
-    console.log('[IFrame Chat] Draft cleared for field:', fieldId)
+    logger.debug('[IFrame Chat] Draft cleared for field:', fieldId)
   } catch (error) {
-    console.error('[IFrame Chat] Failed to clear draft:', error)
+    logger.error('[IFrame Chat] Failed to clear draft:', error)
   }
 }
 
@@ -115,7 +119,7 @@ async function getDisabledSkillIds(): Promise<string[]> {
     
     return disabledIds
   } catch (error) {
-    console.error('[IFrame Chat] Failed to get disabled skill IDs:', error)
+    logger.error('[IFrame Chat] Failed to get disabled skill IDs:', error)
     return []
   }
 }
@@ -134,10 +138,10 @@ async function loadActiveSkills(): Promise<void> {
       const allSkills = response.skills || []
       const disabledIds = await getDisabledSkillIds()
       activeSkills = allSkills.filter((skill: ActiveSkill & { id: string }) => !disabledIds.includes(skill.id))
-      console.log('[IFrame Chat] Loaded', activeSkills.length, 'active skills (filtered out', disabledIds.length, 'disabled)')
+      logger.debug('[IFrame Chat] Loaded', activeSkills.length, 'active skills (filtered out', disabledIds.length, 'disabled)')
     }
   } catch (error) {
-    console.error('[IFrame Chat] Failed to load skills:', error)
+    logger.error('[IFrame Chat] Failed to load skills:', error)
     activeSkills = []
   }
 }
@@ -150,7 +154,7 @@ export async function openInlineChat(
   field: HTMLElement,
   fieldLabel?: string,
 ) {
-  console.log('[IFrame Chat] Opening chat for field:', fieldId)
+  logger.debug('[IFrame Chat] Opening chat for field:', fieldId)
 
   // Close existing chat if open
   if (activeIframe) {
@@ -204,7 +208,7 @@ export function closeInlineChat() {
 
   activeFieldId = null
 
-  console.log('[IFrame Chat] Chat closed')
+  logger.debug('[IFrame Chat] Chat closed')
 }
 
 /**
@@ -375,7 +379,7 @@ function createIFrame(field: HTMLElement, fieldLabel: string, fieldId: string) {
     }
   }, 100)
 
-  console.log('[IFrame Chat] IFrame created and mounted')
+  logger.debug('[IFrame Chat] IFrame created and mounted')
 }
 
 /**
@@ -470,7 +474,7 @@ function setupIFrameCommunication(
 async function handleSendMessage(userMessage: string) {
   if (!activeFieldId || !activeField) return
 
-  console.log('[IFrame Chat] Processing instruction:', userMessage)
+  logger.debug('[IFrame Chat] Processing instruction:', userMessage)
 
   try {
     // Send to LLM
@@ -498,7 +502,7 @@ async function handleSendMessage(userMessage: string) {
       sendStatusToIFrame(`Error: ${response.error}`, true)
     }
   } catch (error) {
-    console.error('[IFrame Chat] Error sending message:', error)
+    logger.error('[IFrame Chat] Error sending message:', error)
     sendStatusToIFrame('Sorry, something went wrong. Please try again.', true)
   }
 }
@@ -676,7 +680,7 @@ async function handleContinueInSidebar(
     })
     closeInlineChat()
   } catch (error) {
-    console.error('[IFrame Chat] Failed to open sidebar:', error)
+    logger.error('[IFrame Chat] Failed to open sidebar:', error)
   }
 }
 
@@ -690,7 +694,7 @@ async function handleOpenSkills() {
     })
     closeInlineChat()
   } catch (error) {
-    console.error('[IFrame Chat] Failed to open skills:', error)
+    logger.error('[IFrame Chat] Failed to open skills:', error)
   }
 }
 
@@ -701,7 +705,7 @@ async function handleExcludeField(
   fieldId: string | undefined,
   fieldLabel: string | undefined,
 ) {
-  console.log('[IFrame Chat] Excluding field:', fieldId, fieldLabel)
+  logger.debug('[IFrame Chat] Excluding field:', fieldId, fieldLabel)
   
   try {
     const response = await safeSendMessage({
@@ -710,7 +714,7 @@ async function handleExcludeField(
       fieldLabel: fieldLabel || 'Unknown field',
     })
 
-    console.log('[IFrame Chat] Exclude field response:', response)
+    logger.debug('[IFrame Chat] Exclude field response:', response)
 
     // Notify content script to remove the button for this field FIRST
     window.postMessage(
@@ -721,11 +725,11 @@ async function handleExcludeField(
       '*',
     )
 
-    console.log('[IFrame Chat] Field excluded successfully:', fieldId)
+    logger.debug('[IFrame Chat] Field excluded successfully:', fieldId)
     
     // Close the chat AFTER notifying content script
     closeInlineChat()
   } catch (error) {
-    console.error('[IFrame Chat] Failed to exclude field:', error)
+    logger.error('[IFrame Chat] Failed to exclude field:', error)
   }
 }

@@ -4,6 +4,9 @@ import type { FieldRef } from '../../../../../shared/types';
 import type { ExcludedField } from '../../../../../background/storage';
 import { Button } from '../../../../../shared/components/ui/button';
 import { RotateCw, Focus, EyeOff } from 'lucide-react';
+import { createLogger } from '../../../../../shared/logger';
+
+const logger = createLogger('AllFieldsTab');
 
 export default function AllFieldsTab() {
   const { t } = useTranslation();
@@ -18,7 +21,7 @@ export default function AllFieldsTab() {
     const updateCurrentTab = async () => {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
       if (tab.id && tab.id !== currentTabId) {
-        console.log('[FieldSelector] Tab changed from', currentTabId, 'to', tab.id);
+        logger.debug('[FieldSelector] Tab changed from', currentTabId, 'to', tab.id);
         setCurrentTabId(tab.id);
       }
     };
@@ -28,14 +31,14 @@ export default function AllFieldsTab() {
 
     // Listen for tab activation (user switches tabs)
     const handleTabActivated = (activeInfo: chrome.tabs.TabActiveInfo) => {
-      console.log('[FieldSelector] Tab activated:', activeInfo.tabId);
+      logger.debug('[FieldSelector] Tab activated:', activeInfo.tabId);
       setCurrentTabId(activeInfo.tabId);
     };
 
     // Listen for tab updates (URL changes, page loads)
     const handleTabUpdated = (tabId: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab) => {
       if (changeInfo.status === 'complete' && tab.active) {
-        console.log('[FieldSelector] Tab updated and complete:', tabId);
+        logger.debug('[FieldSelector] Tab updated and complete:', tabId);
         setCurrentTabId(tabId);
       }
     };
@@ -43,7 +46,7 @@ export default function AllFieldsTab() {
     // Auto-rescan when tab becomes visible
     const handleVisibilityChange = () => {
       if (!document.hidden) {
-        console.log('[FieldSelector] Tab visible, updating current tab...');
+        logger.debug('[FieldSelector] Tab visible, updating current tab...');
         updateCurrentTab();
       }
     };
@@ -62,7 +65,7 @@ export default function AllFieldsTab() {
   // Reload fields and selections whenever currentTabId changes
   useEffect(() => {
     if (currentTabId) {
-      console.log('[FieldSelector] Current tab changed to', currentTabId, '- reloading fields and selections');
+      logger.debug('[FieldSelector] Current tab changed to', currentTabId, '- reloading fields and selections');
       scanFields();
       loadSelectedIds();
       loadExcludedFields();
@@ -83,9 +86,9 @@ export default function AllFieldsTab() {
       const excludedIds = new Set(excludedFields.map(f => f.fieldId));
       setExcludedFieldIds(excludedIds);
       
-      console.log('[FieldSelector] Loaded', excludedIds.size, 'excluded fields for', tab.url);
+      logger.debug('[FieldSelector] Loaded', excludedIds.size, 'excluded fields for', tab.url);
     } catch (error) {
-      console.error('Failed to load excluded fields:', error);
+      logger.error('Failed to load excluded fields:', error);
     }
   };
 
@@ -100,7 +103,7 @@ export default function AllFieldsTab() {
         setSelectedIds(result[`selectedFields_${tab.id}`]);
       }
     } catch (error) {
-      console.error('Failed to load selected IDs:', error);
+      logger.error('Failed to load selected IDs:', error);
     }
   };
 
@@ -114,7 +117,7 @@ export default function AllFieldsTab() {
         [`selectedFields_${tab.id}`]: ids,
       });
     } catch (error) {
-      console.error('Failed to save selected IDs:', error);
+      logger.error('Failed to save selected IDs:', error);
     }
   };
 
@@ -126,32 +129,32 @@ export default function AllFieldsTab() {
     try {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
       if (!tab.id) {
-        console.error('[FieldSelector] No active tab found');
+        logger.error('[FieldSelector] No active tab found');
         setLoading(false);
         return;
       }
 
-      console.log('[FieldSelector] Scanning fields for tab', tab.id);
+      logger.debug('[FieldSelector] Scanning fields for tab', tab.id);
       
       const response = await chrome.tabs.sendMessage(tab.id, {
         type: 'SCAN_FIELDS',
       });
 
-      console.log('[FieldSelector] Scan response:', response);
+      logger.debug('[FieldSelector] Scan response:', response);
 
       if (response?.fields) {
-        console.log('[FieldSelector] Found', response.fields.length, 'fields');
+        logger.debug('[FieldSelector] Found', response.fields.length, 'fields');
         setFields(response.fields);
         
         // Load saved selection for THIS tab
         const result = await chrome.storage.local.get(`selectedFields_${tab.id}`);
         if (result[`selectedFields_${tab.id}`] && result[`selectedFields_${tab.id}`].length > 0) {
           // Use saved selection
-          console.log('[FieldSelector] Using saved selection for tab', tab.id);
+          logger.debug('[FieldSelector] Using saved selection for tab', tab.id);
           setSelectedIds(result[`selectedFields_${tab.id}`]);
         } else if (response.fields.length > 0) {
           // No saved selection, select all by default
-          console.log('[FieldSelector] No saved selection, selecting all fields for tab', tab.id);
+          logger.debug('[FieldSelector] No saved selection, selecting all fields for tab', tab.id);
           const allIds = response.fields.map((f: FieldRef) => f.id);
           setSelectedIds(allIds);
           saveSelectedIds(allIds);
@@ -159,26 +162,26 @@ export default function AllFieldsTab() {
           setSelectedIds([]);
         }
       } else {
-        console.warn('[FieldSelector] No fields in response');
+        logger.warn('[FieldSelector] No fields in response');
         setSelectedIds([]);
       }
     } catch (error) {
-      console.error('[FieldSelector] Failed to scan fields:', error);
+      logger.error('[FieldSelector] Failed to scan fields:', error);
       // Try to inject content script if it's not loaded
       try {
         const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
         if (tab.id) {
-          console.log('[FieldSelector] Attempting to inject content script...');
+          logger.debug('[FieldSelector] Attempting to inject content script...');
           await chrome.scripting.executeScript({
             target: { tabId: tab.id },
             files: ['content_script.js'],
           });
-          console.log('[FieldSelector] Content script injected, retrying scan...');
+          logger.debug('[FieldSelector] Content script injected, retrying scan...');
           // Wait a bit for content script to initialize
           setTimeout(() => scanFields(), 500);
         }
       } catch (injectError) {
-        console.error('[FieldSelector] Failed to inject content script:', injectError);
+        logger.error('[FieldSelector] Failed to inject content script:', injectError);
       }
     } finally {
       setLoading(false);

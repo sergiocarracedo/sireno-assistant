@@ -8,6 +8,9 @@ import { Button } from '../../../shared/components/ui/button';
 import { Input } from '../../../shared/components/ui/input';
 import { Plus, Search, Filter, Upload, Target } from 'lucide-react';
 import { readMarkdownFile } from '../../../shared/skill-markdown';
+import { createLogger } from '../../../shared/logger';
+
+const logger = createLogger('SkillsView');
 
 type FilterType = 'all' | 'active' | 'inactive';
 
@@ -37,7 +40,7 @@ export default function SkillsTab() {
         setSkills(response.skills);
       }
     } catch (error) {
-      console.error('Failed to load skills:', error);
+      logger.error('Failed to load skills:', error);
     } finally {
       setLoading(false);
     }
@@ -57,7 +60,7 @@ export default function SkillsTab() {
       
       setDisabledSkills(disabledIds);
     } catch (error) {
-      console.error('Failed to load disabled skills:', error);
+      logger.error('Failed to load disabled skills:', error);
     }
   };
 
@@ -73,7 +76,7 @@ export default function SkillsTab() {
         setActiveSkills(active.map(s => s.id));
       }
     } catch (error) {
-      console.error('Failed to get current domain:', error);
+      logger.error('Failed to get current domain:', error);
     }
   };
 
@@ -108,7 +111,7 @@ export default function SkillsTab() {
       await loadDisabledSkills();
       await loadCurrentDomain(); // Refresh active skills
     } catch (error) {
-      console.error('Failed to toggle skill:', error);
+      logger.error('Failed to toggle skill:', error);
       alert(`Failed to ${disabled ? 'disable' : 'enable'} skill`);
     }
   };

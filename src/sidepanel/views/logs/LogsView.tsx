@@ -5,6 +5,9 @@ import { Input } from '../../../shared/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../shared/components/ui/card';
 import { Trash2, Search, ChevronDown, ChevronRight, MessageSquare, Sparkles } from 'lucide-react';
 import { Separator } from '../../../shared/components/ui/separator';
+import { createLogger } from '../../../shared/logger';
+
+const logger = createLogger('LogsView');
 
 export default function LogsTab() {
   const [logs, setLogs] = useState<LLMLogEntry[]>([]);
@@ -39,7 +42,7 @@ export default function LogsTab() {
         setLogs(response.logs);
       }
     } catch (error) {
-      console.error('Failed to load logs:', error);
+      logger.error('Failed to load logs:', error);
     } finally {
       setLoading(false);
     }
@@ -55,7 +58,7 @@ export default function LogsTab() {
       setLogs([]);
       setExpandedLogIds(new Set());
     } catch (error) {
-      console.error('Failed to clear logs:', error);
+      logger.error('Failed to clear logs:', error);
     }
   };
 

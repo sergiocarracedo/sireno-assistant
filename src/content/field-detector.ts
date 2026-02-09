@@ -3,6 +3,9 @@
  */
 
 import type { FieldRef } from '../shared/types'
+import { createLogger } from '../shared/logger';
+
+const logger = createLogger('field-detector');
 
 export interface DetectedField {
   element: HTMLElement
@@ -223,7 +226,7 @@ function traverseShadowDOM(
   const allElements = root.querySelectorAll('*')
   allElements.forEach((element) => {
     if (element.shadowRoot) {
-      console.log('[FieldDetector] Found Shadow DOM:', element)
+      logger.debug('[FieldDetector] Found Shadow DOM:', element)
       traverseShadowDOM(element.shadowRoot, callback, selectors)
     }
   })
@@ -243,7 +246,7 @@ export class FieldDetector {
   private shadowRootObservers = new Map<ShadowRoot, MutationObserver>()
 
   constructor() {
-    console.log('[FieldDetector] Initializing multi-strategy detector with Shadow DOM support')
+    logger.debug('[FieldDetector] Initializing multi-strategy detector with Shadow DOM support')
   }
 
   /**
@@ -274,7 +277,7 @@ export class FieldDetector {
     // Strategy 5: Polling fallback (including Shadow DOM)
     this.startPolling()
 
-    console.log('[FieldDetector] All detection strategies started (with Shadow DOM support)')
+    logger.debug('[FieldDetector] All detection strategies started (with Shadow DOM support)')
   }
 
   /**
@@ -284,7 +287,7 @@ export class FieldDetector {
     const allElements = document.querySelectorAll('*')
     allElements.forEach((element) => {
       if (element.shadowRoot) {
-        console.log('[FieldDetector] Found existing Shadow Root on:', element)
+        logger.debug('[FieldDetector] Found existing Shadow Root on:', element)
         this.observeShadowRoot(element.shadowRoot)
       }
     })
@@ -304,7 +307,7 @@ export class FieldDetector {
     ]
     
     const fields = shadowRoot.querySelectorAll<HTMLElement>(selectors.join(', '))
-    console.log('[FieldDetector] Scanning Shadow Root, found', fields.length, 'fields')
+    logger.debug('[FieldDetector] Scanning Shadow Root, found', fields.length, 'fields')
     
     fields.forEach((field) => {
       if (isEditableField(field)) {
@@ -340,7 +343,7 @@ export class FieldDetector {
           if (node instanceof HTMLElement) {
             if (isEditableField(node)) {
               hasChanges = true
-              console.log('[FieldDetector] Shadow DOM mutation: new field', node)
+              logger.debug('[FieldDetector] Shadow DOM mutation: new field', node)
               this.registerField(node, this.knownFields.size)
             }
 
@@ -350,7 +353,7 @@ export class FieldDetector {
             descendants.forEach((desc) => {
               if (isEditableField(desc)) {
                 hasChanges = true
-                console.log('[FieldDetector] Shadow DOM mutation: new descendant', desc)
+                logger.debug('[FieldDetector] Shadow DOM mutation: new descendant', desc)
                 this.registerField(desc, this.knownFields.size)
               }
             })
@@ -391,10 +394,10 @@ export class FieldDetector {
 
             if (isNowEditable && !wasKnown) {
               hasChanges = true
-              console.log('[FieldDetector] Shadow DOM: element became contenteditable:', target)
+              logger.debug('[FieldDetector] Shadow DOM: element became contenteditable:', target)
               this.registerField(target, this.knownFields.size)
             } else if (!isNowEditable && wasKnown) {
-              console.log('[FieldDetector] Shadow DOM: element no longer contenteditable:', target)
+              logger.debug('[FieldDetector] Shadow DOM: element no longer contenteditable:', target)
               this.unregisterField(target)
             }
           } else {
@@ -409,7 +412,7 @@ export class FieldDetector {
       })
 
       if (hasChanges) {
-        console.log(
+        logger.debug(
           '[FieldDetector] Shadow DOM mutation detected changes, total fields:',
           this.knownFields.size,
         )
@@ -430,7 +433,7 @@ export class FieldDetector {
     })
 
     this.shadowRootObservers.set(shadowRoot, observer)
-    console.log('[FieldDetector] Shadow Root observer started')
+    logger.debug('[FieldDetector] Shadow Root observer started')
   }
 
   /**
@@ -463,7 +466,7 @@ export class FieldDetector {
     } as any)
 
     this.knownFields.clear()
-    console.log('[FieldDetector] All detection strategies stopped (including Shadow DOM)')
+    logger.debug('[FieldDetector] All detection strategies stopped (including Shadow DOM)')
   }
 
   /**
@@ -491,7 +494,7 @@ export class FieldDetector {
       selectors,
     )
 
-    console.log(
+    logger.debug(
       '[FieldDetector] Initial discovery found',
       fieldCount,
       'fields (including Shadow DOM)',
@@ -507,14 +510,14 @@ export class FieldDetector {
       capture: true,
       passive: true,
     })
-    console.log('[FieldDetector] Focus tracking enabled (capture phase)')
+    logger.debug('[FieldDetector] Focus tracking enabled (capture phase)')
   }
 
   private handleFocusIn = (event: FocusEvent) => {
     const target = event.target
     if (target instanceof HTMLElement && isEditableField(target)) {
       if (!this.knownFields.has(target)) {
-        console.log('[FieldDetector] Focus detected new field:', target)
+        logger.debug('[FieldDetector] Focus detected new field:', target)
         this.registerField(target, this.knownFields.size)
       }
     }
@@ -533,13 +536,13 @@ export class FieldDetector {
           if (node instanceof HTMLElement) {
             if (isEditableField(node)) {
               hasChanges = true
-              console.log('[FieldDetector] Mutation: new editable field added', node)
+              logger.debug('[FieldDetector] Mutation: new editable field added', node)
               this.registerField(node, this.knownFields.size)
             }
             
             // Check if this element has a shadow root
             if (node.shadowRoot) {
-              console.log('[FieldDetector] Mutation: element with Shadow DOM added', node)
+              logger.debug('[FieldDetector] Mutation: element with Shadow DOM added', node)
               this.observeShadowRoot(node.shadowRoot)
               this.scanShadowRoot(node.shadowRoot)
               hasChanges = true
@@ -552,7 +555,7 @@ export class FieldDetector {
             descendants.forEach((desc) => {
               if (isEditableField(desc)) {
                 hasChanges = true
-                console.log('[FieldDetector] Mutation: new editable descendant found', desc)
+                logger.debug('[FieldDetector] Mutation: new editable descendant found', desc)
                 this.registerField(desc, this.knownFields.size)
               }
             })
@@ -561,7 +564,7 @@ export class FieldDetector {
             const elementsWithShadow = node.querySelectorAll('*')
             elementsWithShadow.forEach((el) => {
               if (el.shadowRoot) {
-                console.log('[FieldDetector] Mutation: descendant with Shadow DOM found', el)
+                logger.debug('[FieldDetector] Mutation: descendant with Shadow DOM found', el)
                 this.observeShadowRoot(el.shadowRoot)
                 this.scanShadowRoot(el.shadowRoot)
                 hasChanges = true
@@ -601,11 +604,11 @@ export class FieldDetector {
             if (isNowEditable && !wasKnown) {
               // Element became editable - register it
               hasChanges = true
-              console.log('[FieldDetector] Element became contenteditable:', target)
+              logger.debug('[FieldDetector] Element became contenteditable:', target)
               this.registerField(target, this.knownFields.size)
             } else if (!isNowEditable && wasKnown) {
               // Element is no longer editable - unregister it
-              console.log('[FieldDetector] Element no longer contenteditable:', target)
+              logger.debug('[FieldDetector] Element no longer contenteditable:', target)
               this.unregisterField(target)
             }
           } else {
@@ -621,7 +624,7 @@ export class FieldDetector {
       })
 
       if (hasChanges) {
-        console.log(
+        logger.debug(
           '[FieldDetector] Mutation observer detected changes, total fields:',
           this.knownFields.size,
         )
@@ -641,7 +644,7 @@ export class FieldDetector {
       ],
     })
 
-    console.log('[FieldDetector] Mutation observer started')
+    logger.debug('[FieldDetector] Mutation observer started')
   }
 
   /**
@@ -656,7 +659,7 @@ export class FieldDetector {
               isEditableField(entry.target) &&
               !this.knownFields.has(entry.target)
             ) {
-              console.log(
+              logger.debug(
                 '[FieldDetector] Intersection observer detected visible field:',
                 entry.target,
               )
@@ -677,7 +680,7 @@ export class FieldDetector {
       this.intersectionObserver?.observe(field)
     })
 
-    console.log('[FieldDetector] Intersection observer started')
+    logger.debug('[FieldDetector] Intersection observer started')
   }
 
   /**
@@ -688,7 +691,7 @@ export class FieldDetector {
       this.discoverNewFields()
     }, 3000)
 
-    console.log('[FieldDetector] Polling started (every 3s)')
+    logger.debug('[FieldDetector] Polling started (every 3s)')
   }
 
   private discoverNewFields() {
@@ -720,7 +723,7 @@ export class FieldDetector {
     )
 
     if (newCount > 0) {
-      console.log('[FieldDetector] Polling discovered', newCount, 'new fields (including Shadow DOM)')
+      logger.debug('[FieldDetector] Polling discovered', newCount, 'new fields (including Shadow DOM)')
     }
   }
 

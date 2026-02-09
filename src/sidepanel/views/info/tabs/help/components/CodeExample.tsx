@@ -1,6 +1,9 @@
 import { Copy, Check } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '../../../../../../shared/components/ui/button';
+import { createLogger } from '../../../../../../shared/logger';
+
+const logger = createLogger('CodeExample');
 
 interface CodeExampleProps {
   code: string;
@@ -17,7 +20,7 @@ export default function CodeExample({ code, language = 'text', title }: CodeExam
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (error) {
-      console.error('Failed to copy:', error);
+      logger.error('Failed to copy:', error);
     }
   };
 

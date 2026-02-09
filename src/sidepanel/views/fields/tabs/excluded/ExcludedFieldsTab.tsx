@@ -4,6 +4,9 @@ import type { ExcludedField } from '../../../../../background/storage';
 import { Button } from '../../../../../shared/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../../../shared/components/ui/card';
 import { EyeOff, Trash2, RefreshCw } from 'lucide-react';
+import { createLogger } from '../../../../../shared/logger';
+
+const logger = createLogger('ExcludedFieldsTab');
 
 export default function ExcludedFieldsTab() {
   const { t } = useTranslation();
@@ -16,14 +19,14 @@ export default function ExcludedFieldsTab() {
     
     // Listen for tab changes
     const handleTabChange = (activeInfo: chrome.tabs.TabActiveInfo) => {
-      console.log('[ExcludedFieldsTab] Tab changed:', activeInfo);
+      logger.debug('Tab changed:', activeInfo);
       loadExcludedFields();
     };
     
     const handleTabUpdate = (_tabId: number, changeInfo: chrome.tabs.TabChangeInfo, _tab: chrome.tabs.Tab) => {
       // Only reload if the URL changed
       if (changeInfo.url) {
-        console.log('[ExcludedFieldsTab] Tab URL updated:', changeInfo.url);
+        logger.debug('Tab URL updated:', changeInfo.url);
         loadExcludedFields();
       }
     };
@@ -38,24 +41,24 @@ export default function ExcludedFieldsTab() {
   }, []);
 
   const loadExcludedFields = async () => {
-    console.log('[ExcludedFieldsTab] ===== FUNCTION CALLED =====');
+    logger.debug('===== FUNCTION CALLED =====');
     setLoading(true);
     try {
       // Debug: List all storage keys directly
       const allStorage = await chrome.storage.local.get(null);
-      console.log('[ExcludedFieldsTab] ===== STORAGE DUMP START =====');
-      console.log('[ExcludedFieldsTab] ALL storage items:', allStorage);
-      console.log('[ExcludedFieldsTab] All keys:', Object.keys(allStorage));
+      logger.debug(' ===== STORAGE DUMP START =====');
+      logger.debug(' ALL storage items:', allStorage);
+      logger.debug(' All keys:', Object.keys(allStorage));
       
       const excludedKeys = Object.keys(allStorage).filter(key => key.startsWith('excluded_fields_'));
-      console.log('[ExcludedFieldsTab] Excluded field keys found:', excludedKeys);
+      logger.debug(' Excluded field keys found:', excludedKeys);
       
       // Show each excluded field key and its data
       excludedKeys.forEach(key => {
-        console.log(`[ExcludedFieldsTab] Key: ${key}`);
-        console.log(`[ExcludedFieldsTab] Data:`, allStorage[key]);
+        logger.debug(` Key: ${key}`);
+        logger.debug(` Data:`, allStorage[key]);
       });
-      console.log('[ExcludedFieldsTab] ===== STORAGE DUMP END =====');
+      logger.debug(' ===== STORAGE DUMP END =====');
       
       // Try multiple methods to get the current tab
       let tab;
@@ -63,27 +66,27 @@ export default function ExcludedFieldsTab() {
       
       // Method 1: Query for active tab
       [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-      console.log('[ExcludedFieldsTab] Method 1 - chrome.tabs.query:', tab);
-      console.log('[ExcludedFieldsTab] Method 1 - tab.url:', tab?.url);
-      console.log('[ExcludedFieldsTab] Method 1 - tab.pendingUrl:', tab?.pendingUrl);
-      console.log('[ExcludedFieldsTab] Method 1 - tab keys:', tab ? Object.keys(tab) : 'no tab');
+      logger.debug(' Method 1 - chrome.tabs.query:', tab);
+      logger.debug(' Method 1 - tab.url:', tab?.url);
+      logger.debug(' Method 1 - tab.pendingUrl:', tab?.pendingUrl);
+      logger.debug(' Method 1 - tab keys:', tab ? Object.keys(tab) : 'no tab');
       
       // Method 2: Query for active tab in last focused window
       if (!tab?.url) {
         [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
-        console.log('[ExcludedFieldsTab] Method 2 - lastFocusedWindow:', tab);
-        console.log('[ExcludedFieldsTab] Method 2 - tab.url:', tab?.url);
-        console.log('[ExcludedFieldsTab] Method 2 - tab keys:', tab ? Object.keys(tab) : 'no tab');
+        logger.debug(' Method 2 - lastFocusedWindow:', tab);
+        logger.debug(' Method 2 - tab.url:', tab?.url);
+        logger.debug(' Method 2 - tab keys:', tab ? Object.keys(tab) : 'no tab');
       }
       
       // Method 3: Use chrome.tabs.getCurrent() 
       if (!tab?.url) {
         try {
           const currentTab = await chrome.tabs.getCurrent();
-          console.log('[ExcludedFieldsTab] Method 3 - getCurrent:', currentTab);
+          logger.debug(' Method 3 - getCurrent:', currentTab);
           if (currentTab) tab = currentTab;
         } catch (e) {
-          console.log('[ExcludedFieldsTab] getCurrent failed:', e);
+          logger.debug(' getCurrent failed:', e);
         }
       }
       
@@ -91,22 +94,22 @@ export default function ExcludedFieldsTab() {
       if (!tab?.url) {
         try {
           const windows = await chrome.windows.getAll({ populate: true });
-          console.log('[ExcludedFieldsTab] Method 4 - windows:', windows);
+          logger.debug(' Method 4 - windows:', windows);
           const currentWindow = windows.find(w => w.focused);
           if (currentWindow?.tabs) {
             tab = currentWindow.tabs.find(t => t.active);
-            console.log('[ExcludedFieldsTab] Found tab from window:', tab);
+            logger.debug(' Found tab from window:', tab);
           }
         } catch (e) {
-          console.log('[ExcludedFieldsTab] windows method failed:', e);
+          logger.debug(' windows method failed:', e);
         }
       }
       
       tabUrl = tab?.url;
-      console.log('[ExcludedFieldsTab] Final tab URL:', tabUrl);
+      logger.debug(' Final tab URL:', tabUrl);
       
       if (!tabUrl) {
-        console.log('[ExcludedFieldsTab] FAILED to get tab URL - showing all excluded fields');
+        logger.debug(' FAILED to get tab URL - showing all excluded fields');
         // Show all excluded fields if we can't determine the URL
         const allFields: ExcludedField[] = [];
         excludedKeys.forEach(key => {
@@ -115,7 +118,7 @@ export default function ExcludedFieldsTab() {
             allFields.push(...fields);
           }
         });
-        console.log('[ExcludedFieldsTab] Showing all fields:', allFields);
+        logger.debug(' Showing all fields:', allFields);
         setExcludedFields(allFields);
         setCurrentUrl('(all pages)');
         setLoading(false);
@@ -124,23 +127,23 @@ export default function ExcludedFieldsTab() {
 
       setCurrentUrl(tabUrl);
       const expectedKey = `excluded_fields_${tabUrl}`;
-      console.log('[ExcludedFieldsTab] Requesting excluded fields for URL:', tabUrl);
-      console.log('[ExcludedFieldsTab] Expected storage key:', expectedKey);
-      console.log('[ExcludedFieldsTab] Key exists in storage?', excludedKeys.includes(expectedKey));
+      logger.debug(' Requesting excluded fields for URL:', tabUrl);
+      logger.debug(' Expected storage key:', expectedKey);
+      logger.debug(' Key exists in storage?', excludedKeys.includes(expectedKey));
       
       const response = await chrome.runtime.sendMessage({
         type: 'GET_EXCLUDED_FIELDS',
         url: tabUrl,
       });
 
-      console.log('[ExcludedFieldsTab] Response:', response);
+      logger.debug(' Response:', response);
 
       if (response.type === 'EXCLUDED_FIELDS_RESPONSE') {
-        console.log('[ExcludedFieldsTab] Excluded fields from response:', response.fields);
+        logger.debug(' Excluded fields from response:', response.fields);
         
         // If no fields found for current URL, show ALL excluded fields as fallback
         if (response.fields.length === 0) {
-          console.log('[ExcludedFieldsTab] No fields for current URL, checking all URLs...');
+          logger.debug(' No fields for current URL, checking all URLs...');
           const allFields: ExcludedField[] = [];
           excludedKeys.forEach(key => {
             const fields = allStorage[key];
@@ -148,7 +151,7 @@ export default function ExcludedFieldsTab() {
               allFields.push(...fields);
             }
           });
-          console.log('[ExcludedFieldsTab] All excluded fields across all URLs:', allFields);
+          logger.debug(' All excluded fields across all URLs:', allFields);
           
           // Filter to only show fields from current domain
           try {
@@ -161,7 +164,7 @@ export default function ExcludedFieldsTab() {
                 return false;
               }
             });
-            console.log('[ExcludedFieldsTab] Fields matching current domain:', domainFields);
+            logger.debug(' Fields matching current domain:', domainFields);
             setExcludedFields(domainFields);
           } catch {
             // If URL parsing fails, show all fields
@@ -172,23 +175,23 @@ export default function ExcludedFieldsTab() {
         }
       }
     } catch (error) {
-      console.error('Failed to load excluded fields:', error);
+      logger.error('Failed to load excluded fields:', error);
     } finally {
       setLoading(false);
     }
   };
 
   const handleRemove = async (fieldId: string) => {
-    console.log('[ExcludedFieldsTab] Remove button clicked for:', fieldId);
+    logger.debug(' Remove button clicked for:', fieldId);
     try {
       // Find the field to get its actual URL
       const field = excludedFields.find(f => f.fieldId === fieldId);
       if (!field) {
-        console.error('[ExcludedFieldsTab] Field not found:', fieldId);
+        logger.error(' Field not found:', fieldId);
         return;
       }
       
-      console.log('[ExcludedFieldsTab] Removing field:', field);
+      logger.debug(' Removing field:', field);
       
       await chrome.runtime.sendMessage({
         type: 'REMOVE_EXCLUDED_FIELD',
@@ -196,7 +199,7 @@ export default function ExcludedFieldsTab() {
         fieldId,
       });
 
-      console.log('[ExcludedFieldsTab] Field removed, reloading list');
+      logger.debug(' Field removed, reloading list');
       
       // Reload the list
       await loadExcludedFields();
@@ -205,16 +208,16 @@ export default function ExcludedFieldsTab() {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
       if (tab?.id && tab.url === field.url) {
         // Only notify if we're on the same page as the excluded field
-        console.log('[ExcludedFieldsTab] Notifying content script that field was un-excluded:', fieldId);
+        logger.debug(' Notifying content script that field was un-excluded:', fieldId);
         chrome.tabs.sendMessage(tab.id, { 
           type: 'FIELD_UNEXCLUDED', 
           fieldId 
         }).catch((error) => {
-          console.log('[ExcludedFieldsTab] Could not notify content script:', error);
+          logger.debug(' Could not notify content script:', error);
         });
       }
     } catch (error) {
-      console.error('Failed to remove excluded field:', error);
+      logger.error('Failed to remove excluded field:', error);
     }
   };
 
@@ -227,7 +230,7 @@ export default function ExcludedFieldsTab() {
       return;
     }
 
-    console.log('[ExcludedFieldsTab] Clear all clicked, removing', excludedFields.length, 'fields');
+    logger.debug(' Clear all clicked, removing', excludedFields.length, 'fields');
     
     try {
       // Get current tab info for notification
@@ -236,7 +239,7 @@ export default function ExcludedFieldsTab() {
       
       // Remove all fields one by one using their actual URLs
       for (const field of excludedFields) {
-        console.log('[ExcludedFieldsTab] Removing field:', field.fieldId, 'from', field.url);
+        logger.debug(' Removing field:', field.fieldId, 'from', field.url);
         await chrome.runtime.sendMessage({
           type: 'REMOVE_EXCLUDED_FIELD',
           url: field.url, // Use each field's URL, not currentUrl
@@ -249,25 +252,25 @@ export default function ExcludedFieldsTab() {
         }
       }
 
-      console.log('[ExcludedFieldsTab] All fields removed, reloading list');
+      logger.debug(' All fields removed, reloading list');
       
       // Reload the list
       await loadExcludedFields();
 
       // Notify the content script about all un-excluded fields on current page
       if (tab?.id && fieldIdsToNotify.length > 0) {
-        console.log('[ExcludedFieldsTab] Notifying content script about un-excluded fields:', fieldIdsToNotify);
+        logger.debug(' Notifying content script about un-excluded fields:', fieldIdsToNotify);
         for (const fieldId of fieldIdsToNotify) {
           chrome.tabs.sendMessage(tab.id, { 
             type: 'FIELD_UNEXCLUDED', 
             fieldId 
           }).catch((error) => {
-            console.log('[ExcludedFieldsTab] Could not notify content script:', error);
+            logger.debug(' Could not notify content script:', error);
           });
         }
       }
     } catch (error) {
-      console.error('Failed to clear excluded fields:', error);
+      logger.error('Failed to clear excluded fields:', error);
     }
   };
 

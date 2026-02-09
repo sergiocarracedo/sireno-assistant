@@ -296,6 +296,6 @@ export function useTranslation() {
 // Auto-initialize on import (async)
 initI18n().catch((error) => {
   // Silently fallback to English if initialization fails
-  console.error('[i18n] Initialization failed, falling back to English:', error)
+  logger.error('Initialization failed, falling back to English:', error)
   currentLanguage = 'en'
 })

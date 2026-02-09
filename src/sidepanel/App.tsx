@@ -9,6 +9,9 @@ import InfoView from './views/info';
 import LogsView from './views/logs';
 import SettingsView from './views/settings';
 import SkillsView from './views/skills';
+import { createLogger } from '../shared/logger';
+
+const logger = createLogger('App');
 
 type View = 'chat' | 'skills' | 'settings' | 'fields' | 'logs' | 'info';
 
@@ -34,7 +37,7 @@ export default function App() {
         setConfig(response.config);
       }
     } catch (error) {
-      console.error('Failed to load config:', error);
+      logger.error('Failed to load config:', error);
     }
   };
 
@@ -58,7 +61,7 @@ export default function App() {
         setExcludedFieldsCount(0);
       }
     } catch (error) {
-      console.error('Failed to load excluded fields count:', error);
+      logger.error('Failed to load excluded fields count:', error);
       setExcludedFieldsCount(0);
     }
   };
@@ -78,7 +81,7 @@ export default function App() {
         }
       }
     } catch (error) {
-      console.error('Failed to check init data:', error);
+      logger.error('Failed to check init data:', error);
     }
   };
 

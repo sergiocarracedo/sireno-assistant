@@ -10,6 +10,9 @@ import { Separator } from '../../../shared/components/ui/separator';
 import { Checkbox } from '../../../shared/components/ui/checkbox';
 import { CheckCircle2, Loader2 } from 'lucide-react';
 import { useTranslation, type SupportedLanguage } from '../../../shared/i18n';
+import { createLogger } from '../../../shared/logger';
+
+const logger = createLogger('SettingsView');
 
 // Model lists for each provider (as of Feb 2026)
 const PROVIDER_MODELS: Record<Provider, { value: string; label: string }[]> = {
@@ -76,7 +79,7 @@ export default function SettingsTab({ onNavigate }: SettingsTabProps) {
         setConfig(response.config);
       }
     } catch (error) {
-      console.error('Failed to load config:', error);
+      logger.error('Failed to load config:', error);
     } finally {
       setLoading(false);
     }
@@ -95,7 +98,7 @@ export default function SettingsTab({ onNavigate }: SettingsTabProps) {
         onNavigate('chat');
       }, 1500);
     } catch (error) {
-      console.error('Failed to save config:', error);
+      logger.error('Failed to save config:', error);
     }
   };
 
