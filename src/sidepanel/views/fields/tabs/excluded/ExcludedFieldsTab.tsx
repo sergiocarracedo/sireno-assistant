@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useTranslation } from '../../shared/i18n';
-import type { ExcludedField } from '../../background/storage';
-import { Button } from './ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
+import { useTranslation } from '../../../../../shared/i18n';
+import type { ExcludedField } from '../../../../../background/storage';
+import { Button } from '../../../../../shared/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../../../shared/components/ui/card';
 import { EyeOff, Trash2, RefreshCw } from 'lucide-react';
 
 export default function ExcludedFieldsTab() {

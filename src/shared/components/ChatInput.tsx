@@ -1,8 +1,8 @@
 import { ArrowUp, LoaderCircle } from 'lucide-react'
 import { forwardRef, KeyboardEvent, useImperativeHandle, useRef } from 'react'
 import { useControllable, UseControllableProps } from 'use-controllable'
-import { Button } from '../../sidepanel/components/ui/button'
-import { Textarea } from '../../sidepanel/components/ui/textarea'
+import { Button } from './ui/button'
+import { Textarea } from './ui/textarea'
 
 export type ChatInputProps = UseControllableProps<string> & {
   /** Callback when user submits the message */

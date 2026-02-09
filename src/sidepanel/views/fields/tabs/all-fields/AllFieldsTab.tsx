@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useTranslation } from '../../shared/i18n';
-import type { FieldRef } from '../../shared/types';
-import type { ExcludedField } from '../../background/storage';
-import { Button } from './ui/button';
+import { useTranslation } from '../../../../../shared/i18n';
+import type { FieldRef } from '../../../../../shared/types';
+import type { ExcludedField } from '../../../../../background/storage';
+import { Button } from '../../../../../shared/components/ui/button';
 import { RotateCw, Focus, EyeOff } from 'lucide-react';
 
-export default function FieldSelector() {
+export default function AllFieldsTab() {
   const { t } = useTranslation();
   const [fields, setFields] = useState<FieldRef[]>([]);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);

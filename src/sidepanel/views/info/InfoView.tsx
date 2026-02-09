@@ -1,9 +1,9 @@
 import { BookOpen, Info } from 'lucide-react';
 import { useState } from 'react';
-import { useTranslation } from '../../shared/i18n';
-import AboutTab from './AboutTab';
-import HelpTab from './HelpTab';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
+import { useTranslation } from '../../../shared/i18n';
+import AboutTab from './tabs/about/AboutTab';
+import HelpTab from './tabs/help/HelpTab';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../shared/components/ui/tabs';
 
 export default function InfoView() {
   const { t } = useTranslation();

@@ -1,6 +1,6 @@
 import { AlertTriangle, ExternalLink, Github, Heart, Lock } from 'lucide-react';
-import { useTranslation } from '../../shared/i18n';
-import { ButtonLink } from './ui/button-link';
+import { useTranslation } from '../../../../../shared/i18n';
+import { ButtonLink } from '../../../../../shared/components/ui/button-link';
 
 export default function AboutTab() {
   const { t } = useTranslation();

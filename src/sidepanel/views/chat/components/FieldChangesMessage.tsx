@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Button } from './ui/button';
-import { Card } from './ui/card';
-import type { LLMResponse, FieldRef } from '../../shared/types';
+import { Button } from '../../../../shared/components/ui';
+import { Card } from '../../../../shared/components/ui';
+import type { LLMResponse, FieldRef } from '../../../../shared/types';
 import { Check, X, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface FieldChangesMessageProps {

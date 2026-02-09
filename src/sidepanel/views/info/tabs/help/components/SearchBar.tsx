@@ -1,7 +1,7 @@
 import { Search, X } from 'lucide-react';
-import { useTranslation } from '../../../shared/i18n';
-import { Input } from '../ui/input';
-import { Button } from '../ui/button';
+import { useTranslation } from '../../../../../../shared/i18n';
+import { Input } from '../../../../../../shared/components/ui/input';
+import { Button } from '../../../../../../shared/components/ui/button';
 
 interface SearchBarProps {
   value: string;

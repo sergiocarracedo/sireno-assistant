@@ -1,6 +1,6 @@
 import { ExternalLink, Hand, MessageSquare, Settings } from 'lucide-react';
 import Screenshot from './Screenshot';
-import { ButtonLink } from '../ui/button-link';
+import { ButtonLink } from '../../../../../../shared/components/ui/button-link';
 
 interface GettingStartedContentProps {
   searchQuery: string;

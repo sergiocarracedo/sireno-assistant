@@ -1,11 +1,11 @@
 import { Circle, Download, Pencil, Target, Trash2 } from 'lucide-react';
-import { useTranslation } from '../../shared/i18n';
-import { downloadSkillAsMarkdown } from '../../shared/skill-markdown';
-import { getSkillDomainMatch, getSkillIntentTriggers } from '../../shared/skill-utils';
-import type { Skill } from '../../shared/types';
-import { Button } from './ui/button';
-import { Card } from './ui/card';
-import { Switch } from './ui/switch';
+import { useTranslation } from '../../../../shared/i18n';
+import { downloadSkillAsMarkdown } from '../../../../shared/skill-markdown';
+import { getSkillDomainMatch, getSkillIntentTriggers } from '../../../../shared/skill-utils';
+import type { Skill } from '../../../../shared/types';
+import { Button } from '../../../../shared/components/ui/button';
+import { Card } from '../../../../shared/components/ui/card';
+import { Switch } from '../../../../shared/components/ui/switch';
 
 interface SkillCardProps {
   skill: Skill;

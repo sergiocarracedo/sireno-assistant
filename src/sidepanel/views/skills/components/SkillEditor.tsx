@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react';
-import { useTranslation } from '../../shared/i18n';
-import type { Skill } from '../../shared/types';
-import { getSkillDomainMatch, getSkillIntentTriggers, getSkillSafety } from '../../shared/skill-utils';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Label } from './ui/label';
-import { Textarea } from './ui/textarea';
-import { Select } from '../../shared/components';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
-import { Checkbox } from './ui/checkbox';
-import { Separator } from './ui/separator';
+import { useTranslation } from '../../../../shared/i18n';
+import type { Skill } from '../../../../shared/types';
+import { getSkillDomainMatch, getSkillIntentTriggers, getSkillSafety } from '../../../../shared/skill-utils';
+import { Button } from '../../../../shared/components/ui/button';
+import { Input } from '../../../../shared/components/ui/input';
+import { Label } from '../../../../shared/components/ui/label';
+import { Textarea } from '../../../../shared/components/ui/textarea';
+import { Select } from '../../../../shared/components';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../../shared/components/ui/card';
+import { Checkbox } from '../../../../shared/components/ui/checkbox';
+import { Separator } from '../../../../shared/components/ui/separator';
 import { ArrowLeft, AlertCircle, Save, X } from 'lucide-react';
 
 interface SkillEditorProps {

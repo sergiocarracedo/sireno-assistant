@@ -1,14 +1,14 @@
 import { ArrowLeft, FileText, HelpCircle, ListChecks, Settings, Zap } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { Button } from '../shared/components/ui/button';
 import { useTranslation } from '../shared/i18n';
 import type { ExtensionConfig } from '../shared/types';
-import ChatTab from './components/ChatTab';
-import FieldsView from './components/FieldsView';
-import InfoView from './components/InfoView';
-import LogsTab from './components/LogsTab';
-import SettingsTab from './components/SettingsTab';
-import SkillsTab from './components/SkillsTab';
-import { Button } from './components/ui/button';
+import ChatView from './views/chat';
+import FieldsView from './views/fields';
+import InfoView from './views/info';
+import LogsView from './views/logs';
+import SettingsView from './views/settings';
+import SkillsView from './views/skills';
 
 type View = 'chat' | 'skills' | 'settings' | 'fields' | 'logs' | 'info';
 
@@ -109,6 +109,45 @@ export default function App() {
     loadExcludedFieldsCount();
   }, [activeView]);
 
+  const views: Record<string, { title: string; icon: React.ReactNode; render: React.ReactNode; bubble?: React.ReactNode }> = useMemo(() => ({
+    chat: {
+      title: 'Chat',
+      icon: <Zap className="h-4 w-4" />,
+      render: <ChatView onNavigate={setActiveView} initData={initData} />,
+    },
+    fields: {
+      title: 'Fields',
+      icon: <ListChecks className="h-4 w-4" />,
+      render: <FieldsView />,
+      bubble: excludedFieldsCount > 0 && (
+          <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white">
+            {excludedFieldsCount > 9 ? '9+' : excludedFieldsCount}
+          </span>
+        )
+    },
+    skills: {
+      title: 'Skills',
+      icon: <Zap className="h-4 w-4" />,
+      render: <SkillsView />,
+    },
+    ...(config?.enableLogging ?{
+      logs: {
+        title: 'Logs',
+        icon: <FileText className="h-4 w-4" />,
+        render: <LogsView />,
+      } } : {}),
+    settings: {
+      title: 'Settings',
+      icon: <Settings className="h-4 w-4" />,
+      render: <SettingsView onNavigate={setActiveView} />,
+    },
+    info: {
+      title: 'Info',
+      icon: <HelpCircle className="h-4 w-4" />,
+      render: <InfoView />,
+    },
+  }), [initData, setActiveView, excludedFieldsCount]);
+
   return (
     <div className="app">
       <header className="header">
@@ -128,67 +167,23 @@ export default function App() {
         
         {/* Right side: Action icons */}
         <div className="flex flex-1 min-w-0 gap-1 overflow-auto justify-end">
-          <Button
-            variant={activeView === 'settings' ? 'default' : 'ghost'}
-            size="sm"
-            onClick={() => setActiveView('settings')}
-            className="gap-1.5"
-            title="Settings"
-          >
-            <Settings className="h-4 w-4" />
-          </Button>
-          <Button
-            variant={activeView === 'info' ? 'default' : 'ghost'}
-            size="sm"
-            onClick={() => setActiveView('info')}
-            className="gap-1.5"
-            title={t('nav.info')}
-          >
-            <HelpCircle className="h-4 w-4" />
-          </Button>
-          <Button
-            variant={activeView === 'skills' ? 'default' : 'ghost'}
-            size="sm"
-            onClick={() => setActiveView('skills')}
-            className="gap-1.5"
-            title="Skills"
-          >
-            <Zap className="h-4 w-4" />
-          </Button>
-          {config?.enableLogging && (
+          {Object.entries(views).map(([key, view]) => (
             <Button
-              variant={activeView === 'logs' ? 'default' : 'ghost'}
+              key={key}
+              variant={activeView === key ? 'default' : 'ghost'}
               size="sm"
-              onClick={() => setActiveView('logs')}
-              title="Logs"
+              onClick={() => setActiveView(key as View)}
+              title={view.title}
             >
-              <FileText className="h-4 w-4" />
+              {view.icon}
+              {view?.bubble ?? null}
             </Button>
-          )}
-          <Button
-            variant={activeView === 'fields' ? 'default' : 'ghost'}
-            size="sm"
-            onClick={() => setActiveView('fields')}
-            title={t('nav.fields')}
-            className="relative"
-          >
-            <ListChecks className="h-4 w-4" />
-            {excludedFieldsCount > 0 && (
-              <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white">
-                {excludedFieldsCount > 9 ? '9+' : excludedFieldsCount}
-              </span>
-            )}
-          </Button>
+          ))}
         </div>
       </header>
 
       <div className="tab-content">
-        {activeView === 'chat' && <ChatTab onNavigate={setActiveView} initData={initData} />}
-        {activeView === 'fields' && <FieldsView />}
-        {activeView === 'skills' && <SkillsTab />}
-        {activeView === 'logs' && <LogsTab />}
-        {activeView === 'settings' && <SettingsTab onNavigate={setActiveView} />}
-        {activeView === 'info' && <InfoView />}
+        {views[activeView] ? views[activeView].render : <p>No active view</p>}
       </div>
     </div>
   );

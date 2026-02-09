@@ -1,7 +1,7 @@
 import * as SelectPrimitive from '@radix-ui/react-select'
 import { ChevronDown, Check } from 'lucide-react'
 import { cn } from '../../lib/utils'
-import { Label } from '../../sidepanel/components/ui/label'
+import { Label } from './ui/label'
 
 export interface SelectOption {
   value: string

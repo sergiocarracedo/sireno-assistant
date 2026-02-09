@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react';
-import type { ExtensionConfig, Provider } from '../../shared/types';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Label } from './ui/label';
-import { Select } from '../../shared/components';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
-import { Slider } from './ui/slider';
-import { Separator } from './ui/separator';
-import { Checkbox } from './ui/checkbox';
+import type { ExtensionConfig, Provider } from '../../../shared/types';
+import { Button } from '../../../shared/components/ui/button';
+import { Input } from '../../../shared/components/ui/input';
+import { Label } from '../../../shared/components/ui/label';
+import { Select } from '../../../shared/components';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../shared/components/ui/card';
+import { Slider } from '../../../shared/components/ui/slider';
+import { Separator } from '../../../shared/components/ui/separator';
+import { Checkbox } from '../../../shared/components/ui/checkbox';
 import { CheckCircle2, Loader2 } from 'lucide-react';
-import { useTranslation, type SupportedLanguage } from '../../shared/i18n';
+import { useTranslation, type SupportedLanguage } from '../../../shared/i18n';
 
 // Model lists for each provider (as of Feb 2026)
 const PROVIDER_MODELS: Record<Provider, { value: string; label: string }[]> = {

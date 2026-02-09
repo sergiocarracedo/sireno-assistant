@@ -10,12 +10,11 @@ import {
   ThinkingMessage,
   Tooltip,
   UserMessage,
-} from '../../shared/components';
-import { skillMatchesDomain } from '../../shared/skill-utils';
-import type { ContextLevel, FieldRef, LLMResponse } from '../../shared/types';
-import FieldChangesMessage from './FieldChangesMessage';
-import { Button } from './ui/button';
-import { Label } from './ui/label';
+} from '../../../shared/components';
+import { Button, Label } from '../../../shared/components/ui';
+import { skillMatchesDomain } from '../../../shared/skill-utils';
+import type { ContextLevel, FieldRef, LLMResponse } from '../../../shared/types';
+import FieldChangesMessage from './components/FieldChangesMessage';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -533,7 +532,7 @@ export default function ChatTab({ onNavigate, initData }: ChatTabProps) {
         </div>
       ))}
 
-      {loading && <ThinkingMessage />}
+      {loading && <ThinkingMessage subtle />}
       {error && <ErrorMessage error={error} />}
 
       <div ref={messagesEndRef} />

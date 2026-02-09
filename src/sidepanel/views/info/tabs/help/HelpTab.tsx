@@ -1,11 +1,11 @@
 import { BookOpen, GraduationCap, Zap } from 'lucide-react';
 import { useState } from 'react';
-import { useTranslation } from '../../shared/i18n';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import SearchBar from './help/SearchBar';
-import GettingStartedContent from './help/GettingStartedContent';
-import FeaturesContent from './help/FeaturesContent';
-import AdvancedContent from './help/AdvancedContent';
+import { useTranslation } from '../../../../../shared/i18n';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../../../shared/components/ui/tabs';
+import SearchBar from './components/SearchBar';
+import GettingStartedContent from './components/GettingStartedContent';
+import FeaturesContent from './components/FeaturesContent';
+import AdvancedContent from './components/AdvancedContent';
 
 export default function HelpTab() {
   const { t } = useTranslation();

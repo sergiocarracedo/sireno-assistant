@@ -1,5 +1,5 @@
-import { Loader2, AlertCircle } from 'lucide-react'
-import { Card } from '../../sidepanel/components/ui/card'
+import { AlertCircle, Loader2 } from 'lucide-react'
+import { Card } from './ui/card'
 
 export interface ThinkingMessageProps {
   text?: string
@@ -70,7 +70,7 @@ export interface UserMessageProps {
 export function UserMessage({ content }: UserMessageProps) {
   return (
     <div className="flex justify-end">
-      <Card className="max-w-[85%] p-3 bg-blue-500 dark:bg-blue-600 text-white border-blue-500 dark:border-blue-600">
+      <Card className="max-w-[85%] px-3 py-2 bg-blue-500 dark:bg-blue-600 text-white border-blue-500 dark:border-blue-600">
         <div className="text-sm whitespace-pre-wrap">{content}</div>
       </Card>
     </div>
@@ -86,7 +86,7 @@ export interface AssistantMessageProps {
  */
 export function AssistantMessage({ content }: AssistantMessageProps) {
   return (
-    <Card className="p-3 bg-white dark:bg-gray-800 max-w-[85%]">
+    <Card className="px-3 py-2 bg-white dark:bg-gray-800 max-w-[85%]">
       <div className="text-sm text-gray-900 dark:text-gray-100 whitespace-pre-wrap">
         {content}
       </div>

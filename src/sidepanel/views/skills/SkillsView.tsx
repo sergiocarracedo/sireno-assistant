@@ -1,13 +1,13 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
-import { useTranslation } from '../../shared/i18n';
-import type { Skill } from '../../shared/types';
-import { skillMatchesDomain, getSkillDomainMatch, getSkillIntentTriggers } from '../../shared/skill-utils';
-import SkillCard from './SkillCard';
-import SkillEditor from './SkillEditor';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
+import { useTranslation } from '../../../shared/i18n';
+import type { Skill } from '../../../shared/types';
+import { skillMatchesDomain, getSkillDomainMatch, getSkillIntentTriggers } from '../../../shared/skill-utils';
+import SkillCard from './components/SkillCard';
+import SkillEditor from './components/SkillEditor';
+import { Button } from '../../../shared/components/ui/button';
+import { Input } from '../../../shared/components/ui/input';
 import { Plus, Search, Filter, Upload, Target } from 'lucide-react';
-import { readMarkdownFile } from '../../shared/skill-markdown';
+import { readMarkdownFile } from '../../../shared/skill-markdown';
 
 type FilterType = 'all' | 'active' | 'inactive';
 

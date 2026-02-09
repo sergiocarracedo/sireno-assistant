@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import type { LLMLogEntry } from '../../shared/types';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
+import type { LLMLogEntry } from '../../../shared/types';
+import { Button } from '../../../shared/components/ui/button';
+import { Input } from '../../../shared/components/ui/input';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../shared/components/ui/card';
 import { Trash2, Search, ChevronDown, ChevronRight, MessageSquare, Sparkles } from 'lucide-react';
-import { Separator } from './ui/separator';
+import { Separator } from '../../../shared/components/ui/separator';
 
 export default function LogsTab() {
   const [logs, setLogs] = useState<LLMLogEntry[]>([]);

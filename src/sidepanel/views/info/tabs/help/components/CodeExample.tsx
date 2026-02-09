@@ -1,6 +1,6 @@
 import { Copy, Check } from 'lucide-react';
 import { useState } from 'react';
-import { Button } from '../ui/button';
+import { Button } from '../../../../../../shared/components/ui/button';
 
 interface CodeExampleProps {
   code: string;

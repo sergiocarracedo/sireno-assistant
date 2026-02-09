@@ -1,7 +1,7 @@
-import { useEffect, useState, useRef } from 'react'
-import { X, Zap, EyeOff } from 'lucide-react'
+import { EyeOff, X, Zap } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
 import { ChatInput, ChatInputRef, ErrorMessage, ThinkingMessage, Tooltip } from '../../shared/components'
-import { Button } from '../../sidepanel/components/ui/button'
+import { Button } from '../../shared/components/ui/button'
 
 interface InlineChatAppProps {
   fieldLabel?: string
@@ -160,7 +160,7 @@ export function InlineChatApp({
                     • {skill.name}
                   </div>
                 ))}
-                <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">Click to manage</p>
+                {/* <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">Click to manage</p> */}
               </div>
             }
             side="bottom"

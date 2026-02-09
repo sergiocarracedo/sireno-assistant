@@ -1,9 +1,9 @@
 import { EyeOff, List } from 'lucide-react';
 import { useState } from 'react';
-import { useTranslation } from '../../shared/i18n';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import FieldSelector from './FieldSelector';
-import ExcludedFieldsTab from './ExcludedFieldsTab';
+import { useTranslation } from '../../../shared/i18n';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../shared/components/ui/tabs';
+import AllFieldsTab from './tabs/all-fields/AllFieldsTab';
+import ExcludedFieldsTab from './tabs/excluded/ExcludedFieldsTab';
 
 export default function FieldsView() {
   const { t } = useTranslation();
@@ -36,7 +36,7 @@ export default function FieldsView() {
 
           <div className="flex-1 overflow-hidden">
             <TabsContent value="fields" className="mt-0 h-full">
-              <FieldSelector />
+              <AllFieldsTab />
             </TabsContent>
 
             <TabsContent value="excluded" className="mt-0 h-full">
