@@ -1,0 +1,212 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "done": "Done",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "confirm": "Confirm",
+    "warning": "Warning"
+  },
+  "nav": {
+    "info": "Help & About",
+    "fields": "Fields & Excluded"
+  },
+  "tabs": {
+    "chat": "Chat",
+    "fields": "Fields",
+    "skills": "Skills",
+    "settings": "Settings",
+    "logs": "Logs"
+  },
+  "chat": {
+    "placeholder": "Describe what you want to fill in...",
+    "send": "Send",
+    "clear": "Clear Chat",
+    "selectFields": "Select fields first",
+    "noFieldsSelected": "No fields selected",
+    "processing": "Processing...",
+    "apply": "Apply Changes",
+    "preview": "Preview Changes"
+  },
+  "fields": {
+    "title": "Fields",
+    "detected": "Detected Fields",
+    "selected": "Selected",
+    "selectAll": "Select All",
+    "selectNone": "Select None",
+    "deselectAll": "Deselect All",
+    "noFields": "No fields detected on this page",
+    "scan": "Scan Fields",
+    "rescan": "Rescan",
+    "scanning": "Scanning...",
+    "focus": "Focus",
+    "excluded": "Excluded",
+    "restore": "Restore",
+    "noFieldsFound": "No fields found. Click \"Rescan\" to scan for fields.",
+    "fieldsSelected": "{{count}} of {{total}} fields selected",
+    "contextLevel": "Context Level",
+    "contextLevels": {
+      "none": "None - No context",
+      "domain": "Domain - Just the website name",
+      "url": "URL - Current page URL",
+      "selected": "Selected - Include current field values",
+      "allPage": "All Page - Include visible page text"
+    }
+  },
+  "fieldsView": {
+    "title": "Field Management",
+    "subtitle": "Manage form fields and exclusions",
+    "allFieldsTab": "All Fields",
+    "excludedTab": "Excluded",
+    "clearAll": "Clear All",
+    "noExcludedFields": "No excluded fields on this page.",
+    "loadingExcluded": "Loading excluded fields...",
+    "confirmClearAll": "Are you sure you want to remove all excluded fields?",
+    "confirmClearAllCount": "Are you sure you want to remove all {{count}} excluded fields?"
+  },
+  "skills": {
+    "title": "Skills",
+    "description": "Skills customize how the AI fills forms for specific websites",
+    "new": "New Skill",
+    "edit": "Edit Skill",
+    "editSkill": "Edit Skill",
+    "createNewSkill": "Create New Skill",
+    "createYourFirstSkill": "Create Your First Skill",
+    "delete": "Delete Skill",
+    "export": "Export as markdown",
+    "import": "Import MD",
+    "confirmDelete": "Are you sure you want to delete this skill?",
+    "deleteSkillConfirm": "Delete skill \"{{name}}\"?",
+    "name": "Skill Name",
+    "namePlaceholder": "e.g., LinkedIn Profile",
+    "instructions": "Instructions",
+    "instructionsPlaceholder": "Tell the AI how to fill forms on this site...",
+    "domainPattern": "Domain Pattern",
+    "domainPatternPlaceholder": "e.g., linkedin.com",
+    "domainPatternHelp": "Supports wildcards: *.example.com or example.*",
+    "active": "Active",
+    "inactive": "Inactive",
+    "all": "All",
+    "allCount": "All ({{count}})",
+    "activeCount": "Active ({{count}})",
+    "inactiveCount": "Inactive ({{count}})",
+    "noSkills": "No skills created yet",
+    "noSkillsYet": "No skills yet",
+    "noSkillsMatch": "No skills match your filters",
+    "createFirst": "Create your first skill to customize form filling",
+    "createFirstDescription": "Create a custom skill or import a template to get started",
+    "saveChanges": "Save Changes",
+    "createSkill": "Create Skill"
+  },
+  "skillCard": {
+    "autoActive": "AUTO-ACTIVE",
+    "disabled": "DISABLED",
+    "inactive": "INACTIVE"
+  },
+  "settings": {
+    "title": "Settings",
+    "provider": "AI Provider",
+    "model": "Model",
+    "apiKey": "API Key",
+    "apiKeyPlaceholder": "Enter your API key",
+    "temperature": "Temperature",
+    "temperatureHelp": "Lower = more focused, Higher = more creative",
+    "maxTokens": "Max Tokens",
+    "maxTokensHelp": "Maximum response length",
+    "showSparkOnHover": "Show assistant button on hover",
+    "showSparkOnFocus": "Show assistant button on focus",
+    "enableLogging": "Enable LLM request logging",
+    "allPageTextLimit": "Page text limit (characters)",
+    "language": "Language",
+    "languageHelp": "Select your preferred language",
+    "save": "Save Settings",
+    "saved": "Settings saved successfully"
+  },
+  "logs": {
+    "title": "LLM Logs",
+    "clear": "Clear Logs",
+    "cleared": "Logs cleared",
+    "noLogs": "No logs yet",
+    "request": "Request",
+    "response": "Response",
+    "error": "Error",
+    "timestamp": "Timestamp",
+    "model": "Model",
+    "tokens": "Tokens"
+  },
+  "inline": {
+    "placeholder": "What should I do with this field?",
+    "continueInSidebar": "Continue in sidebar",
+    "openSkills": "Manage skills",
+    "processing": "Processing...",
+    "done": "Done!"
+  },
+  "info": {
+    "title": "Information",
+    "helpTab": "Help",
+    "aboutTab": "About"
+  },
+  "help": {
+    "title": "Help & Documentation",
+    "subtitle": "Learn how to use Sireno Assistant effectively",
+    "searchPlaceholder": "Search help articles...",
+    "gettingStartedTab": "Getting Started",
+    "featuresTab": "Features",
+    "advancedTab": "Advanced"
+  },
+  "about": {
+    "title": "Sireno Assistant",
+    "version": "Version",
+    "creator": "Creator",
+    "privacy": {
+      "title": "Privacy First",
+      "text": "This tool doesn't collect any information. All data is sent directly to your chosen AI provider (OpenAI, Claude, or Gemini) using YOUR API key. We never see, store, or have access to this information. Your conversations and form data remain completely private."
+    },
+    "openSource": {
+      "title": "Open Source",
+      "text": "Sireno Assistant is free and open source software, licensed under GPL. The source code is available on GitHub for anyone to inspect, modify, or contribute to.",
+      "viewGithub": "View on GitHub",
+      "starProject": "Star the project"
+    },
+    "disclaimer": {
+      "title": "Disclaimer",
+      "text": "This is an open source project provided \"as-is\" without any guarantees or warranties. The author assumes no responsibility for any issues arising from use of this extension. Use at your own risk. Please review AI-generated content before submitting forms."
+    },
+    "support": {
+      "title": "Support the Project",
+      "text": "If you find this extension useful, consider supporting its development. Your contributions help maintain and improve the project.",
+      "sponsor": "Sponsor on GitHub"
+    },
+    "license": "Licensed under",
+    "madeWith": "Made with",
+    "by": "by"
+  },
+  "errors": {
+    "apiKeyRequired": "API key is required",
+    "apiKeyInvalid": "API key is invalid",
+    "requestFailed": "Request failed",
+    "networkError": "Network error",
+    "invalidResponse": "Invalid response from AI",
+    "extensionReloaded": "Extension was reloaded. Please refresh the page.",
+    "noFieldsDetected": "No fields detected on this page"
+  },
+  "systemPrompts": {
+    "formFilling": "You are a helpful assistant that proposes changes to form fields on a web page.",
+    "inlineChat": "You are a helpful assistant that transforms field values based on user instructions.",
+    "importantNote": "IMPORTANT: Provide ONLY the new/transformed text value for the field. Do not include any explanations, quotes, or markdown. Just output the raw result text.",
+    "contextInfo": "Current date and time: {{datetime}}. Browser language: {{language}}.",
+    "activeSkills": "ACTIVE SKILLS ({{count}}):",
+    "applySkills": "Apply all active skill instructions when generating field changes."
+  },
+  "languages": {
+    "en": "English",
+    "es": "Español"
+  }
+}

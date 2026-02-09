@@ -1,0 +1,212 @@
+{
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "close": "Cerrar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "done": "Listo",
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "confirm": "Confirmar",
+    "warning": "Advertencia"
+  },
+  "nav": {
+    "info": "Ayuda e Información",
+    "fields": "Campos y Excluidos"
+  },
+  "tabs": {
+    "chat": "Chat",
+    "fields": "Campos",
+    "skills": "Habilidades",
+    "settings": "Configuración",
+    "logs": "Registros"
+  },
+  "chat": {
+    "placeholder": "Describe qué quieres rellenar...",
+    "send": "Enviar",
+    "clear": "Limpiar Chat",
+    "selectFields": "Selecciona campos primero",
+    "noFieldsSelected": "No hay campos seleccionados",
+    "processing": "Procesando...",
+    "apply": "Aplicar Cambios",
+    "preview": "Vista Previa"
+  },
+  "fields": {
+    "title": "Campos",
+    "detected": "Campos Detectados",
+    "selected": "Seleccionado",
+    "selectAll": "Seleccionar Todos",
+    "selectNone": "Seleccionar Ninguno",
+    "deselectAll": "Deseleccionar Todos",
+    "noFields": "No se detectaron campos en esta página",
+    "scan": "Escanear Campos",
+    "rescan": "Reescanear",
+    "scanning": "Escaneando...",
+    "focus": "Enfocar",
+    "excluded": "Excluido",
+    "restore": "Restaurar",
+    "noFieldsFound": "No se encontraron campos. Haz clic en \"Reescanear\" para buscar campos.",
+    "fieldsSelected": "{{count}} de {{total}} campos seleccionados",
+    "contextLevel": "Nivel de Contexto",
+    "contextLevels": {
+      "none": "Ninguno - Sin contexto",
+      "domain": "Dominio - Solo el nombre del sitio web",
+      "url": "URL - URL de la página actual",
+      "selected": "Seleccionado - Incluir valores actuales de campos",
+      "allPage": "Toda la Página - Incluir texto visible de la página"
+    }
+  },
+  "fieldsView": {
+    "title": "Gestión de Campos",
+    "subtitle": "Gestiona campos de formulario y exclusiones",
+    "allFieldsTab": "Todos los Campos",
+    "excludedTab": "Excluidos",
+    "clearAll": "Limpiar Todo",
+    "noExcludedFields": "No hay campos excluidos en esta página.",
+    "loadingExcluded": "Cargando campos excluidos...",
+    "confirmClearAll": "¿Estás seguro de que quieres eliminar todos los campos excluidos?",
+    "confirmClearAllCount": "¿Estás seguro de que quieres eliminar los {{count}} campos excluidos?"
+  },
+  "skills": {
+    "title": "Habilidades",
+    "description": "Las habilidades personalizan cómo la IA rellena formularios para sitios web específicos",
+    "new": "Nueva Habilidad",
+    "edit": "Editar Habilidad",
+    "editSkill": "Editar Habilidad",
+    "createNewSkill": "Crear Nueva Habilidad",
+    "createYourFirstSkill": "Crea Tu Primera Habilidad",
+    "delete": "Eliminar Habilidad",
+    "export": "Exportar como markdown",
+    "import": "Importar MD",
+    "confirmDelete": "¿Estás seguro de que quieres eliminar esta habilidad?",
+    "deleteSkillConfirm": "¿Eliminar habilidad \"{{name}}\"?",
+    "name": "Nombre de Habilidad",
+    "namePlaceholder": "ej., Perfil de LinkedIn",
+    "instructions": "Instrucciones",
+    "instructionsPlaceholder": "Dile a la IA cómo rellenar formularios en este sitio...",
+    "domainPattern": "Patrón de Dominio",
+    "domainPatternPlaceholder": "ej., linkedin.com",
+    "domainPatternHelp": "Admite comodines: *.ejemplo.com o ejemplo.*",
+    "active": "Activa",
+    "inactive": "Inactiva",
+    "all": "Todas",
+    "allCount": "Todas ({{count}})",
+    "activeCount": "Activas ({{count}})",
+    "inactiveCount": "Inactivas ({{count}})",
+    "noSkills": "Aún no se han creado habilidades",
+    "noSkillsYet": "Aún no hay habilidades",
+    "noSkillsMatch": "Ninguna habilidad coincide con tus filtros",
+    "createFirst": "Crea tu primera habilidad para personalizar el llenado de formularios",
+    "createFirstDescription": "Crea una habilidad personalizada o importa una plantilla para comenzar",
+    "saveChanges": "Guardar Cambios",
+    "createSkill": "Crear Habilidad"
+  },
+  "skillCard": {
+    "autoActive": "AUTO-ACTIVA",
+    "disabled": "DESHABILITADA",
+    "inactive": "INACTIVA"
+  },
+  "settings": {
+    "title": "Configuración",
+    "provider": "Proveedor de IA",
+    "model": "Modelo",
+    "apiKey": "Clave API",
+    "apiKeyPlaceholder": "Ingresa tu clave API",
+    "temperature": "Temperatura",
+    "temperatureHelp": "Menor = más enfocado, Mayor = más creativo",
+    "maxTokens": "Tokens Máximos",
+    "maxTokensHelp": "Longitud máxima de respuesta",
+    "showSparkOnHover": "Mostrar botón asistente al pasar el cursor",
+    "showSparkOnFocus": "Mostrar botón asistente al enfocar",
+    "enableLogging": "Habilitar registro de solicitudes LLM",
+    "allPageTextLimit": "Límite de texto de página (caracteres)",
+    "language": "Idioma",
+    "languageHelp": "Selecciona tu idioma preferido",
+    "save": "Guardar Configuración",
+    "saved": "Configuración guardada exitosamente"
+  },
+  "logs": {
+    "title": "Registros LLM",
+    "clear": "Limpiar Registros",
+    "cleared": "Registros limpiados",
+    "noLogs": "Aún no hay registros",
+    "request": "Solicitud",
+    "response": "Respuesta",
+    "error": "Error",
+    "timestamp": "Marca de Tiempo",
+    "model": "Modelo",
+    "tokens": "Tokens"
+  },
+  "inline": {
+    "placeholder": "¿Qué debo hacer con este campo?",
+    "continueInSidebar": "Continuar en la barra lateral",
+    "openSkills": "Gestionar habilidades",
+    "processing": "Procesando...",
+    "done": "¡Listo!"
+  },
+  "info": {
+    "title": "Información",
+    "helpTab": "Ayuda",
+    "aboutTab": "Acerca de"
+  },
+  "help": {
+    "title": "Ayuda y Documentación",
+    "subtitle": "Aprende a usar Sireno Assistant de manera efectiva",
+    "searchPlaceholder": "Buscar artículos de ayuda...",
+    "gettingStartedTab": "Comenzando",
+    "featuresTab": "Características",
+    "advancedTab": "Avanzado"
+  },
+  "about": {
+    "title": "Sireno Assistant",
+    "version": "Versión",
+    "creator": "Creador",
+    "privacy": {
+      "title": "Privacidad Primero",
+      "text": "Esta herramienta no recopila ninguna información. Todos los datos se envían directamente a tu proveedor de IA elegido (OpenAI, Claude o Gemini) usando TU clave API. Nunca vemos, almacenamos ni tenemos acceso a esta información. Tus conversaciones y datos de formularios permanecen completamente privados."
+    },
+    "openSource": {
+      "title": "Código Abierto",
+      "text": "Sireno Assistant es software gratuito y de código abierto, licenciado bajo GPL. El código fuente está disponible en GitHub para que cualquiera lo inspeccione, modifique o contribuya.",
+      "viewGithub": "Ver en GitHub",
+      "starProject": "Dar estrella al proyecto"
+    },
+    "disclaimer": {
+      "title": "Descargo de Responsabilidad",
+      "text": "Este es un proyecto de código abierto proporcionado \"tal cual\" sin ninguna garantía. El autor no asume responsabilidad por problemas que surjan del uso de esta extensión. Úsala bajo tu propio riesgo. Por favor, revisa el contenido generado por IA antes de enviar formularios."
+    },
+    "support": {
+      "title": "Apoya el Proyecto",
+      "text": "Si encuentras útil esta extensión, considera apoyar su desarrollo. Tus contribuciones ayudan a mantener y mejorar el proyecto.",
+      "sponsor": "Patrocinar en GitHub"
+    },
+    "license": "Licenciado bajo",
+    "madeWith": "Hecho con",
+    "by": "por"
+  },
+  "errors": {
+    "apiKeyRequired": "Se requiere una clave API",
+    "apiKeyInvalid": "La clave API es inválida",
+    "requestFailed": "Falló la solicitud",
+    "networkError": "Error de red",
+    "invalidResponse": "Respuesta inválida de la IA",
+    "extensionReloaded": "La extensión fue recargada. Por favor, actualiza la página.",
+    "noFieldsDetected": "No se detectaron campos en esta página"
+  },
+  "systemPrompts": {
+    "formFilling": "Eres un asistente útil que propone cambios a campos de formularios en una página web.",
+    "inlineChat": "Eres un asistente útil que transforma valores de campos según las instrucciones del usuario.",
+    "importantNote": "IMPORTANTE: Proporciona SOLO el valor de texto nuevo/transformado para el campo. No incluyas explicaciones, comillas o markdown. Solo emite el texto del resultado.",
+    "contextInfo": "Fecha y hora actual: {{datetime}}. Idioma del navegador: {{language}}.",
+    "activeSkills": "HABILIDADES ACTIVAS ({{count}}):",
+    "applySkills": "Aplica todas las instrucciones de habilidades activas al generar cambios en los campos."
+  },
+  "languages": {
+    "en": "English",
+    "es": "Español"
+  }
+}

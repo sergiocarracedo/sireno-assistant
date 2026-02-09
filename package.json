@@ -1,0 +1,72 @@
+{
+  "name": "sireno-assistant",
+  "version": "0.1.0",
+  "description": "AI-powered assistant for web forms and content. Use your own API keys (OpenAI, Anthropic, Google) for privacy-first AI assistance on any website.",
+  "author": "Sergio Carracedo <hi@sergiocarracedo.es>",
+  "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sergiocarracedo/sireno-assistant"
+  },
+  "keywords": [
+    "chrome-extension",
+    "ai",
+    "openai",
+    "anthropic",
+    "google-gemini",
+    "form-filler",
+    "productivity",
+    "assistant"
+  ],
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "vite build --watch --mode development",
+    "build": "tsc && vite build --mode production",
+    "build:dev": "tsc && vite build --mode development",
+    "preview": "vite preview",
+    "test": "vitest run --exclude test/e2e/**",
+    "test:watch": "vitest --exclude test/e2e/**",
+    "test:e2e": "playwright test test/e2e/"
+  },
+  "dependencies": {
+    "@ai-sdk/anthropic": "latest",
+    "@ai-sdk/google": "latest",
+    "@ai-sdk/openai": "latest",
+    "@radix-ui/react-checkbox": "^1.3.3",
+    "@radix-ui/react-label": "^2.1.8",
+    "@radix-ui/react-select": "^2.2.6",
+    "@radix-ui/react-slider": "^1.3.6",
+    "@radix-ui/react-switch": "^1.2.6",
+    "@radix-ui/react-tabs": "^1.1.13",
+    "@radix-ui/react-tooltip": "^1.2.8",
+    "ai": "^6.0.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.563.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tailwind-merge": "^3.4.0",
+    "use-controllable": "^1.1.3",
+    "zod": "^3.22.4"
+  },
+  "overrides": {
+    "@ai-sdk/provider": "latest"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0",
+    "@tailwindcss/postcss": "^4.1.18",
+    "@types/chrome": "^0.0.260",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.24",
+    "jsdom": "^23.0.0",
+    "postcss": "^8.5.6",
+    "sharp": "^0.34.5",
+    "tailwindcss": "^4.1.18",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.0",
+    "vitest": "^1.2.0"
+  }
+}
