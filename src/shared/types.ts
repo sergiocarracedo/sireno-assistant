@@ -2,7 +2,7 @@
  * Shared types for the extension
  */
 
-export type Provider = 'openai' | 'anthropic' | 'google';
+export type Provider = 'openai' | 'anthropic' | 'google' | 'groq';
 
 export type ContextLevel = 'none' | 'domain' | 'url' | 'selected' | 'allPage';
 

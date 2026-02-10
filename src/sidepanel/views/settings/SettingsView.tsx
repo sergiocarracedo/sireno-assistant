@@ -16,6 +16,12 @@ const logger = createLogger('SettingsView');
 
 // Model lists for each provider (as of Feb 2026)
 const PROVIDER_MODELS: Record<Provider, { value: string; label: string }[]> = {
+  groq: [
+    { value: 'llama-3.1-8b-instant', label: 'Llama 3.1 8B Instant (Fastest)' },
+    { value: 'llama-3.3-70b-versatile', label: 'Llama 3.3 70B Versatile' },
+    { value: 'gemma2-9b-it', label: 'Gemma 2 9B' },
+    { value: 'deepseek-r1-distill-llama-70b', label: 'DeepSeek R1 Distill Llama 70B' },
+  ],
   openai: [
     { value: 'gpt-5.2', label: 'GPT-5.2 (Latest)' },
     { value: 'gpt-5-mini', label: 'GPT-5 Mini' },
@@ -45,9 +51,28 @@ const PROVIDER_MODELS: Record<Provider, { value: string; label: string }[]> = {
 };
 
 const PROVIDER_NAMES: Record<Provider, string> = {
+  groq: 'Groq',
   openai: 'OpenAI',
   anthropic: 'Anthropic',
   google: 'Google (Gemini)',
+};
+
+// Provider info with badges
+const PROVIDER_INFO: Record<Provider, { description: string; badge?: string; badgeColor?: string }> = {
+  groq: {
+    description: 'Ultra-fast inference with Llama models',
+    badge: 'FREE TIER',
+    badgeColor: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+  },
+  openai: {
+    description: 'GPT models from OpenAI',
+  },
+  anthropic: {
+    description: 'Claude models from Anthropic',
+  },
+  google: {
+    description: 'Gemini models from Google',
+  },
 };
 
 interface SettingsTabProps {
@@ -139,6 +164,16 @@ export default function SettingsTab({ onNavigate }: SettingsTabProps) {
               value={config.provider}
               onChange={(value) => handleProviderChange(value as Provider)}
             />
+            {PROVIDER_INFO[config.provider]?.badge && (
+              <div className="flex items-center gap-2">
+                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${PROVIDER_INFO[config.provider].badgeColor}`}>
+                  {PROVIDER_INFO[config.provider].badge}
+                </span>
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  {PROVIDER_INFO[config.provider].description}
+                </span>
+              </div>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -162,6 +197,19 @@ export default function SettingsTab({ onNavigate }: SettingsTabProps) {
             <p className="text-xs text-gray-500 dark:text-gray-400">
               Your API key is stored locally and never shared
             </p>
+            {config.provider === 'groq' && (
+              <p className="text-xs text-blue-600 dark:text-blue-400">
+                Get your free Groq API key at{' '}
+                <a
+                  href="https://console.groq.com/keys"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline hover:no-underline"
+                >
+                  console.groq.com/keys
+                </a>
+              </p>
+            )}
           </div>
         </CardContent>
       </Card>

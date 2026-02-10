@@ -1,7 +1,7 @@
 {
   "name": "sireno-assistant",
-  "version": "0.1.0",
-  "description": "AI-powered assistant for web forms and content. Use your own API keys (OpenAI, Anthropic, Google) for privacy-first AI assistance on any website.",
+  "version": "0.2.0",
+  "description": "AI-powered assistant for web forms and content. Use your own API keys (OpenAI, Anthropic, Google, Groq) for privacy-first AI assistance on any website.",
   "author": "Sergio Carracedo <hi@sergiocarracedo.es>",
   "license": "GPL-3.0",
   "repository": {
@@ -14,6 +14,7 @@
     "openai",
     "anthropic",
     "google-gemini",
+    "groq",
     "form-filler",
     "productivity",
     "assistant"
@@ -32,6 +33,7 @@
   "dependencies": {
     "@ai-sdk/anthropic": "latest",
     "@ai-sdk/google": "latest",
+    "@ai-sdk/groq": "^3.0.22",
     "@ai-sdk/openai": "latest",
     "@radix-ui/react-checkbox": "^1.3.3",
     "@radix-ui/react-label": "^2.1.8",

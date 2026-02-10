@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Sireno Assistant",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Your AI-powered assistant for web forms and content. Use your own API keys to fill, modify, and enhance any website with AI.",
   "permissions": [
     "activeTab",
@@ -13,7 +13,8 @@
   "host_permissions": [
     "https://api.openai.com/*",
     "https://api.anthropic.com/*",
-    "https://generativelanguage.googleapis.com/*"
+    "https://generativelanguage.googleapis.com/*",
+    "https://api.groq.com/*"
   ],
   "background": {
     "service_worker": "service_worker.js",

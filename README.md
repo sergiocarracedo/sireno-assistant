@@ -20,7 +20,8 @@ Sireno Assistant is a Chrome extension that brings AI assistance directly to any
 
 ### Why Sireno?
 
-- ✅ **Your API Keys, Your Data**: Works with OpenAI, Anthropic (Claude), or Google (Gemini)
+- ✅ **Your API Keys, Your Data**: Works with OpenAI, Anthropic (Claude), Google (Gemini), or Groq
+- ✅ **Free Tier Option**: Get started with Groq's free tier - no credit card required
 - ✅ **Complete Privacy**: No data sent to third parties, everything stays between you and your chosen AI provider
 - ✅ **Works Everywhere**: Compatible with ANY website - Gmail, LinkedIn, Notion, Twitter, and more
 - ✅ **Multilingual**: Available in English and Spanish (more languages coming soon)
@@ -101,7 +102,11 @@ _Chrome Web Store listing pending approval_
 
 1. Click the Sireno icon in your browser toolbar (or press `Ctrl+Shift+F` / `Cmd+Shift+F` on Mac)
 2. Go to the **Settings** tab
-3. Select your preferred AI provider (OpenAI, Anthropic, or Google)
+3. Select your preferred AI provider:
+   - **Groq** (Recommended for beginners - FREE tier available at [console.groq.com/keys](https://console.groq.com/keys))
+   - **OpenAI** (GPT models)
+   - **Anthropic** (Claude models)
+   - **Google** (Gemini models)
 4. Enter your API key
 5. Adjust temperature and max tokens if desired
 6. Click "Save Settings"

@@ -6,8 +6,8 @@ import { createLogger } from '../shared/logger';
 const logger = createLogger('Storage');
 
 const DEFAULT_CONFIG: ExtensionConfig = {
-  provider: 'openai',
-  model: 'gpt-5.2',
+  provider: 'groq',
+  model: 'llama-3.1-8b-instant',
   apiKey: '',
   temperature: 0.7,
   maxTokens: 2000,
