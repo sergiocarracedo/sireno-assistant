@@ -241,13 +241,21 @@ Yes! Sireno uses your own API keys and sends data directly to your chosen AI pro
 
 ### How much does it cost?
 
-Sireno is free and open source. You only pay for the AI API usage through your own provider account. Typical costs are very low ($0.01-0.10 per request depending on model and length).
+Sireno is free and open source. You only pay for the AI API usage through your own provider account:
+
+- **Groq**: FREE tier available (no credit card required)
+- **OpenAI**: Pay-as-you-go ($0.01-0.10 per request depending on model)
+- **Anthropic**: Pay-as-you-go (similar pricing to OpenAI)
+- **Google**: Free tier available, then pay-as-you-go
 
 ### Which AI providers are supported?
 
+- **Groq** (FREE tier): Llama 3.1 8B Instant, Llama 3.3 70B, Gemma 2 9B, DeepSeek R1
 - **OpenAI**: GPT-5.2, GPT-5 Mini, GPT-4.1, GPT-4o, and more
 - **Anthropic**: Claude Opus 4.6, Claude Sonnet 4.5, Claude Haiku 4.5
 - **Google**: Gemini 3 Pro, Gemini 2.5 Pro/Flash, Gemini 2.0 Flash
+
+**New in v0.2.0**: Each provider now remembers its own API key and model selection, so you can switch between providers seamlessly!
 
 ### Does it work on [specific website]?
 
