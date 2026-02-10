@@ -123,7 +123,24 @@ src/
 ├── content/         # Content scripts (injected into pages)
 ├── sidepanel/       # React UI (side panel)
 └── shared/          # Shared types, utilities, translations
+
+.meta/               # Project metadata (NOT in Git)
+├── docs/            # Documentation for sharing
+├── releases/        # Built packages
+├── testing/         # Test plans and results
+├── plans/           # Project planning docs
+└── agents/          # AI agent collaboration files
 ```
+
+**Note:** The `.meta` folder is gitignored and used for project management files that are not part of the extension. See `.meta/README.md` for details.
+
+### Working with AI Agents
+
+If you're using AI coding assistants (OpenCode, Copilot, Cursor, etc.):
+
+- Read `.meta/agents/AGENT_INSTRUCTIONS.md` for detailed guidelines
+- Use `.meta` folder for test plans, documentation, and planning
+- See `.meta/agents/QUICK_REFERENCE.md` for quick tips
 
 ### Testing
 
