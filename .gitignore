@@ -3,6 +3,9 @@ dist/
 .DS_Store
 *.log
 
+# Meta folder (project management, not part of the extension)
+.meta/
+
 # Environment files
 .env
 .env.local
