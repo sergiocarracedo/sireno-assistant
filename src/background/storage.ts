@@ -1,4 +1,4 @@
-import type { ExtensionConfig, Skill, LLMLogEntry } from '../shared/types';
+import type { ExtensionConfig, Skill, LLMLogEntry, Provider } from '../shared/types';
 import { DEFAULT_SKILLS } from '../shared/skill-templates';
 import { skillMatchesDomain } from '../shared/skill-utils';
 import { createLogger } from '../shared/logger';
@@ -7,8 +7,24 @@ const logger = createLogger('Storage');
 
 const DEFAULT_CONFIG: ExtensionConfig = {
   provider: 'groq',
-  model: 'llama-3.1-8b-instant',
-  apiKey: '',
+  providerConfigs: {
+    groq: {
+      model: 'llama-3.1-8b-instant',
+      apiKey: '',
+    },
+    openai: {
+      model: 'gpt-5.2',
+      apiKey: '',
+    },
+    anthropic: {
+      model: 'claude-opus-4-6',
+      apiKey: '',
+    },
+    google: {
+      model: 'gemini-3-pro-preview',
+      apiKey: '',
+    },
+  },
   temperature: 0.7,
   maxTokens: 2000,
   allPageTextLimit: 10000,
@@ -17,11 +33,59 @@ const DEFAULT_CONFIG: ExtensionConfig = {
 };
 
 /**
+ * Migrate old config format to new provider-specific format
+ */
+function migrateConfig(oldConfig: any): ExtensionConfig {
+  // Check if already migrated
+  if (oldConfig.providerConfigs) {
+    return { ...DEFAULT_CONFIG, ...oldConfig };
+  }
+
+  logger.info('Migrating config to provider-specific format');
+
+  // Old format: { provider, model, apiKey, ... }
+  const provider: Provider = oldConfig.provider || DEFAULT_CONFIG.provider;
+  const model = oldConfig.model || '';
+  const apiKey = oldConfig.apiKey || '';
+
+  // Create new format
+  const newConfig: ExtensionConfig = {
+    ...DEFAULT_CONFIG,
+    ...oldConfig,
+    providerConfigs: {
+      ...DEFAULT_CONFIG.providerConfigs,
+      // Preserve the old provider's settings
+      [provider]: {
+        model: model || DEFAULT_CONFIG.providerConfigs[provider as Provider].model,
+        apiKey: apiKey,
+      },
+    },
+  };
+
+  // Remove old fields
+  delete (newConfig as any).model;
+  delete (newConfig as any).apiKey;
+
+  logger.info('Config migrated successfully');
+  return newConfig;
+}
+
+/**
  * Get extension configuration from chrome.storage
  */
 export async function getConfig(): Promise<ExtensionConfig> {
   const result = await chrome.storage.sync.get('config');
-  return { ...DEFAULT_CONFIG, ...(result.config || {}) };
+  const savedConfig = result.config || {};
+  
+  // Migrate if needed
+  const config = migrateConfig(savedConfig);
+  
+  // Save migrated config back if migration occurred
+  if (!savedConfig.providerConfigs && Object.keys(savedConfig).length > 0) {
+    await chrome.storage.sync.set({ config });
+  }
+  
+  return config;
 }
 
 /**

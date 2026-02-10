@@ -82,9 +82,25 @@ interface SettingsTabProps {
 export default function SettingsTab({ onNavigate }: SettingsTabProps) {
   const { t, language, setLanguage } = useTranslation();
   const [config, setConfig] = useState<ExtensionConfig>({
-    provider: 'openai',
-    model: 'gpt-5.2',
-    apiKey: '',
+    provider: 'groq',
+    providerConfigs: {
+      groq: {
+        model: 'llama-3.1-8b-instant',
+        apiKey: '',
+      },
+      openai: {
+        model: 'gpt-5.2',
+        apiKey: '',
+      },
+      anthropic: {
+        model: 'claude-opus-4-6',
+        apiKey: '',
+      },
+      google: {
+        model: 'gemini-3-pro-preview',
+        apiKey: '',
+      },
+    },
     temperature: 0.7,
     maxTokens: 2000,
     allPageTextLimit: 10000,
@@ -128,9 +144,8 @@ export default function SettingsTab({ onNavigate }: SettingsTabProps) {
   };
 
   const handleProviderChange = (newProvider: Provider) => {
-    // Reset to first model for the new provider
-    const firstModel = PROVIDER_MODELS[newProvider][0]?.value || '';
-    setConfig({ ...config, provider: newProvider, model: firstModel });
+    // Just switch provider - keep existing config for that provider
+    setConfig({ ...config, provider: newProvider });
   };
 
   if (loading) {
@@ -160,15 +175,14 @@ export default function SettingsTab({ onNavigate }: SettingsTabProps) {
               options={(Object.keys(PROVIDER_NAMES) as Provider[]).map((provider) => ({
                 value: provider,
                 label: PROVIDER_NAMES[provider],
+                badge: PROVIDER_INFO[provider]?.badge,
+                badgeColor: PROVIDER_INFO[provider]?.badgeColor,
               }))}
               value={config.provider}
               onChange={(value) => handleProviderChange(value as Provider)}
             />
             {PROVIDER_INFO[config.provider]?.badge && (
               <div className="flex items-center gap-2">
-                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${PROVIDER_INFO[config.provider].badgeColor}`}>
-                  {PROVIDER_INFO[config.provider].badge}
-                </span>
                 <span className="text-xs text-gray-500 dark:text-gray-400">
                   {PROVIDER_INFO[config.provider].description}
                 </span>
@@ -180,8 +194,17 @@ export default function SettingsTab({ onNavigate }: SettingsTabProps) {
             <Label htmlFor="model">Model</Label>
             <Select
               options={availableModels}
-              value={config.model}
-              onChange={(value) => setConfig({ ...config, model: value })}
+              value={config.providerConfigs[config.provider].model}
+              onChange={(value) => setConfig({
+                ...config,
+                providerConfigs: {
+                  ...config.providerConfigs,
+                  [config.provider]: {
+                    ...config.providerConfigs[config.provider],
+                    model: value,
+                  },
+                },
+              })}
             />
           </div>
 
@@ -190,8 +213,17 @@ export default function SettingsTab({ onNavigate }: SettingsTabProps) {
             <Input
               id="apiKey"
               type="password"
-              value={config.apiKey}
-              onChange={(e) => setConfig({ ...config, apiKey: e.target.value })}
+              value={config.providerConfigs[config.provider].apiKey}
+              onChange={(e) => setConfig({
+                ...config,
+                providerConfigs: {
+                  ...config.providerConfigs,
+                  [config.provider]: {
+                    ...config.providerConfigs[config.provider],
+                    apiKey: e.target.value,
+                  },
+                },
+              })}
               placeholder="Enter your API key"
             />
             <p className="text-xs text-gray-500 dark:text-gray-400">

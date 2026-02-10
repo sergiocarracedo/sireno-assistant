@@ -46,7 +46,8 @@ export class LLMClient {
   }
 
   private getModel() {
-    const { provider, model, apiKey } = this.config;
+    const { provider, providerConfigs } = this.config;
+    const { model, apiKey } = providerConfigs[provider];
     
     switch (provider) {
       case 'openai': {
