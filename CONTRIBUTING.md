@@ -138,9 +138,9 @@ src/
 
 If you're using AI coding assistants (OpenCode, Copilot, Cursor, etc.):
 
-- Read `.meta/agents/AGENT_INSTRUCTIONS.md` for detailed guidelines
+- Read `.meta/agents/agents.md` for detailed guidelines
 - Use `.meta` folder for test plans, documentation, and planning
-- See `.meta/agents/QUICK_REFERENCE.md` for quick tips
+- See `.meta/agents/quick-reference.md` for quick tips
 
 ### Testing
 

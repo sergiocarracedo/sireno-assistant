@@ -312,8 +312,8 @@ If you find Sireno Assistant useful, please:
 If you're an AI coding assistant or developer working on this project:
 
 - **Contributing Guide**: See [CONTRIBUTING.md](CONTRIBUTING.md)
-- **AI Agent Instructions**: See [`.meta/agents/AGENT_INSTRUCTIONS.md`](.meta/agents/AGENT_INSTRUCTIONS.md)
-- **Quick Reference**: See [`.meta/agents/QUICK_REFERENCE.md`](.meta/agents/QUICK_REFERENCE.md)
+- **AI Agent Instructions**: See [`.meta/agents/agents.md`](.meta/agents/agents.md)
+- **Quick Reference**: See [`.meta/agents/quick-reference.md`](.meta/agents/quick-reference.md)
 - **Project Metadata**: The `.meta` folder contains test plans, documentation, and planning files (gitignored)
 
 **Quick tip for AI agents:** Use `.meta` folder for test plans, documentation, releases, and planning. See `.meta/README.md` for details.
