@@ -5,6 +5,47 @@ All notable changes to Sireno Assistant will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-02-10
+
+### Added
+
+- 🆓 **Groq Provider Support**: Added Groq as a 4th AI provider with FREE tier access
+  - Get free API keys at https://console.groq.com/keys
+  - Ultra-fast inference with Llama 3.1 8B Instant model
+  - Support for Llama 3.3 70B, Gemma 2 9B, and DeepSeek R1 models
+  - "FREE TIER" badge displayed in provider dropdown
+- **Provider-Specific Configuration**: Each provider now remembers its own API key and model
+  - Switch between providers seamlessly without losing credentials
+  - Settings are preserved per provider
+  - Automatic migration from v0.1.0 config format
+
+### Changed
+
+- **Default Provider**: Changed from OpenAI to Groq (free tier option)
+- **Settings UI**: Enhanced provider selector with inline badges
+- **Config Storage**: Migrated from flat structure to nested `providerConfigs` object
+  - Old format: `{ provider, model, apiKey, ... }`
+  - New format: `{ provider, providerConfigs: { groq: {...}, openai: {...}, ... }, ... }`
+
+### Fixed
+
+- Provider switching now preserves API keys and model selections
+- Badge display moved from below selector to inside dropdown options
+
+### Migration
+
+- Existing users from v0.1.0 will be automatically migrated on first load
+- Your current provider, model, and API key will be preserved
+- Other providers will start with empty API keys
+- No user action required
+
+### Technical
+
+- Added `ProviderConfig` interface for per-provider settings
+- Enhanced Select component with badge support using Radix UI
+- Updated storage layer with `migrateConfig()` function
+- All TypeScript compilation successful with strict mode
+
 ## [0.1.0] - 2026-02-09
 
 ### Added

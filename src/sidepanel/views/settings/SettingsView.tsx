@@ -16,6 +16,12 @@ const logger = createLogger('SettingsView');
 
 // Model lists for each provider (as of Feb 2026)
 const PROVIDER_MODELS: Record<Provider, { value: string; label: string }[]> = {
+  groq: [
+    { value: 'llama-3.1-8b-instant', label: 'Llama 3.1 8B Instant (Fastest)' },
+    { value: 'llama-3.3-70b-versatile', label: 'Llama 3.3 70B Versatile' },
+    { value: 'gemma2-9b-it', label: 'Gemma 2 9B' },
+    { value: 'deepseek-r1-distill-llama-70b', label: 'DeepSeek R1 Distill Llama 70B' },
+  ],
   openai: [
     { value: 'gpt-5.2', label: 'GPT-5.2 (Latest)' },
     { value: 'gpt-5-mini', label: 'GPT-5 Mini' },
@@ -45,9 +51,28 @@ const PROVIDER_MODELS: Record<Provider, { value: string; label: string }[]> = {
 };
 
 const PROVIDER_NAMES: Record<Provider, string> = {
+  groq: 'Groq',
   openai: 'OpenAI',
   anthropic: 'Anthropic',
   google: 'Google (Gemini)',
+};
+
+// Provider info with badges
+const PROVIDER_INFO: Record<Provider, { description: string; badge?: string; badgeColor?: string }> = {
+  groq: {
+    description: 'Ultra-fast inference with Llama models',
+    badge: 'FREE TIER',
+    badgeColor: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+  },
+  openai: {
+    description: 'GPT models from OpenAI',
+  },
+  anthropic: {
+    description: 'Claude models from Anthropic',
+  },
+  google: {
+    description: 'Gemini models from Google',
+  },
 };
 
 interface SettingsTabProps {
@@ -57,9 +82,25 @@ interface SettingsTabProps {
 export default function SettingsTab({ onNavigate }: SettingsTabProps) {
   const { t, language, setLanguage } = useTranslation();
   const [config, setConfig] = useState<ExtensionConfig>({
-    provider: 'openai',
-    model: 'gpt-5.2',
-    apiKey: '',
+    provider: 'groq',
+    providerConfigs: {
+      groq: {
+        model: 'llama-3.1-8b-instant',
+        apiKey: '',
+      },
+      openai: {
+        model: 'gpt-5.2',
+        apiKey: '',
+      },
+      anthropic: {
+        model: 'claude-opus-4-6',
+        apiKey: '',
+      },
+      google: {
+        model: 'gemini-3-pro-preview',
+        apiKey: '',
+      },
+    },
     temperature: 0.7,
     maxTokens: 2000,
     allPageTextLimit: 10000,
@@ -103,9 +144,8 @@ export default function SettingsTab({ onNavigate }: SettingsTabProps) {
   };
 
   const handleProviderChange = (newProvider: Provider) => {
-    // Reset to first model for the new provider
-    const firstModel = PROVIDER_MODELS[newProvider][0]?.value || '';
-    setConfig({ ...config, provider: newProvider, model: firstModel });
+    // Just switch provider - keep existing config for that provider
+    setConfig({ ...config, provider: newProvider });
   };
 
   if (loading) {
@@ -135,18 +175,36 @@ export default function SettingsTab({ onNavigate }: SettingsTabProps) {
               options={(Object.keys(PROVIDER_NAMES) as Provider[]).map((provider) => ({
                 value: provider,
                 label: PROVIDER_NAMES[provider],
+                badge: PROVIDER_INFO[provider]?.badge,
+                badgeColor: PROVIDER_INFO[provider]?.badgeColor,
               }))}
               value={config.provider}
               onChange={(value) => handleProviderChange(value as Provider)}
             />
+            {PROVIDER_INFO[config.provider]?.badge && (
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  {PROVIDER_INFO[config.provider].description}
+                </span>
+              </div>
+            )}
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="model">Model</Label>
             <Select
               options={availableModels}
-              value={config.model}
-              onChange={(value) => setConfig({ ...config, model: value })}
+              value={config.providerConfigs[config.provider].model}
+              onChange={(value) => setConfig({
+                ...config,
+                providerConfigs: {
+                  ...config.providerConfigs,
+                  [config.provider]: {
+                    ...config.providerConfigs[config.provider],
+                    model: value,
+                  },
+                },
+              })}
             />
           </div>
 
@@ -155,13 +213,35 @@ export default function SettingsTab({ onNavigate }: SettingsTabProps) {
             <Input
               id="apiKey"
               type="password"
-              value={config.apiKey}
-              onChange={(e) => setConfig({ ...config, apiKey: e.target.value })}
+              value={config.providerConfigs[config.provider].apiKey}
+              onChange={(e) => setConfig({
+                ...config,
+                providerConfigs: {
+                  ...config.providerConfigs,
+                  [config.provider]: {
+                    ...config.providerConfigs[config.provider],
+                    apiKey: e.target.value,
+                  },
+                },
+              })}
               placeholder="Enter your API key"
             />
             <p className="text-xs text-gray-500 dark:text-gray-400">
               Your API key is stored locally and never shared
             </p>
+            {config.provider === 'groq' && (
+              <p className="text-xs text-blue-600 dark:text-blue-400">
+                Get your free Groq API key at{' '}
+                <a
+                  href="https://console.groq.com/keys"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline hover:no-underline"
+                >
+                  console.groq.com/keys
+                </a>
+              </p>
+            )}
           </div>
         </CardContent>
       </Card>

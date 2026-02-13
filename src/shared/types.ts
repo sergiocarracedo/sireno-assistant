@@ -2,7 +2,7 @@
  * Shared types for the extension
  */
 
-export type Provider = 'openai' | 'anthropic' | 'google';
+export type Provider = 'openai' | 'anthropic' | 'google' | 'groq';
 
 export type ContextLevel = 'none' | 'domain' | 'url' | 'selected' | 'allPage';
 
@@ -60,10 +60,18 @@ export interface Skill {
   instructions: string;
 }
 
-export interface ExtensionConfig {
-  provider: Provider;
+/** Provider-specific configuration */
+export interface ProviderConfig {
   model: string;
   apiKey: string;
+}
+
+export interface ExtensionConfig {
+  /** Currently selected provider */
+  provider: Provider;
+  /** Provider-specific configurations (model + API key per provider) */
+  providerConfigs: Record<Provider, ProviderConfig>;
+  /** General settings */
   temperature?: number;
   maxTokens?: number;
   /** Character limit for "allPage" context */

@@ -2,6 +2,7 @@ import { generateObject } from 'ai';
 import { createOpenAI } from '@ai-sdk/openai';
 import { createAnthropic } from '@ai-sdk/anthropic';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
+import { createGroq } from '@ai-sdk/groq';
 import type { ExtensionConfig, LLMResponse } from '../shared/types';
 import type { RunLLMRequest } from '../shared/messages';
 import { LLMResponseSchema } from '../shared/schemas';
@@ -45,7 +46,8 @@ export class LLMClient {
   }
 
   private getModel() {
-    const { provider, model, apiKey } = this.config;
+    const { provider, providerConfigs } = this.config;
+    const { model, apiKey } = providerConfigs[provider];
     
     switch (provider) {
       case 'openai': {
@@ -59,6 +61,10 @@ export class LLMClient {
       case 'google': {
         const google = createGoogleGenerativeAI({ apiKey });
         return google(model);
+      }
+      case 'groq': {
+        const groq = createGroq({ apiKey });
+        return groq(model);
       }
       default:
         throw new Error(`Unknown provider: ${provider}`);

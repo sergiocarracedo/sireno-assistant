@@ -84,8 +84,9 @@ export async function handleMessage(
       case 'RUN_LLM': {
         const config = await getConfig();
         
-        // Validate API key
-        if (!config.apiKey) {
+        // Validate API key for current provider
+        const { apiKey } = config.providerConfigs[config.provider];
+        if (!apiKey) {
           sendResponse({ type: 'LLM_ERROR', error: 'API key not configured' });
           return;
         }
@@ -99,11 +100,12 @@ export async function handleMessage(
           if (config.enableLogging) {
             const systemPrompt = buildSystemPromptForLogging(message.request);
             const userPrompt = buildUserPromptForLogging(message.request);
+            const { model } = config.providerConfigs[config.provider];
             
             await addLLMLog({
               type: 'chat',
               request: {
-                model: config.model,
+                model: model,
                 messages: [
                   { role: 'system', content: systemPrompt },
                   { role: 'user', content: userPrompt },
@@ -122,11 +124,12 @@ export async function handleMessage(
           if (config.enableLogging) {
             const systemPrompt = buildSystemPromptForLogging(message.request);
             const userPrompt = buildUserPromptForLogging(message.request);
+            const { model } = config.providerConfigs[config.provider];
             
             await addLLMLog({
               type: 'chat',
               request: {
-                model: config.model,
+                model: model,
                 messages: [
                   { role: 'system', content: systemPrompt },
                   { role: 'user', content: userPrompt },
@@ -150,7 +153,8 @@ export async function handleMessage(
 
       case 'VALIDATE_CONFIG': {
         const config = await getConfig();
-        if (!config.apiKey) {
+        const { apiKey } = config.providerConfigs[config.provider];
+        if (!apiKey) {
           sendResponse({ type: 'LLM_ERROR', error: 'API key not set' });
         } else {
           sendResponse({ type: 'CONFIG_RESPONSE', config });
@@ -178,8 +182,9 @@ export async function handleMessage(
 
       case 'RUN_INLINE_LLM': {
         const config = await getConfig();
+        const { apiKey } = config.providerConfigs[config.provider];
         
-        if (!config.apiKey) {
+        if (!apiKey) {
           sendResponse({ type: 'LLM_ERROR', error: 'API key not configured' });
           return;
         }
@@ -258,10 +263,11 @@ IMPORTANT: Provide ONLY the new/transformed text value for the field. Do not inc
           
           // Log if enabled
           if (config.enableLogging) {
+            const { model } = config.providerConfigs[config.provider];
             await addLLMLog({
               type: 'inline',
               request: {
-                model: config.model,
+                model: model,
                 messages: [
                   { role: 'system', content: systemPrompt },
                   { role: 'user', content: userPrompt },

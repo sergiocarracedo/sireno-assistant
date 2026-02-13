@@ -7,6 +7,8 @@ export interface SelectOption {
   value: string
   label: string
   disabled?: boolean
+  badge?: string
+  badgeColor?: string
 }
 
 export interface SelectProps {
@@ -105,7 +107,19 @@ export function Select({
                       <Check className="h-4 w-4" />
                     </SelectPrimitive.ItemIndicator>
                   </span>
-                  <SelectPrimitive.ItemText>{option.label}</SelectPrimitive.ItemText>
+                  <SelectPrimitive.ItemText>
+                    <span className="flex items-center gap-2">
+                      {option.label}
+                      {option.badge && (
+                        <span className={cn(
+                          'text-xs px-1.5 py-0.5 rounded-full font-medium',
+                          option.badgeColor || 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200'
+                        )}>
+                          {option.badge}
+                        </span>
+                      )}
+                    </span>
+                  </SelectPrimitive.ItemText>
                 </SelectPrimitive.Item>
               ))}
             </SelectPrimitive.Viewport>
