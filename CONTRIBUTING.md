@@ -7,6 +7,7 @@ Thank you for your interest in contributing to Sireno Assistant! We welcome cont
 ### Reporting Bugs
 
 If you find a bug, please open an issue with:
+
 - A clear description of the problem
 - Steps to reproduce
 - Expected vs actual behavior
@@ -16,6 +17,7 @@ If you find a bug, please open an issue with:
 ### Suggesting Features
 
 We love new ideas! Please open an issue with:
+
 - A clear description of the feature
 - Use cases and benefits
 - Any implementation ideas you have
@@ -23,12 +25,14 @@ We love new ideas! Please open an issue with:
 ### Submitting Pull Requests
 
 1. **Fork the repository**
+
    ```bash
    git clone https://github.com/sergiocarracedo/sireno-assistant
    cd sireno-assistant
    ```
 
 2. **Create a feature branch**
+
    ```bash
    git checkout -b feature/your-feature-name
    ```
@@ -39,6 +43,7 @@ We love new ideas! Please open an issue with:
    - Update documentation as needed
 
 4. **Test your changes**
+
    ```bash
    npm run build
    npm test
@@ -46,11 +51,12 @@ We love new ideas! Please open an issue with:
    ```
 
 5. **Commit your changes**
+
    ```bash
    git add .
    git commit -m "feat: add your feature description"
    ```
-   
+
    Use conventional commit messages:
    - `feat:` for new features
    - `fix:` for bug fixes
@@ -70,6 +76,7 @@ We love new ideas! Please open an issue with:
 We welcome translations! To add a new language:
 
 1. **Create translation file**
+
    ```bash
    cp src/shared/translations/en.json src/shared/translations/[lang-code].json
    ```
@@ -77,25 +84,26 @@ We welcome translations! To add a new language:
 2. **Translate all strings** in your new file
 
 3. **Update the i18n system**
-   
+
    Edit `src/shared/i18n.ts`:
+
    ```typescript
    // Add your language to the type
-   export type SupportedLanguage = 'en' | 'es' | 'fr' // add yours here
-   
+   export type SupportedLanguage = "en" | "es" | "fr"; // add yours here
+
    // Import your translations
-   import frTranslations from './translations/fr.json'
-   
+   import frTranslations from "./translations/fr.json";
+
    // Register in the translations object
    const translations: Record<SupportedLanguage, Translations> = {
      en: enTranslations,
      es: esTranslations,
      fr: frTranslations, // add yours here
-   }
+   };
    ```
 
 4. **Update language selector**
-   
+
    Edit `src/sidepanel/components/SettingsTab.tsx` to add your language option.
 
 5. **Test thoroughly**
@@ -174,6 +182,7 @@ npm test
 ## Questions?
 
 If you have questions about contributing, feel free to:
+
 - Open an issue for discussion
 - Ask in existing issues/PRs
 - Check existing documentation

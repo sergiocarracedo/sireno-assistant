@@ -1,27 +1,43 @@
+# Dependencies
 node_modules/
+
+# Build outputs
 dist/
-.DS_Store
-*.log
+build/
+.vite/
+.astro/
 
-# Meta folder (project management, not part of the extension)
-.meta/
+# Testing
+coverage/
+.nyc_output/
+playwright-report/
+test-results/
 
-# Environment files
+# IDE
+.vscode/settings.json
+.idea/
+
+# Environment
 .env
 .env.local
 .env.*.local
 
-# Test files
-test-*.html
-test-*.js
-
-# Editor files
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# OS files
+# OS
+.DS_Store
 Thumbs.db
 
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Temporary files
+*.tmp
+*.temp
+
+# Meta folder (project management)
+.meta/
+
+# Test files (legacy)
+test-*.html
+test-*.js

@@ -31,7 +31,9 @@ Sireno Assistant is a Chrome extension that brings AI assistance directly to any
 ## ✨ Features
 
 ### 🎯 Inline AI Chat
+
 Click the AI button on any input field to get instant assistance. Perfect for:
+
 - Writing emails
 - Composing social media posts
 - Filling out forms
@@ -39,16 +41,21 @@ Click the AI button on any input field to get instant assistance. Perfect for:
 - Fixing grammar
 
 ### 📝 Multi-Field Form Filling
+
 Select multiple fields and let AI fill them all intelligently based on your instructions.
 
 ### 🎨 Skills System
+
 Create custom AI behaviors for different websites. For example:
+
 - Professional tone for LinkedIn
 - Casual tone for Twitter
 - Formal language for business emails
 
 ### 🔍 Smart Context
+
 5 levels of context awareness:
+
 - **None**: Just your instruction
 - **Domain**: Includes website domain
 - **URL**: Includes full page URL
@@ -56,11 +63,13 @@ Create custom AI behaviors for different websites. For example:
 - **All Page**: Includes visible page content
 
 ### 🌍 Multi-Language Support
+
 - 🇬🇧 English
 - 🇪🇸 Spanish
 - Want your language? See [Contributing](CONTRIBUTING.md)
 
 ### 🛡️ Privacy & Transparency
+
 - **Optional LLM Logging**: See exactly what data is sent to your AI provider
 - **Local Storage Only**: Your API keys never leave your device
 - **No Tracking**: Zero telemetry or analytics
@@ -75,17 +84,20 @@ _Chrome Web Store listing pending approval_
 ### From Source
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/sergiocarracedo/sireno-assistant
    cd sireno-assistant
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    ```
 
 3. **Build the extension**
+
    ```bash
    npm run build
    ```
@@ -208,6 +220,7 @@ npm test
 ```
 
 Test on real websites:
+
 - Gmail: Compose email
 - LinkedIn: Create post
 - Twitter: Write tweet
@@ -282,6 +295,7 @@ Try clicking "Rescan" in the Fields tab, or manually focus the field. Some dynam
 This project is licensed under the **GNU General Public License v3.0** - see the [LICENSE](LICENSE) file for details.
 
 This means:
+
 - ✅ Free to use, modify, and distribute
 - ✅ Must remain open source
 - ✅ Changes must be documented
@@ -292,6 +306,7 @@ This means:
 **Created by** [Sergio Carracedo](https://github.com/sergiocarracedo)
 
 **Powered by:**
+
 - [Vercel AI SDK](https://sdk.vercel.ai) - AI provider integration
 - [React](https://react.dev) - UI framework
 - [Tailwind CSS](https://tailwindcss.com) - Styling
@@ -301,6 +316,7 @@ This means:
 ## ⭐ Support
 
 If you find Sireno Assistant useful, please:
+
 - ⭐ Star this repository
 - 🐛 Report bugs via [GitHub Issues](https://github.com/sergiocarracedo/sireno-assistant/issues)
 - 💡 Suggest features
