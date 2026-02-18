@@ -20,6 +20,31 @@ export interface DetectedField {
 }
 
 /**
+ * CSS selectors for text-input fields only.
+ * Allowlist approach: only types where typing text makes sense.
+ * Excludes: checkbox, radio, button, submit, reset, image, range, file, password, hidden, color.
+ */
+export const EDITABLE_FIELD_SELECTORS = [
+  "input:not([type]):not([disabled]):not([readonly])",
+  'input[type="text"]:not([disabled]):not([readonly])',
+  'input[type="email"]:not([disabled]):not([readonly])',
+  'input[type="number"]:not([disabled]):not([readonly])',
+  'input[type="tel"]:not([disabled]):not([readonly])',
+  'input[type="url"]:not([disabled]):not([readonly])',
+  'input[type="search"]:not([disabled]):not([readonly])',
+  'input[type="date"]:not([disabled]):not([readonly])',
+  'input[type="time"]:not([disabled]):not([readonly])',
+  'input[type="datetime-local"]:not([disabled]):not([readonly])',
+  'input[type="month"]:not([disabled]):not([readonly])',
+  'input[type="week"]:not([disabled]):not([readonly])',
+  "textarea:not([disabled]):not([readonly])",
+  '[contenteditable="true"]',
+  '[contenteditable=""]',
+  '[contenteditable="plaintext-only"]',
+  '[role="textbox"]:not([aria-disabled="true"])',
+];
+
+/**
  * Check if an element is an editable field
  * Handles inputs, textareas, contenteditable, and ARIA textboxes
  */
@@ -29,35 +54,8 @@ export function isEditableField(element: Element, skipProcessedCheck = false): b
   // Skip if already processed (unless explicitly told not to check)
   if (!skipProcessedCheck && element.hasAttribute("data-sireno-processed")) return false;
 
-  // Check standard inputs (exclude password, hidden, file)
-  if (
-    element.matches(
-      'input:not([type="password"]):not([type="file"]):not([type="hidden"]):not([disabled]):not([readonly])',
-    )
-  ) {
-    return true;
-  }
-
-  // Check textarea
-  if (element.matches("textarea:not([disabled]):not([readonly])")) {
-    return true;
-  }
-
-  // Check contenteditable (handles all variants)
-  const contenteditable = element.getAttribute("contenteditable");
-  if (
-    contenteditable === "true" ||
-    contenteditable === "" ||
-    contenteditable === "plaintext-only"
-  ) {
-    return true;
-  }
-
-  // Check ARIA role="textbox"
-  if (
-    element.getAttribute("role") === "textbox" &&
-    element.getAttribute("aria-disabled") !== "true"
-  ) {
+  // Check against the shared allowlist selector
+  if (element.matches(EDITABLE_FIELD_SELECTORS.join(", "))) {
     return true;
   }
 
@@ -293,14 +291,7 @@ export class FieldDetector {
    * Scan a Shadow Root for editable fields
    */
   private scanShadowRoot(shadowRoot: ShadowRoot) {
-    const selectors = [
-      'input:not([type="password"]):not([type="file"]):not([type="hidden"]):not([disabled]):not([readonly])',
-      "textarea:not([disabled]):not([readonly])",
-      '[contenteditable="true"]',
-      '[contenteditable=""]',
-      '[contenteditable="plaintext-only"]',
-      '[role="textbox"]:not([aria-disabled="true"])',
-    ];
+    const selectors = EDITABLE_FIELD_SELECTORS;
 
     const fields = shadowRoot.querySelectorAll<HTMLElement>(selectors.join(", "));
     logger.debug("[FieldDetector] Scanning Shadow Root, found", fields.length, "fields");
@@ -463,14 +454,7 @@ export class FieldDetector {
    * Strategy 1: Discover existing fields on page load (including Shadow DOM)
    */
   private discoverExistingFields() {
-    const selectors = [
-      'input:not([type="password"]):not([type="file"]):not([type="hidden"]):not([disabled]):not([readonly])',
-      "textarea:not([disabled]):not([readonly])",
-      '[contenteditable="true"]',
-      '[contenteditable=""]',
-      '[contenteditable="plaintext-only"]',
-      '[role="textbox"]:not([aria-disabled="true"])',
-    ];
+    const selectors = EDITABLE_FIELD_SELECTORS;
 
     let fieldCount = 0;
 
@@ -673,14 +657,7 @@ export class FieldDetector {
   }
 
   private discoverNewFields() {
-    const selectors = [
-      'input:not([type="password"]):not([type="file"]):not([type="hidden"]):not([disabled]):not([readonly])',
-      "textarea:not([disabled]):not([readonly])",
-      '[contenteditable="true"]',
-      '[contenteditable=""]',
-      '[contenteditable="plaintext-only"]',
-      '[role="textbox"]:not([aria-disabled="true"])',
-    ];
+    const selectors = EDITABLE_FIELD_SELECTORS;
 
     let newCount = 0;
 

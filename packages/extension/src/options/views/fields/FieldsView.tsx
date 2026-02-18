@@ -1,7 +1,7 @@
 import { EyeOff, List } from "lucide-react";
 import { useState } from "react";
+import { Tabs, Tab } from "@heroui/react";
 import { useTranslation } from "../../../shared/i18n";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../shared/components/ui/tabs";
 import AllFieldsTab from "./tabs/all-fields/AllFieldsTab";
 import ExcludedFieldsTab from "./tabs/excluded/ExcludedFieldsTab";
 
@@ -19,30 +19,44 @@ export default function FieldsView() {
         <p className="text-sm text-gray-600 dark:text-gray-400">{t("fieldsView.subtitle")}</p>
       </div>
 
-      <div className="flex-1 overflow-hidden">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
-          <TabsList className="grid w-full grid-cols-2 mb-4">
-            <TabsTrigger value="fields" className="text-xs flex items-center gap-1.5">
+      <Tabs
+        selectedKey={activeTab}
+        onSelectionChange={(key) => setActiveTab(key as string)}
+        variant="underlined"
+        color="secondary"
+        classNames={{
+          tabList: "gap-4 w-full border-b border-gray-700",
+          tab: "pb-2",
+        }}
+      >
+        <Tab
+          key="fields"
+          title={
+            <span className="flex items-center gap-1.5 text-xs">
               <List className="h-3.5 w-3.5" />
               {t("fieldsView.allFieldsTab")}
-            </TabsTrigger>
-            <TabsTrigger value="excluded" className="text-xs flex items-center gap-1.5">
+            </span>
+          }
+        >
+          <div className="mt-4">
+            <AllFieldsTab />
+          </div>
+        </Tab>
+
+        <Tab
+          key="excluded"
+          title={
+            <span className="flex items-center gap-1.5 text-xs">
               <EyeOff className="h-3.5 w-3.5" />
               {t("fieldsView.excludedTab")}
-            </TabsTrigger>
-          </TabsList>
-
-          <div className="flex-1 overflow-hidden">
-            <TabsContent value="fields" className="mt-0 h-full">
-              <AllFieldsTab />
-            </TabsContent>
-
-            <TabsContent value="excluded" className="mt-0 h-full">
-              <ExcludedFieldsTab />
-            </TabsContent>
+            </span>
+          }
+        >
+          <div className="mt-4">
+            <ExcludedFieldsTab />
           </div>
-        </Tabs>
-      </div>
+        </Tab>
+      </Tabs>
     </div>
   );
 }

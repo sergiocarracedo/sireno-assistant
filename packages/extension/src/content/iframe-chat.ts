@@ -176,8 +176,21 @@ export async function openInlineChat(fieldId: string, field: HTMLElement, fieldL
   // Load skills
   await loadActiveSkills();
 
-  // Detect dark mode
-  isDarkMode = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  // Detect dark mode: check stored theme preference, fall back to system
+  try {
+    const stored = await chrome.storage.local.get("ui_theme");
+    const theme = stored["ui_theme"] as string | undefined;
+    if (theme === "dark") {
+      isDarkMode = true;
+    } else if (theme === "light") {
+      isDarkMode = false;
+    } else {
+      // 'system' or unset — use OS preference
+      isDarkMode = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    }
+  } catch {
+    isDarkMode = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  }
 
   // Highlight field
   highlightField(field);

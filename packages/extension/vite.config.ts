@@ -80,6 +80,8 @@ export default defineConfig(({ mode }) => {
           content_script_v2: resolve(__dirname, "src/content/content_script_v2.ts"),
           // Side panel
           sidepanel: resolve(__dirname, "src/sidepanel/index.html"),
+          // Options page
+          options: resolve(__dirname, "src/options/index.html"),
           // Iframe chat (React-based)
           "iframe-chat": resolve(__dirname, "src/content/iframe-chat.html"),
         },

@@ -62,16 +62,33 @@ export function createAssistantButton(
   // Calculate initial position using fixed positioning
   const updateButtonPosition = () => {
     const fieldRect = field.getBoundingClientRect();
-    const fieldHeight = fieldRect.height;
+
+    // Skip update if field is not visible in viewport
+    if (fieldRect.width === 0 || fieldRect.height === 0) return;
+
+    const btnSize = 24;
+    const margin = 4; // px from field edges
 
     if (isMultiline) {
-      // For scrollable fields, always position at bottom of visible area
-      button.style.top = `${fieldRect.bottom - 32}px`;
-      button.style.left = `${fieldRect.right - 32}px`;
+      // For scrollable/multiline fields, pin to bottom-right of the VISIBLE area of the field.
+      // getBoundingClientRect() already clips to the viewport, so this stays stable
+      // regardless of what content is scrolled inside the field.
+      const top = Math.min(
+        fieldRect.bottom - btnSize - margin,
+        window.innerHeight - btnSize - margin,
+      );
+      const left = Math.min(
+        fieldRect.right - btnSize - margin,
+        window.innerWidth - btnSize - margin,
+      );
+      button.style.top = `${Math.max(fieldRect.top + margin, top)}px`;
+      button.style.left = `${Math.max(fieldRect.left + margin, left)}px`;
     } else {
       // Centered vertically, right-aligned for single-line inputs
-      button.style.top = `${fieldRect.top + (fieldHeight - 24) / 2}px`;
-      button.style.left = `${fieldRect.right - 32}px`;
+      const top = fieldRect.top + (fieldRect.height - btnSize) / 2;
+      const left = fieldRect.right - btnSize - margin;
+      button.style.top = `${Math.max(0, top)}px`;
+      button.style.left = `${Math.max(0, left)}px`;
     }
   };
 
@@ -82,14 +99,14 @@ export function createAssistantButton(
   // It will be shown by setupFieldInteraction() in content_script_v2.ts
   // based on hover/focus settings
 
-  // Hover effect
+  // Hover effect - use filter instead of transform to avoid conflicting with show/hide scale
   button.addEventListener("mouseenter", () => {
-    button.style.transform = "scale(1.1)";
+    button.style.filter = "brightness(1.15)";
     button.style.boxShadow = "0 4px 8px rgba(102, 126, 234, 0.6)";
   });
 
   button.addEventListener("mouseleave", () => {
-    button.style.transform = "scale(1)";
+    button.style.filter = "";
     button.style.boxShadow = "0 2px 4px rgba(102, 126, 234, 0.4)";
   });
 
@@ -99,7 +116,7 @@ export function createAssistantButton(
     e.preventDefault();
     e.stopPropagation();
     isClicking = true;
-    button.style.transform = "scale(0.95)";
+    button.style.filter = "brightness(0.9)";
   });
 
   button.addEventListener("mouseup", (e) => {
@@ -109,7 +126,7 @@ export function createAssistantButton(
       onClick(field);
     }
     isClicking = false;
-    button.style.transform = "scale(1)";
+    button.style.filter = "";
   });
 
   button.addEventListener("click", (e) => {
@@ -124,19 +141,20 @@ export function createAssistantButton(
   const resizeObserver = new ResizeObserver(updateButtonPosition);
   resizeObserver.observe(field);
 
-  // Update on scroll within the field
+  // Update on scroll within the field itself (content inside textarea scrolling)
   field.addEventListener("scroll", updateButtonPosition, { passive: true });
 
-  // Also update on window scroll and resize
+  // Window scroll/resize: debounced to avoid excessive calls during page scroll
   let scrollTimeout: number;
   const windowScrollHandler = () => {
     clearTimeout(scrollTimeout);
     scrollTimeout = window.setTimeout(updateButtonPosition, 10);
   };
-  window.addEventListener("scroll", windowScrollHandler, { passive: true });
+  window.addEventListener("scroll", windowScrollHandler, { passive: true, capture: true });
   window.addEventListener("resize", windowScrollHandler, { passive: true });
 
-  // Update on any parent scroll events (for scrollable containers)
+  // Parent container scroll: call directly (no debounce) so the button
+  // tracks the field edge in real-time when a scrollable ancestor is scrolled.
   let currentElement: HTMLElement | null = field.parentElement;
   const scrollHandlers: Array<{ element: HTMLElement; handler: () => void }> = [];
   while (currentElement) {
@@ -145,15 +163,14 @@ export function createAssistantButton(
       computedStyle.overflow === "auto" ||
       computedStyle.overflow === "scroll" ||
       computedStyle.overflowY === "auto" ||
-      computedStyle.overflowY === "scroll";
+      computedStyle.overflowY === "scroll" ||
+      computedStyle.overflowX === "auto" ||
+      computedStyle.overflowX === "scroll";
 
     if (isScrollable) {
-      const handler = () => {
-        clearTimeout(scrollTimeout);
-        scrollTimeout = window.setTimeout(updateButtonPosition, 10);
-      };
-      currentElement.addEventListener("scroll", handler, { passive: true });
-      scrollHandlers.push({ element: currentElement, handler });
+      // Use direct call (no debounce) for snappy tracking of scrollable containers
+      currentElement.addEventListener("scroll", updateButtonPosition, { passive: true });
+      scrollHandlers.push({ element: currentElement, handler: updateButtonPosition });
     }
     currentElement = currentElement.parentElement;
   }
@@ -163,7 +180,7 @@ export function createAssistantButton(
     button.remove();
     resizeObserver.disconnect();
     field.removeEventListener("scroll", updateButtonPosition);
-    window.removeEventListener("scroll", windowScrollHandler);
+    window.removeEventListener("scroll", windowScrollHandler, { capture: true });
     window.removeEventListener("resize", windowScrollHandler);
     scrollHandlers.forEach(({ element, handler }) => {
       element.removeEventListener("scroll", handler);

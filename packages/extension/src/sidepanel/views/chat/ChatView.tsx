@@ -454,7 +454,7 @@ export default function ChatTab({ onNavigate, initData }: ChatTabProps) {
                     </p>
                   </div>
                 }
-                side="right"
+                placement="right"
               >
                 <Info className="h-3.5 w-3.5 text-gray-400 cursor-help" />
               </Tooltip>

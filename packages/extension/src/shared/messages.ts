@@ -60,6 +60,8 @@ export type SidePanelToServiceWorkerMessage =
   | { type: "REMOVE_EXCLUDED_FIELD"; url: string; fieldId: string }
   | { type: "EXCLUDE_FIELD"; fieldId: string; fieldLabel: string }
   | { type: "IS_FIELD_EXCLUDED"; url: string; fieldId: string }
+  | { type: "FETCH_MODELS"; provider: import("./types").Provider }
+  | { type: "GET_CACHED_MODELS"; provider: import("./types").Provider }
   | { type: "DEBUG_DUMP_STORAGE" };
 
 // Service worker -> Side panel (streaming or response)
@@ -81,4 +83,11 @@ export type ServiceWorkerToSidePanelMessage =
   | { type: "EXCLUDED_FIELD_REMOVED" }
   | { type: "FIELD_EXCLUDED" }
   | { type: "FIELD_EXCLUDED_RESPONSE"; isExcluded: boolean }
-  | { type: "DEBUG_STORAGE_DUMP"; data: any };
+  | { type: "DEBUG_STORAGE_DUMP"; data: any }
+  | {
+      type: "MODELS_RESPONSE";
+      models: string[];
+      provider: import("./types").Provider;
+      fromCache: boolean;
+    }
+  | { type: "MODELS_ERROR"; provider: import("./types").Provider; error: string };

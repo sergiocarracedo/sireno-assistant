@@ -1,7 +1,7 @@
 import { BookOpen, GraduationCap, Zap } from "lucide-react";
 import { useState } from "react";
+import { Tabs, Tab } from "@heroui/react";
 import { useTranslation } from "../../../../../shared/i18n";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../../../shared/components/ui/tabs";
 import SearchBar from "./components/SearchBar";
 import GettingStartedContent from "./components/GettingStartedContent";
 import FeaturesContent from "./components/FeaturesContent";
@@ -24,38 +24,58 @@ export default function HelpTab() {
 
       <SearchBar value={searchQuery} onChange={setSearchQuery} />
 
-      <div className="flex-1 overflow-hidden">
-        <Tabs value={activeSubTab} onValueChange={setActiveSubTab} className="h-full flex flex-col">
-          <TabsList className="grid w-full grid-cols-3 mb-4">
-            <TabsTrigger value="getting-started" className="text-xs flex items-center gap-1.5">
+      <Tabs
+        selectedKey={activeSubTab}
+        onSelectionChange={(key) => setActiveSubTab(key as string)}
+        variant="underlined"
+        color="secondary"
+        classNames={{
+          tabList: "gap-4 w-full border-b border-gray-700 mt-3",
+          tab: "pb-2",
+        }}
+      >
+        <Tab
+          key="getting-started"
+          title={
+            <span className="flex items-center gap-1.5 text-xs">
               <BookOpen className="h-3.5 w-3.5" />
               {t("help.gettingStartedTab")}
-            </TabsTrigger>
-            <TabsTrigger value="features" className="text-xs flex items-center gap-1.5">
+            </span>
+          }
+        >
+          <div className="mt-4">
+            <GettingStartedContent searchQuery={searchQuery} />
+          </div>
+        </Tab>
+
+        <Tab
+          key="features"
+          title={
+            <span className="flex items-center gap-1.5 text-xs">
               <Zap className="h-3.5 w-3.5" />
               {t("help.featuresTab")}
-            </TabsTrigger>
-            <TabsTrigger value="advanced" className="text-xs flex items-center gap-1.5">
+            </span>
+          }
+        >
+          <div className="mt-4">
+            <FeaturesContent searchQuery={searchQuery} />
+          </div>
+        </Tab>
+
+        <Tab
+          key="advanced"
+          title={
+            <span className="flex items-center gap-1.5 text-xs">
               <GraduationCap className="h-3.5 w-3.5" />
               {t("help.advancedTab")}
-            </TabsTrigger>
-          </TabsList>
-
-          <div className="flex-1 overflow-y-auto">
-            <TabsContent value="getting-started" className="mt-0">
-              <GettingStartedContent searchQuery={searchQuery} />
-            </TabsContent>
-
-            <TabsContent value="features" className="mt-0">
-              <FeaturesContent searchQuery={searchQuery} />
-            </TabsContent>
-
-            <TabsContent value="advanced" className="mt-0">
-              <AdvancedContent searchQuery={searchQuery} />
-            </TabsContent>
+            </span>
+          }
+        >
+          <div className="mt-4">
+            <AdvancedContent searchQuery={searchQuery} />
           </div>
-        </Tabs>
-      </div>
+        </Tab>
+      </Tabs>
     </div>
   );
 }

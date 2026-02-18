@@ -184,7 +184,7 @@ export function InlineChatApp({
                 {/* <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">Click to manage</p> */}
               </div>
             }
-            side="bottom"
+            placement="bottom"
           >
             <button
               onClick={handleOpenSkills}
@@ -222,7 +222,7 @@ export function InlineChatApp({
 
           {/* Action Links */}
           <div className="flex justify-between items-center">
-            <Tooltip content="Hide assistant button for this field" side="top">
+            <Tooltip content="Hide assistant button for this field" placement="top">
               <button
                 onClick={handleExcludeField}
                 className="text-xs text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:underline flex items-center gap-1"

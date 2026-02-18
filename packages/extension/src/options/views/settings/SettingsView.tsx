@@ -1,7 +1,11 @@
-import { CheckCircle2, Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Select } from "../../../shared/components";
+import { useState, useEffect, useCallback } from "react";
+import type { ExtensionConfig, Provider } from "../../../shared/types";
+import type { Theme } from "../../../shared/hooks/useTheme";
 import { Button } from "../../../shared/components/ui/button";
+import { Input } from "../../../shared/components/ui/input";
+import { Label } from "../../../shared/components/ui/label";
+import { Select } from "../../../shared/components";
+import { Switch } from "@heroui/react";
 import {
   Card,
   CardContent,
@@ -9,19 +13,18 @@ import {
   CardHeader,
   CardTitle,
 } from "../../../shared/components/ui/card";
-import { Checkbox } from "../../../shared/components/ui/checkbox";
-import { Input } from "../../../shared/components/ui/input";
-import { Label } from "../../../shared/components/ui/label";
-import { Separator } from "../../../shared/components/ui/separator";
 import { Slider } from "../../../shared/components/ui/slider";
+import { Separator } from "../../../shared/components/ui/separator";
+import { Checkbox } from "../../../shared/components/ui/checkbox";
+import { Loader2, RefreshCw, AlertTriangle, Moon, Sun } from "lucide-react";
 import { useTranslation, type SupportedLanguage } from "../../../shared/i18n";
 import { createLogger } from "../../../shared/logger";
-import type { ExtensionConfig, Provider } from "../../../shared/types";
+import toast, { Toaster } from "react-hot-toast";
 
 const logger = createLogger("SettingsView");
 
-// Model lists for each provider (as of Feb 2026)
-const PROVIDER_MODELS: Record<Provider, { value: string; label: string }[]> = {
+// Fallback model lists used when no API key is set or fetch fails
+const FALLBACK_MODELS: Record<Provider, { value: string; label: string }[]> = {
   groq: [
     { value: "llama-3.1-8b-instant", label: "Llama 3.1 8B Instant (Fastest)" },
     { value: "llama-3.3-70b-versatile", label: "Llama 3.3 70B Versatile" },
@@ -29,27 +32,21 @@ const PROVIDER_MODELS: Record<Provider, { value: string; label: string }[]> = {
     { value: "deepseek-r1-distill-llama-70b", label: "DeepSeek R1 Distill Llama 70B" },
   ],
   openai: [
-    { value: "gpt-5.2", label: "GPT-5.2 (Latest)" },
-    { value: "gpt-5-mini", label: "GPT-5 Mini" },
-    { value: "gpt-5-nano", label: "GPT-5 Nano" },
-    { value: "gpt-5", label: "GPT-5" },
-    { value: "gpt-4.1", label: "GPT-4.1" },
-    { value: "gpt-4.1-mini", label: "GPT-4.1 Mini" },
     { value: "gpt-4o", label: "GPT-4o" },
     { value: "gpt-4o-mini", label: "GPT-4o Mini" },
+    { value: "gpt-4-turbo", label: "GPT-4 Turbo" },
+    { value: "o1", label: "o1" },
+    { value: "o1-mini", label: "o1 Mini" },
+    { value: "o3-mini", label: "o3 Mini" },
   ],
   anthropic: [
-    { value: "claude-opus-4-6", label: "Claude Opus 4.6 (Latest)" },
+    { value: "claude-opus-4-5", label: "Claude Opus 4.5 (Latest)" },
     { value: "claude-sonnet-4-5", label: "Claude Sonnet 4.5" },
     { value: "claude-haiku-4-5", label: "Claude Haiku 4.5" },
-    { value: "claude-opus-4-5", label: "Claude Opus 4.5" },
   ],
   google: [
-    { value: "gemini-3-pro-preview", label: "Gemini 3 Pro (Preview)" },
-    { value: "gemini-3-flash-preview", label: "Gemini 3 Flash (Preview)" },
     { value: "gemini-2.5-pro", label: "Gemini 2.5 Pro" },
     { value: "gemini-2.5-flash", label: "Gemini 2.5 Flash" },
-    { value: "gemini-2.5-flash-lite", label: "Gemini 2.5 Flash-Lite" },
     { value: "gemini-2.0-flash", label: "Gemini 2.0 Flash" },
     { value: "gemini-1.5-pro", label: "Gemini 1.5 Pro" },
     { value: "gemini-1.5-flash", label: "Gemini 1.5 Flash" },
@@ -63,70 +60,76 @@ const PROVIDER_NAMES: Record<Provider, string> = {
   google: "Google (Gemini)",
 };
 
-// Provider info with badges
 const PROVIDER_INFO: Record<
   Provider,
-  { description: string; badge?: string; badgeColor?: string }
+  { description: string; badge?: string; badgeColor?: string; docsUrl?: string }
 > = {
   groq: {
     description: "Ultra-fast inference with Llama models",
     badge: "FREE TIER",
     badgeColor: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
+    docsUrl: "https://console.groq.com/keys",
   },
   openai: {
     description: "GPT models from OpenAI",
+    docsUrl: "https://platform.openai.com/api-keys",
   },
   anthropic: {
     description: "Claude models from Anthropic",
+    docsUrl: "https://console.anthropic.com/settings/keys",
   },
   google: {
     description: "Gemini models from Google",
+    badge: "FREE TIER",
+    badgeColor: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
+    docsUrl: "https://aistudio.google.com/app/apikey",
   },
 };
 
 interface SettingsTabProps {
   onNavigate: (view: "chat" | "skills" | "settings" | "fields") => void;
+  theme?: Theme;
+  setTheme?: (theme: Theme) => void;
 }
 
-export default function SettingsTab({ onNavigate }: SettingsTabProps) {
+type ModelEntry = { value: string; label: string; deprecated?: boolean };
+
+type FetchState = "idle" | "fetching" | "success" | "error";
+
+export default function SettingsTab({ onNavigate, theme, setTheme }: SettingsTabProps) {
   const { t, language, setLanguage } = useTranslation();
   const [config, setConfig] = useState<ExtensionConfig>({
     provider: "groq",
     providerConfigs: {
-      groq: {
-        model: "llama-3.1-8b-instant",
-        apiKey: "",
-      },
-      openai: {
-        model: "gpt-5.2",
-        apiKey: "",
-      },
-      anthropic: {
-        model: "claude-opus-4-6",
-        apiKey: "",
-      },
-      google: {
-        model: "gemini-3-pro-preview",
-        apiKey: "",
-      },
+      groq: { model: "llama-3.1-8b-instant", apiKey: "" },
+      openai: { model: "gpt-4o", apiKey: "" },
+      anthropic: { model: "claude-opus-4-5", apiKey: "" },
+      google: { model: "gemini-2.5-pro", apiKey: "" },
     },
     temperature: 0.7,
     maxTokens: 2000,
     allPageTextLimit: 10000,
     showSparkOnHover: true,
   });
-  const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  // Per-provider model lists (fetched from API or fallback)
+  const [fetchedModels, setFetchedModels] = useState<Partial<Record<Provider, string[]>>>({});
+  const [fetchState, setFetchState] = useState<FetchState>("idle");
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   useEffect(() => {
     loadConfig();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadConfig = async () => {
     try {
       const response = await chrome.runtime.sendMessage({ type: "GET_CONFIG" });
-      if (response.type === "CONFIG_RESPONSE") {
+      if (response?.type === "CONFIG_RESPONSE") {
         setConfig(response.config);
+        // Try loading cached models for the active provider
+        loadCachedModels(response.config.provider);
       }
     } catch (error) {
       logger.error("Failed to load config:", error);
@@ -135,26 +138,68 @@ export default function SettingsTab({ onNavigate }: SettingsTabProps) {
     }
   };
 
+  const loadCachedModels = async (provider: Provider) => {
+    try {
+      const response = await chrome.runtime.sendMessage({
+        type: "GET_CACHED_MODELS",
+        provider,
+      });
+      if (response?.type === "MODELS_RESPONSE") {
+        setFetchedModels((prev) => ({ ...prev, [provider]: response.models }));
+      }
+    } catch {
+      // Ignore — we'll just use fallback list
+    }
+  };
+
+  const fetchLiveModels = useCallback(async (provider: Provider, apiKey: string) => {
+    if (!apiKey?.trim()) return;
+    setFetchState("fetching");
+    setFetchError(null);
+    try {
+      const response = await chrome.runtime.sendMessage({
+        type: "FETCH_MODELS",
+        provider,
+      });
+      if (response?.type === "MODELS_RESPONSE") {
+        setFetchedModels((prev) => ({ ...prev, [provider]: response.models }));
+        setFetchState("success");
+      } else if (response?.type === "MODELS_ERROR") {
+        setFetchError(response.error);
+        setFetchState("error");
+      }
+    } catch (err) {
+      setFetchError(err instanceof Error ? err.message : "Unknown error");
+      setFetchState("error");
+    }
+  }, []);
+
   const saveConfig = async () => {
     try {
-      await chrome.runtime.sendMessage({
-        type: "SET_CONFIG",
-        config,
+      await chrome.runtime.sendMessage({ type: "SET_CONFIG", config });
+      toast.success("Settings saved successfully!", {
+        duration: 2000,
+        position: "bottom-center",
       });
-      setSaved(true);
+      // Trigger model fetch for the active provider after save
+      const apiKey = config.providerConfigs[config.provider]?.apiKey;
+      if (apiKey) {
+        fetchLiveModels(config.provider, apiKey);
+      }
       setTimeout(() => {
-        setSaved(false);
-        // Navigate back to chat after showing success message
         onNavigate("chat");
       }, 1500);
     } catch (error) {
       logger.error("Failed to save config:", error);
+      toast.error("Failed to save settings");
     }
   };
 
   const handleProviderChange = (newProvider: Provider) => {
-    // Just switch provider - keep existing config for that provider
     setConfig({ ...config, provider: newProvider });
+    setFetchState("idle");
+    setFetchError(null);
+    loadCachedModels(newProvider);
   };
 
   if (loading) {
@@ -165,11 +210,80 @@ export default function SettingsTab({ onNavigate }: SettingsTabProps) {
     );
   }
 
-  const availableModels = PROVIDER_MODELS[config.provider] || [];
+  // Build model options for the current provider
+  const buildModelOptions = (): ModelEntry[] => {
+    const live = fetchedModels[config.provider];
+    const currentModel = config.providerConfigs[config.provider]?.model ?? "";
+
+    if (live && live.length > 0) {
+      const options: ModelEntry[] = live.map((id) => ({ value: id, label: id }));
+
+      // Check if currently configured model is deprecated (not in live list)
+      if (currentModel && !live.includes(currentModel)) {
+        options.unshift({
+          value: currentModel,
+          label: `⚠ ${currentModel} (Deprecated)`,
+          deprecated: true,
+        });
+      }
+      return options;
+    }
+
+    // Fallback: use static list, still check for deprecated model
+    const fallback = FALLBACK_MODELS[config.provider] ?? [];
+    const inFallback = fallback.some((m) => m.value === currentModel);
+    if (currentModel && !inFallback) {
+      return [
+        { value: currentModel, label: `⚠ ${currentModel} (Deprecated)`, deprecated: true },
+        ...fallback,
+      ];
+    }
+    return fallback;
+  };
+
+  const modelOptions = buildModelOptions();
+  const currentModel = config.providerConfigs[config.provider]?.model ?? "";
+  const currentModelDeprecated = modelOptions.find((m) => m.value === currentModel)?.deprecated;
+
+  const hasApiKey = !!config.providerConfigs[config.provider]?.apiKey?.trim();
 
   return (
     <div className="flex flex-col h-full">
+      <Toaster />
       <div className="flex-1 overflow-y-auto space-y-4 pb-4">
+        {theme !== undefined && setTheme && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Appearance</CardTitle>
+              <CardDescription>Customize the visual theme of the extension</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label htmlFor="theme-switch">Dark Mode</Label>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    Switch between light and dark theme
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Sun className="h-4 w-4 text-gray-500" />
+                  <Switch
+                    id="theme-switch"
+                    isSelected={
+                      theme === "dark" ||
+                      (theme === "system" &&
+                        window.matchMedia("(prefers-color-scheme: dark)").matches)
+                    }
+                    onValueChange={(checked) => setTheme(checked ? "dark" : "light")}
+                    color="secondary"
+                  />
+                  <Moon className="h-4 w-4 text-gray-500" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         <Card>
           <CardHeader>
             <CardTitle>Provider Settings</CardTitle>
@@ -188,20 +302,52 @@ export default function SettingsTab({ onNavigate }: SettingsTabProps) {
                 value={config.provider}
                 onChange={(value) => handleProviderChange(value as Provider)}
               />
-              {PROVIDER_INFO[config.provider]?.badge && (
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-gray-500 dark:text-gray-400">
-                    {PROVIDER_INFO[config.provider].description}
-                  </span>
-                </div>
+              {PROVIDER_INFO[config.provider]?.description && (
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  {PROVIDER_INFO[config.provider].description}
+                </p>
               )}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="model">Model</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="model">Model</Label>
+                {hasApiKey && (
+                  <button
+                    onClick={() =>
+                      fetchLiveModels(
+                        config.provider,
+                        config.providerConfigs[config.provider]?.apiKey ?? "",
+                      )
+                    }
+                    disabled={fetchState === "fetching"}
+                    className="flex items-center gap-1 text-xs text-violet-600 dark:text-violet-400 hover:underline disabled:opacity-50"
+                    title="Refresh model list from provider API"
+                  >
+                    <RefreshCw
+                      className={`h-3 w-3 ${fetchState === "fetching" ? "animate-spin" : ""}`}
+                    />
+                    {fetchState === "fetching" ? "Fetching…" : "Refresh models"}
+                  </button>
+                )}
+              </div>
+
+              {currentModelDeprecated && (
+                <div className="flex items-start gap-2 p-2.5 bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-md">
+                  <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                  <p className="text-xs text-amber-700 dark:text-amber-300">
+                    The model <strong>{currentModel}</strong> is no longer available from this
+                    provider. Please select a different model.
+                  </p>
+                </div>
+              )}
+
               <Select
-                options={availableModels}
-                value={config.providerConfigs[config.provider].model}
+                options={modelOptions.map((m) => ({
+                  value: m.value,
+                  label: m.label,
+                }))}
+                value={currentModel}
                 onChange={(value) =>
                   setConfig({
                     ...config,
@@ -215,6 +361,22 @@ export default function SettingsTab({ onNavigate }: SettingsTabProps) {
                   })
                 }
               />
+
+              {fetchState === "error" && fetchError && (
+                <p className="text-xs text-red-600 dark:text-red-400">
+                  Failed to fetch models: {fetchError}. Using fallback list.
+                </p>
+              )}
+              {fetchState === "success" && (
+                <p className="text-xs text-green-600 dark:text-green-400">
+                  Model list updated from {PROVIDER_NAMES[config.provider]} API.
+                </p>
+              )}
+              {!hasApiKey && (
+                <p className="text-xs text-gray-400 dark:text-gray-500">
+                  Add an API key to fetch the latest models from {PROVIDER_NAMES[config.provider]}.
+                </p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -222,7 +384,7 @@ export default function SettingsTab({ onNavigate }: SettingsTabProps) {
               <Input
                 id="apiKey"
                 type="password"
-                value={config.providerConfigs[config.provider].apiKey}
+                value={config.providerConfigs[config.provider]?.apiKey ?? ""}
                 onChange={(e) =>
                   setConfig({
                     ...config,
@@ -238,21 +400,18 @@ export default function SettingsTab({ onNavigate }: SettingsTabProps) {
                 placeholder="Enter your API key"
               />
               <p className="text-xs text-gray-500 dark:text-gray-400">
-                Your API key is stored locally and never shared
-              </p>
-              {config.provider === "groq" && (
-                <p className="text-xs text-blue-600 dark:text-blue-400">
-                  Get your free Groq API key at{" "}
+                Your API key is stored locally and never shared.{" "}
+                {PROVIDER_INFO[config.provider]?.docsUrl && (
                   <a
-                    href="https://console.groq.com/keys"
+                    href={PROVIDER_INFO[config.provider].docsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="underline hover:no-underline"
+                    className="text-violet-600 dark:text-violet-400 underline hover:no-underline"
                   >
-                    console.groq.com/keys
+                    Get your API key →
                   </a>
-                </p>
-              )}
+                )}
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -337,7 +496,6 @@ export default function SettingsTab({ onNavigate }: SettingsTabProps) {
                 value={language}
                 onChange={async (value) => {
                   await setLanguage(value as SupportedLanguage);
-                  // Reload page to ensure all components update
                   window.location.reload();
                 }}
               />
@@ -399,20 +557,11 @@ export default function SettingsTab({ onNavigate }: SettingsTabProps) {
         </Card>
       </div>
 
-      {/* Sticky footer with save button and success message */}
-      <div className="border-t bg-white dark:bg-gray-900 p-4 space-y-3">
+      {/* Sticky footer with save button */}
+      <div className="border-t bg-white dark:bg-gray-900 p-4">
         <Button onClick={saveConfig} className="w-full" size="lg">
           Save Settings
         </Button>
-
-        {saved && (
-          <Card className="border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950">
-            <CardContent className="flex items-center gap-2 py-3 text-green-600 dark:text-green-400">
-              <CheckCircle2 className="w-5 h-5" />
-              <span className="font-medium">Settings saved successfully!</span>
-            </CardContent>
-          </Card>
-        )}
       </div>
     </div>
   );

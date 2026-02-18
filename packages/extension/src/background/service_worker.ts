@@ -6,6 +6,15 @@ const logger = createLogger("ServiceWorker");
 
 logger.info("Initializing...");
 
+// Open options page on first install for onboarding
+chrome.runtime.onInstalled.addListener((details) => {
+  if (details.reason === "install") {
+    chrome.tabs.create({
+      url: chrome.runtime.getURL("src/options/index.html") + "?tab=settings&onboarding=true",
+    });
+  }
+});
+
 // Set side panel behavior to open on action click
 chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true }).catch((error) => {
   logger.error("Failed to set panel behavior:", error);

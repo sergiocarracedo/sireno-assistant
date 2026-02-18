@@ -19,6 +19,7 @@ import {
   removeExcludedField,
 } from "./storage";
 import { LLMClient } from "./llm-client";
+import { fetchModels, getCachedModels } from "./model-fetcher";
 import { skillMatchesDomain } from "../shared/skill-utils";
 import { createLogger } from "../shared/logger";
 import { getCurrentDateTime, getBrowserLanguage } from "../shared/i18n";
@@ -478,6 +479,46 @@ IMPORTANT: Provide ONLY the new/transformed text value for the field. Do not inc
           logger.debug(`  ${key}:`, allData[key]);
         });
         sendResponse({ type: "DEBUG_STORAGE_DUMP", data: allData });
+        break;
+      }
+
+      case "FETCH_MODELS": {
+        try {
+          const config = await getConfig();
+          const apiKey = config.providerConfigs[message.provider]?.apiKey ?? "";
+          const models = await fetchModels(message.provider, apiKey);
+          sendResponse({
+            type: "MODELS_RESPONSE",
+            models,
+            provider: message.provider,
+            fromCache: false,
+          });
+        } catch (err) {
+          sendResponse({
+            type: "MODELS_ERROR",
+            provider: message.provider,
+            error: err instanceof Error ? err.message : "Failed to fetch models",
+          });
+        }
+        break;
+      }
+
+      case "GET_CACHED_MODELS": {
+        const cached = await getCachedModels(message.provider);
+        if (cached) {
+          sendResponse({
+            type: "MODELS_RESPONSE",
+            models: cached,
+            provider: message.provider,
+            fromCache: true,
+          });
+        } else {
+          sendResponse({
+            type: "MODELS_ERROR",
+            provider: message.provider,
+            error: "No cached models available",
+          });
+        }
         break;
       }
 
