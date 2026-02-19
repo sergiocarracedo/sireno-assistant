@@ -1,0 +1,37 @@
+packages/extension/src/options/views/info/InfoView.tsx
+  9dd85531868f82e9 12
+packages/extension/src/options/views/skills/components/SkillEditor.tsx
+  9dd85531868f82e9 120,300
+packages/extension/src/options/views/logs/LogsView.tsx
+  9dd85531868f82e9 123
+packages/extension/src/sidepanel/App.tsx
+  9dd85531868f82e9 59-60,62,65
+packages/extension/src/options/App.tsx
+  9dd85531868f82e9 69,72,99,106-107,110,112,114-115,119-120,123-125,127
+packages/extension/src/options/views/settings/SettingsView.tsx
+  9dd85531868f82e9 249,526
+packages/extension/src/options/views/fields/FieldsView.tsx
+  9dd85531868f82e9 12,14-15
+packages/extension/src/options/views/skills/SkillsView.tsx
+  9dd85531868f82e9 202
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.4",
+  "base_commit_sha": "ce99b95d47b2ed039efb75a7532fe888c6a3969c",
+  "prompts": {
+    "9dd85531868f82e9": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_3a7351306ffeTxUxjL27OYtz1v",
+        "model": "github-copilot/claude-opus-4.5"
+      },
+      "human_author": "Sergio Carracedo <hi@sergiocarracedo.es>",
+      "messages": [],
+      "total_additions": 57,
+      "total_deletions": 150,
+      "accepted_lines": 32,
+      "overriden_lines": 0
+    }
+  }
+}
