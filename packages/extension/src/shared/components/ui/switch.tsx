@@ -25,11 +25,7 @@ const Switch = React.forwardRef<any, SwitchProps>(
       title={title}
       className={cn("", className)}
       {...props}
-    >
-      <HeroSwitch.Control>
-        <HeroSwitch.Thumb />
-      </HeroSwitch.Control>
-    </HeroSwitch>
+    />
   ),
 );
 Switch.displayName = "Switch";

@@ -1,7 +1,7 @@
 // @ts-nocheck
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from "react";
-import { Select as HeroSelect } from "@heroui/react";
+import { Select as HeroSelect, SelectItem } from "@heroui/react";
 import { cn } from "../../lib/utils";
 import { Label } from "./ui/label";
 
@@ -36,57 +36,41 @@ const Select = React.forwardRef<any, SelectProps>(
       disabled,
       className,
     },
-    ref,
+    _ref,
   ) => {
-    const handleChange = (key: any) => {
+    const handleChange = (keys: any) => {
+      const key = typeof keys === "string" ? keys : Array.from(keys)[0];
       onChange?.(key as string);
     };
 
     return (
-      <div className={cn("space-y-1", className)} ref={ref}>
+      <div className={cn("space-y-1", className)}>
         {label && <Label className="text-xs">{label}</Label>}
         <HeroSelect
-          selectedKey={value || defaultValue}
+          selectedKeys={value ? [value] : defaultValue ? [defaultValue] : []}
           onSelectionChange={handleChange}
           isDisabled={disabled}
           placeholder={placeholder}
-          classNames={{
-            trigger: "h-9 data-[hover=true]:bg-gray-100 dark:data-[hover=true]:bg-gray-800",
-          }}
+          aria-label={label || placeholder}
         >
-          <HeroSelect.Trigger>
-            <HeroSelect.Value placeholder={placeholder} />
-          </HeroSelect.Trigger>
-          <HeroSelect.Portal>
-            <HeroSelect.Overlay />
-            <HeroSelect.Content>
-              <HeroSelect.ListBox>
-                {options.map((option) => (
-                  <HeroSelect.Item
-                    key={option.value}
-                    value={option.value}
-                    isDisabled={option.disabled}
-                    textValue={option.label}
+          {options.map((option) => (
+            <SelectItem key={option.value} isDisabled={option.disabled} textValue={option.label}>
+              <div className="flex items-center gap-2">
+                {option.label}
+                {option.badge && (
+                  <span
+                    className={cn(
+                      "text-xs px-1.5 py-0.5 rounded-full font-medium",
+                      option.badgeColor ||
+                        "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200",
+                    )}
                   >
-                    <div className="flex items-center gap-2">
-                      {option.label}
-                      {option.badge && (
-                        <span
-                          className={cn(
-                            "text-xs px-1.5 py-0.5 rounded-full font-medium",
-                            option.badgeColor ||
-                              "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200",
-                          )}
-                        >
-                          {option.badge}
-                        </span>
-                      )}
-                    </div>
-                  </HeroSelect.Item>
-                ))}
-              </HeroSelect.ListBox>
-            </HeroSelect.Content>
-          </HeroSelect.Portal>
+                    {option.badge}
+                  </span>
+                )}
+              </div>
+            </SelectItem>
+          ))}
         </HeroSelect>
       </div>
     );

@@ -274,7 +274,7 @@ export default function SettingsTab({ onNavigate, theme, setTheme }: SettingsTab
                       (theme === "system" &&
                         window.matchMedia("(prefers-color-scheme: dark)").matches)
                     }
-                    onValueChange={(checked) => setTheme(checked ? "dark" : "light")}
+                    onValueChange={(checked: boolean) => setTheme(checked ? "dark" : "light")}
                     color="secondary"
                   />
                   <Moon className="h-4 w-4 text-gray-500" />

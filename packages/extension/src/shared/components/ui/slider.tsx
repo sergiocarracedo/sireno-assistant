@@ -27,12 +27,7 @@ const Slider = React.forwardRef<any, SliderProps>(
       step={step}
       className={cn("", className)}
       {...props}
-    >
-      <HeroSlider.Track>
-        <HeroSlider.Fill />
-        <HeroSlider.Thumb />
-      </HeroSlider.Track>
-    </HeroSlider>
+    />
   ),
 );
 Slider.displayName = "Slider";
