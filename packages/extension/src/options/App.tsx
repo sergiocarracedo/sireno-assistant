@@ -111,16 +111,16 @@ export default function OptionsApp() {
         <Tabs
           selectedKey={activeTab}
           onSelectionChange={(key) => handleTabChange(key as TabKey)}
-          variant="underlined"
+          variant="solid"
           color="secondary"
           classNames={{
-            // Tab list: shrink-0 so it never scrolls; content constrained to max-w-4xl
-            base: "flex-1 flex flex-col overflow-hidden",
+            // Base: fill available height with flex column layout
+            base: "flex-1 flex flex-col overflow-hidden w-full",
             tabList:
-              "gap-6 max-w-4xl mx-auto w-full px-6 border-b border-gray-200 dark:border-gray-800 pt-4 rounded-none bg-transparent shrink-0",
-            tab: "pb-3",
+              "gap-2 max-w-4xl mx-auto w-full px-6 pt-4 rounded-none bg-transparent shrink-0",
+            tab: "data-[selected=true]:bg-gray-100 dark:data-[selected=true]:bg-gray-800",
             // Panel: fill remaining space, no padding (views handle their own layout)
-            panel: "flex-1 overflow-hidden",
+            panel: "flex-1 overflow-hidden flex flex-col",
           }}
         >
           <Tab
@@ -132,7 +132,7 @@ export default function OptionsApp() {
               </span>
             }
           >
-            <div className="max-w-4xl mx-auto w-full px-6 h-full flex flex-col py-6">
+            <div className="max-w-4xl mx-auto w-full px-6 flex-1 flex flex-col py-6">
               <SettingsView onNavigate={() => {}} />
             </div>
           </Tab>
@@ -146,7 +146,7 @@ export default function OptionsApp() {
               </span>
             }
           >
-            <div className="max-w-4xl mx-auto w-full px-6 h-full flex flex-col py-6">
+            <div className="max-w-4xl mx-auto w-full px-6 flex-1 flex flex-col py-6">
               <SkillsView />
             </div>
           </Tab>
@@ -160,7 +160,7 @@ export default function OptionsApp() {
               </span>
             }
           >
-            <div className="max-w-4xl mx-auto w-full px-6 h-full flex flex-col py-6">
+            <div className="max-w-4xl mx-auto w-full px-6 flex-1 flex flex-col py-6">
               <FieldsView />
             </div>
           </Tab>
@@ -175,7 +175,7 @@ export default function OptionsApp() {
                 </span>
               }
             >
-              <div className="max-w-4xl mx-auto w-full px-6 h-full flex flex-col py-6">
+              <div className="max-w-4xl mx-auto w-full px-6 flex-1 flex flex-col py-6">
                 <LogsView />
               </div>
             </Tab>
@@ -190,7 +190,7 @@ export default function OptionsApp() {
               </span>
             }
           >
-            <div className="max-w-4xl mx-auto w-full px-6 h-full flex flex-col py-6">
+            <div className="max-w-4xl mx-auto w-full px-6 flex-1 flex flex-col py-6">
               <InfoView />
             </div>
           </Tab>
