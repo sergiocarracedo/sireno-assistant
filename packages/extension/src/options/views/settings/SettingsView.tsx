@@ -1,11 +1,11 @@
 import { useState, useEffect, useCallback } from "react";
 import type { ExtensionConfig, Provider } from "../../../shared/types";
-import type { Theme } from "../../../shared/hooks/useTheme";
+
 import { Button } from "../../../shared/components/ui/button";
 import { Input } from "../../../shared/components/ui/input";
 import { Label } from "../../../shared/components/ui/label";
 import { Select } from "../../../shared/components";
-import { Switch } from "@heroui/react";
+
 import {
   Card,
   CardContent,
@@ -16,7 +16,7 @@ import {
 import { Slider } from "../../../shared/components/ui/slider";
 import { Separator } from "../../../shared/components/ui/separator";
 import { Checkbox } from "../../../shared/components/ui/checkbox";
-import { Loader2, RefreshCw, AlertTriangle, Moon, Sun } from "lucide-react";
+import { Loader2, RefreshCw, AlertTriangle } from "lucide-react";
 import { useTranslation, type SupportedLanguage } from "../../../shared/i18n";
 import { createLogger } from "../../../shared/logger";
 import toast, { Toaster } from "react-hot-toast";
@@ -87,16 +87,14 @@ const PROVIDER_INFO: Record<
 };
 
 interface SettingsTabProps {
-  onNavigate: (view: "chat" | "skills" | "settings" | "fields") => void;
-  theme?: Theme;
-  setTheme?: (theme: Theme) => void;
+  onNavigate: (view: string) => void;
 }
 
 type ModelEntry = { value: string; label: string; deprecated?: boolean };
 
 type FetchState = "idle" | "fetching" | "success" | "error";
 
-export default function SettingsTab({ onNavigate, theme, setTheme }: SettingsTabProps) {
+export default function SettingsTab({ onNavigate }: SettingsTabProps) {
   const { t, language, setLanguage } = useTranslation();
   const [config, setConfig] = useState<ExtensionConfig>({
     provider: "groq",
@@ -251,39 +249,6 @@ export default function SettingsTab({ onNavigate, theme, setTheme }: SettingsTab
     <div className="flex flex-col h-full">
       <Toaster />
       <div className="flex-1 overflow-y-auto space-y-4 pb-4">
-        {theme !== undefined && setTheme && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Appearance</CardTitle>
-              <CardDescription>Customize the visual theme of the extension</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label htmlFor="theme-switch">Dark Mode</Label>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    Switch between light and dark theme
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Sun className="h-4 w-4 text-gray-500" />
-                  <Switch
-                    id="theme-switch"
-                    isSelected={
-                      theme === "dark" ||
-                      (theme === "system" &&
-                        window.matchMedia("(prefers-color-scheme: dark)").matches)
-                    }
-                    onValueChange={(checked: boolean) => setTheme(checked ? "dark" : "light")}
-                    color="secondary"
-                  />
-                  <Moon className="h-4 w-4 text-gray-500" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
         <Card>
           <CardHeader>
             <CardTitle>Provider Settings</CardTitle>

@@ -1,6 +1,7 @@
-import { Chip, Navbar, NavbarBrand, NavbarContent, Tab, Tabs } from "@heroui/react";
+import { Navbar, NavbarBrand, NavbarContent, Tab, Tabs } from "@heroui/react";
 import { FileText, HelpCircle, ListChecks, Settings, Zap } from "lucide-react";
 import { useEffect, useState } from "react";
+import { ThemeToggle } from "../shared/components/ThemeToggle";
 import { useTheme } from "../shared/hooks/useTheme";
 import { createLogger } from "../shared/logger";
 import type { ExtensionConfig } from "../shared/types";
@@ -26,8 +27,8 @@ export default function OptionsApp() {
   const [config, setConfig] = useState<ExtensionConfig | null>(null);
   const [isOnboarding, setIsOnboarding] = useState(false);
 
-  // Apply theme on mount
-  const { theme, setTheme } = useTheme();
+  // Apply theme on mount (reads persisted preference + watches system changes)
+  useTheme();
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -74,14 +75,12 @@ export default function OptionsApp() {
         <NavbarBrand className="gap-2">
           <img src={chrome.runtime.getURL("icons/logo.svg")} alt="Sireno" className="w-6 h-6" />
           <span className="font-semibold text-gray-900 dark:text-white">Sireno Assistant</span>
-          <Chip size="sm" variant="flat" color="secondary">
-            Settings
-          </Chip>
         </NavbarBrand>
         <NavbarContent justify="end" className="gap-2">
           <span className="text-xs text-gray-400 dark:text-gray-500">
             v{chrome.runtime.getManifest().version}
           </span>
+          <ThemeToggle />
         </NavbarContent>
       </Navbar>
 
@@ -116,12 +115,12 @@ export default function OptionsApp() {
           color="secondary"
           classNames={{
             // Tab list: shrink-0 so it never scrolls; content constrained to max-w-4xl
-            base: "shrink-0 w-full",
+            base: "flex-1 flex flex-col overflow-hidden",
             tabList:
-              "gap-6 max-w-4xl mx-auto w-full px-6 border-b border-gray-200 dark:border-gray-800 pt-4 rounded-none bg-transparent",
+              "gap-6 max-w-4xl mx-auto w-full px-6 border-b border-gray-200 dark:border-gray-800 pt-4 rounded-none bg-transparent shrink-0",
             tab: "pb-3",
-            // Panel: fill remaining space, scroll at full viewport width (scrollbar at edge)
-            panel: "flex-1 overflow-y-auto py-6 px-0",
+            // Panel: fill remaining space, no padding (views handle their own layout)
+            panel: "flex-1 overflow-hidden",
           }}
         >
           <Tab
@@ -133,8 +132,8 @@ export default function OptionsApp() {
               </span>
             }
           >
-            <div className="max-w-4xl mx-auto w-full px-6">
-              <SettingsView onNavigate={() => {}} theme={theme} setTheme={setTheme} />
+            <div className="max-w-4xl mx-auto w-full px-6 h-full flex flex-col py-6">
+              <SettingsView onNavigate={() => {}} />
             </div>
           </Tab>
 
@@ -147,7 +146,7 @@ export default function OptionsApp() {
               </span>
             }
           >
-            <div className="max-w-4xl mx-auto w-full px-6">
+            <div className="max-w-4xl mx-auto w-full px-6 h-full flex flex-col py-6">
               <SkillsView />
             </div>
           </Tab>
@@ -161,7 +160,7 @@ export default function OptionsApp() {
               </span>
             }
           >
-            <div className="max-w-4xl mx-auto w-full px-6">
+            <div className="max-w-4xl mx-auto w-full px-6 h-full flex flex-col py-6">
               <FieldsView />
             </div>
           </Tab>
@@ -176,7 +175,7 @@ export default function OptionsApp() {
                 </span>
               }
             >
-              <div className="max-w-4xl mx-auto w-full px-6">
+              <div className="max-w-4xl mx-auto w-full px-6 h-full flex flex-col py-6">
                 <LogsView />
               </div>
             </Tab>
@@ -191,7 +190,7 @@ export default function OptionsApp() {
               </span>
             }
           >
-            <div className="max-w-4xl mx-auto w-full px-6">
+            <div className="max-w-4xl mx-auto w-full px-6 h-full flex flex-col py-6">
               <InfoView />
             </div>
           </Tab>

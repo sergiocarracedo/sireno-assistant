@@ -3,7 +3,7 @@
   "name": "Sireno Assistant",
   "version": "0.2.0",
   "description": "Your AI-powered assistant for web forms and content. Use your own API keys to fill, modify, and enhance any website with AI.",
-  "permissions": ["activeTab", "tabs", "scripting", "storage"],
+  "permissions": ["activeTab", "tabs", "scripting", "storage", "sidePanel"],
   "host_permissions": [
     "https://api.openai.com/*",
     "https://api.anthropic.com/*",
@@ -22,7 +22,10 @@
     }
   ],
   "action": {
-    "default_title": "Open Sireno Settings"
+    "default_title": "Open Sireno Assistant"
+  },
+  "side_panel": {
+    "default_path": "src/sidepanel/index.html"
   },
   "options_ui": {
     "page": "src/options/index.html",

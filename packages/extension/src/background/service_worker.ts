@@ -15,14 +15,10 @@ chrome.runtime.onInstalled.addListener((details) => {
   }
 });
 
-// Open options page when clicking the extension icon
-chrome.action.onClicked.addListener(async () => {
-  if (chrome.runtime.openOptionsPage) {
-    chrome.runtime.openOptionsPage();
-  } else {
-    chrome.tabs.create({
-      url: chrome.runtime.getURL("src/options/index.html"),
-    });
+// Open sidepanel when clicking the extension icon
+chrome.action.onClicked.addListener(async (tab) => {
+  if (tab.id) {
+    await chrome.sidePanel.open({ tabId: tab.id });
   }
 });
 

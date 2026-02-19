@@ -5,11 +5,11 @@ export default heroui({
     light: {
       colors: {
         primary: {
-          DEFAULT: "#10b981", // emerald-500
+          DEFAULT: "#92400e", // amber-800 (coffee brown)
           foreground: "#ffffff",
         },
         secondary: {
-          DEFAULT: "#059669", // emerald-600
+          DEFAULT: "#78350f", // amber-900 (darker coffee)
           foreground: "#ffffff",
         },
       },
@@ -17,12 +17,12 @@ export default heroui({
     dark: {
       colors: {
         primary: {
-          DEFAULT: "#10b981", // emerald-500
+          DEFAULT: "#d97706", // amber-600 (warm coffee)
           foreground: "#ffffff",
         },
         secondary: {
-          DEFAULT: "#34d399", // emerald-400
-          foreground: "#064e3b", // emerald-950
+          DEFAULT: "#f59e0b", // amber-500 (lighter coffee accent)
+          foreground: "#451a03", // amber-950
         },
       },
     },
