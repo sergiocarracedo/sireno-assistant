@@ -56,20 +56,13 @@ export default function App() {
 
   return (
     <div className="app">
-      <Navbar
-        isBordered
-        maxWidth="full"
-        classNames={{
-          base: "bg-white dark:bg-gray-900",
-          wrapper: "px-4",
-        }}
-      >
-        <NavbarBrand className="gap-2">
+      <Navbar isBordered maxWidth="full">
+        <NavbarBrand>
           <img src={chrome.runtime.getURL("icons/logo.svg")} alt="Sireno" className="w-5 h-5" />
-          <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">Sireno</span>
+          <span className="text-sm font-semibold">Sireno</span>
         </NavbarBrand>
 
-        <NavbarContent justify="end" className="gap-1">
+        <NavbarContent justify="end">
           <ThemeToggle />
           <Button
             isIconOnly

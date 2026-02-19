@@ -120,7 +120,7 @@ export default function LogsTab() {
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="max-w-4xl mx-auto w-full px-6 py-6 flex flex-col h-full">
       {/* Header with search and clear */}
       <div className="p-4 border-b space-y-3">
         <div className="flex items-center justify-between">

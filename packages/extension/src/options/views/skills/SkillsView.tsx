@@ -199,7 +199,7 @@ export default function SkillsTab() {
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="max-w-4xl mx-auto w-full px-6 py-6 flex flex-col h-full">
       <div className="mb-4 p-3 bg-gray-50 dark:bg-gray-900/50 rounded-lg border border-gray-200 dark:border-gray-800">
         <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">
           Current domain:{" "}

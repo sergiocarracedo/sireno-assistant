@@ -246,7 +246,7 @@ export default function SettingsTab({ onNavigate }: SettingsTabProps) {
   const hasApiKey = !!config.providerConfigs[config.provider]?.apiKey?.trim();
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="max-w-4xl mx-auto w-full px-6 py-6 flex flex-col h-full">
       <Toaster />
       <div className="flex-1 overflow-y-auto space-y-4 pb-4">
         <Card>
@@ -523,7 +523,7 @@ export default function SettingsTab({ onNavigate }: SettingsTabProps) {
       </div>
 
       {/* Footer with save button */}
-      <div className="border-t border-gray-200 dark:border-gray-800 pt-4 flex justify-end">
+      <div className="pt-4 flex justify-end">
         <Button onClick={saveConfig} size="lg">
           Save Settings
         </Button>

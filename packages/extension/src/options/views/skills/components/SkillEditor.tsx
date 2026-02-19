@@ -117,7 +117,7 @@ export default function SkillEditor({ skill, onSave, onCancel }: SkillEditorProp
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="max-w-4xl mx-auto w-full px-6 py-6 flex flex-col h-full">
       {/* Sticky Header */}
       <div className="flex-shrink-0 pb-3 mb-4 border-b border-gray-200 dark:border-gray-800">
         <div className="flex items-center justify-between">
@@ -297,7 +297,7 @@ export default function SkillEditor({ skill, onSave, onCancel }: SkillEditorProp
       </div>
 
       {/* Fixed Action Buttons */}
-      <div className="flex-shrink-0 flex gap-2 pt-3 border-t border-gray-200 dark:border-gray-800 justify-end">
+      <div className="flex-shrink-0 flex gap-2 pt-3 justify-end">
         <Button variant="outline" onClick={onCancel} className="gap-2">
           <X className="h-4 w-4" />
           {t("common.cancel")}

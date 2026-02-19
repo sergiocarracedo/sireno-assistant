@@ -1,5 +1,4 @@
 import { Navbar, NavbarBrand, NavbarContent, Tab, Tabs } from "@heroui/react";
-import { FileText, HelpCircle, ListChecks, Settings, Zap } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ThemeToggle } from "../shared/components/ThemeToggle";
 import { useTheme } from "../shared/hooks/useTheme";
@@ -64,22 +63,13 @@ export default function OptionsApp() {
      */
     <div className="h-screen flex flex-col bg-gray-50 dark:bg-gray-950 overflow-hidden">
       {/* ── Navbar ── */}
-      <Navbar
-        isBordered
-        maxWidth="full"
-        classNames={{
-          wrapper: "max-w-4xl mx-auto px-6",
-          base: "bg-white dark:bg-gray-900 shrink-0",
-        }}
-      >
-        <NavbarBrand className="gap-2">
+      <Navbar isBordered maxWidth="full">
+        <NavbarBrand>
           <img src={chrome.runtime.getURL("icons/logo.svg")} alt="Sireno" className="w-6 h-6" />
-          <span className="font-semibold text-gray-900 dark:text-white">Sireno Assistant</span>
+          <span className="font-semibold">Sireno Assistant</span>
         </NavbarBrand>
-        <NavbarContent justify="end" className="gap-2">
-          <span className="text-xs text-gray-400 dark:text-gray-500">
-            v{chrome.runtime.getManifest().version}
-          </span>
+        <NavbarContent justify="end">
+          <span className="text-xs">v{chrome.runtime.getManifest().version}</span>
           <ThemeToggle />
         </NavbarContent>
       </Navbar>
@@ -106,96 +96,35 @@ export default function OptionsApp() {
         </div>
       )}
 
-      {/* ── Tabs: tab list is fixed, content scrolls full-width so scrollbar is at window edge ── */}
-      <div className="flex-1 flex flex-col overflow-hidden w-full">
-        <Tabs
-          selectedKey={activeTab}
-          onSelectionChange={(key) => handleTabChange(key as TabKey)}
-          variant="solid"
-          color="secondary"
-          classNames={{
-            // Base: fill available height with flex column layout
-            base: "flex-1 flex flex-col overflow-hidden w-full",
-            tabList:
-              "gap-2 max-w-4xl mx-auto w-full px-6 pt-4 rounded-none bg-transparent shrink-0",
-            tab: "data-[selected=true]:bg-gray-100 dark:data-[selected=true]:bg-gray-800",
-            // Panel: fill remaining space, no padding (views handle their own layout)
-            panel: "flex-1 overflow-hidden flex flex-col",
-          }}
-        >
-          <Tab
-            key="settings"
-            title={
-              <span className="flex items-center gap-1.5">
-                <Settings className="h-4 w-4" />
-                Settings
-              </span>
-            }
-          >
-            <div className="max-w-4xl mx-auto w-full px-6 flex-1 flex flex-col py-6">
-              <SettingsView onNavigate={() => {}} />
-            </div>
-          </Tab>
+      {/* ── Tabs ── */}
+      <Tabs
+        selectedKey={activeTab}
+        onSelectionChange={(key) => handleTabChange(key as TabKey)}
+        variant="solid"
+        color="secondary"
+      >
+        <Tab key="settings" title="Settings">
+          <SettingsView onNavigate={() => {}} />
+        </Tab>
 
-          <Tab
-            key="skills"
-            title={
-              <span className="flex items-center gap-1.5">
-                <Zap className="h-4 w-4" />
-                Skills
-              </span>
-            }
-          >
-            <div className="max-w-4xl mx-auto w-full px-6 flex-1 flex flex-col py-6">
-              <SkillsView />
-            </div>
-          </Tab>
+        <Tab key="skills" title="Skills">
+          <SkillsView />
+        </Tab>
 
-          <Tab
-            key="fields"
-            title={
-              <span className="flex items-center gap-1.5">
-                <ListChecks className="h-4 w-4" />
-                Fields
-              </span>
-            }
-          >
-            <div className="max-w-4xl mx-auto w-full px-6 flex-1 flex flex-col py-6">
-              <FieldsView />
-            </div>
-          </Tab>
+        <Tab key="fields" title="Fields">
+          <FieldsView />
+        </Tab>
 
-          {showLogs ? (
-            <Tab
-              key="logs"
-              title={
-                <span className="flex items-center gap-1.5">
-                  <FileText className="h-4 w-4" />
-                  Logs
-                </span>
-              }
-            >
-              <div className="max-w-4xl mx-auto w-full px-6 flex-1 flex flex-col py-6">
-                <LogsView />
-              </div>
-            </Tab>
-          ) : null}
-
-          <Tab
-            key="info"
-            title={
-              <span className="flex items-center gap-1.5">
-                <HelpCircle className="h-4 w-4" />
-                Help &amp; About
-              </span>
-            }
-          >
-            <div className="max-w-4xl mx-auto w-full px-6 flex-1 flex flex-col py-6">
-              <InfoView />
-            </div>
+        {showLogs ? (
+          <Tab key="logs" title="Logs">
+            <LogsView />
           </Tab>
-        </Tabs>
-      </div>
+        ) : null}
+
+        <Tab key="info" title="Help & About">
+          <InfoView />
+        </Tab>
+      </Tabs>
     </div>
   );
 }
