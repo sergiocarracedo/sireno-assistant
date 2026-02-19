@@ -1,0 +1,23 @@
+packages/extension/src/options/App.tsx
+  9dd85531868f82e9 114,117-118,120-121,123,135,149,163,178,193
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.4",
+  "base_commit_sha": "232cfc7ce6ed859c5f4f7ad136b2644d2ae04dbf",
+  "prompts": {
+    "9dd85531868f82e9": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_3a7351306ffeTxUxjL27OYtz1v",
+        "model": "github-copilot/claude-opus-4.5"
+      },
+      "human_author": "Sergio Carracedo <hi@sergiocarracedo.es>",
+      "messages": [],
+      "total_additions": 11,
+      "total_deletions": 11,
+      "accepted_lines": 11,
+      "overriden_lines": 0
+    }
+  }
+}
