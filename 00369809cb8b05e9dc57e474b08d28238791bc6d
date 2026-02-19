@@ -1,0 +1,31 @@
+packages/extension/src/hero.ts
+  9dd85531868f82e9 8,12,20,24-25
+packages/extension/src/options/views/settings/SettingsView.tsx
+  9dd85531868f82e9 8,90
+packages/extension/src/manifest.json
+  9dd85531868f82e9 6,25-28
+packages/extension/src/options/App.tsx
+  9dd85531868f82e9 4,30,83,118,120,122-123,135,149,163,178,193
+packages/extension/src/background/service_worker.ts
+  9dd85531868f82e9 18-21
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.4",
+  "base_commit_sha": "00369809cb8b05e9dc57e474b08d28238791bc6d",
+  "prompts": {
+    "9dd85531868f82e9": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_3a7351306ffeTxUxjL27OYtz1v",
+        "model": "github-copilot/claude-opus-4.5"
+      },
+      "human_author": "Sergio Carracedo <hi@sergiocarracedo.es>",
+      "messages": [],
+      "total_additions": 33,
+      "total_deletions": 70,
+      "accepted_lines": 28,
+      "overriden_lines": 0
+    }
+  }
+}
