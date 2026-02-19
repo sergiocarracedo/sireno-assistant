@@ -1,0 +1,31 @@
+packages/extension/src/shared/components/Select.tsx
+  9dd85531868f82e9 4,39,41-42,50,54,56-57,68-69,71-73
+packages/extension/src/shared/components/ui/checkbox.tsx
+  9dd85531868f82e9 1-2,16
+packages/extension/src/shared/components/ui/switch.tsx
+  9dd85531868f82e9 28
+packages/extension/src/options/views/settings/SettingsView.tsx
+  9dd85531868f82e9 277
+packages/extension/src/shared/components/ui/slider.tsx
+  9dd85531868f82e9 30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.4",
+  "base_commit_sha": "6c5cc8b8e2be76c0d8ee9332ebab98435f31f8e0",
+  "prompts": {
+    "9dd85531868f82e9": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_3a7351306ffeTxUxjL27OYtz1v",
+        "model": "github-copilot/claude-opus-4.5"
+      },
+      "human_author": "Sergio Carracedo <hi@sergiocarracedo.es>",
+      "messages": [],
+      "total_additions": 69,
+      "total_deletions": 88,
+      "accepted_lines": 21,
+      "overriden_lines": 0
+    }
+  }
+}
