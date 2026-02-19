@@ -557,9 +557,9 @@ export default function SettingsTab({ onNavigate, theme, setTheme }: SettingsTab
         </Card>
       </div>
 
-      {/* Sticky footer with save button */}
-      <div className="border-t bg-white dark:bg-gray-900 p-4">
-        <Button onClick={saveConfig} className="w-full" size="lg">
+      {/* Footer with save button */}
+      <div className="border-t border-gray-200 dark:border-gray-800 pt-4 flex justify-end">
+        <Button onClick={saveConfig} size="lg">
           Save Settings
         </Button>
       </div>

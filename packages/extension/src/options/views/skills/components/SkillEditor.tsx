@@ -297,14 +297,14 @@ export default function SkillEditor({ skill, onSave, onCancel }: SkillEditorProp
       </div>
 
       {/* Fixed Action Buttons */}
-      <div className="flex-shrink-0 flex gap-2 pt-3 border-t border-gray-200 dark:border-gray-800">
-        <Button onClick={handleSubmit} className="gap-2">
-          <Save className="h-4 w-4" />
-          {skill ? t("skills.saveChanges") : t("skills.createSkill")}
-        </Button>
+      <div className="flex-shrink-0 flex gap-2 pt-3 border-t border-gray-200 dark:border-gray-800 justify-end">
         <Button variant="outline" onClick={onCancel} className="gap-2">
           <X className="h-4 w-4" />
           {t("common.cancel")}
+        </Button>
+        <Button onClick={handleSubmit} className="gap-2">
+          <Save className="h-4 w-4" />
+          {skill ? t("skills.saveChanges") : t("skills.createSkill")}
         </Button>
       </div>
     </div>

@@ -107,20 +107,20 @@ export default function OptionsApp() {
         </div>
       )}
 
-      {/* ── Tabs: tab list is fixed, content scrolls ── */}
-      <div className="flex-1 flex flex-col overflow-hidden max-w-4xl mx-auto w-full px-6">
+      {/* ── Tabs: tab list is fixed, content scrolls full-width so scrollbar is at window edge ── */}
+      <div className="flex-1 flex flex-col overflow-hidden w-full">
         <Tabs
           selectedKey={activeTab}
           onSelectionChange={(key) => handleTabChange(key as TabKey)}
           variant="underlined"
           color="secondary"
           classNames={{
-            // Tab list: don't scroll, sits just below the navbar
-            base: "shrink-0",
+            // Tab list: shrink-0 so it never scrolls; content constrained to max-w-4xl
+            base: "shrink-0 w-full",
             tabList:
-              "gap-6 w-full border-b border-gray-200 dark:border-gray-800 pt-4 rounded-none bg-transparent",
+              "gap-6 max-w-4xl mx-auto w-full px-6 border-b border-gray-200 dark:border-gray-800 pt-4 rounded-none bg-transparent",
             tab: "pb-3",
-            // Panel wrapper: fill remaining space and scroll
+            // Panel: fill remaining space, scroll at full viewport width (scrollbar at edge)
             panel: "flex-1 overflow-y-auto py-6 px-0",
           }}
         >
@@ -133,7 +133,9 @@ export default function OptionsApp() {
               </span>
             }
           >
-            <SettingsView onNavigate={() => {}} theme={theme} setTheme={setTheme} />
+            <div className="max-w-4xl mx-auto w-full px-6">
+              <SettingsView onNavigate={() => {}} theme={theme} setTheme={setTheme} />
+            </div>
           </Tab>
 
           <Tab
@@ -145,7 +147,9 @@ export default function OptionsApp() {
               </span>
             }
           >
-            <SkillsView />
+            <div className="max-w-4xl mx-auto w-full px-6">
+              <SkillsView />
+            </div>
           </Tab>
 
           <Tab
@@ -157,7 +161,9 @@ export default function OptionsApp() {
               </span>
             }
           >
-            <FieldsView />
+            <div className="max-w-4xl mx-auto w-full px-6">
+              <FieldsView />
+            </div>
           </Tab>
 
           {showLogs ? (
@@ -170,7 +176,9 @@ export default function OptionsApp() {
                 </span>
               }
             >
-              <LogsView />
+              <div className="max-w-4xl mx-auto w-full px-6">
+                <LogsView />
+              </div>
             </Tab>
           ) : null}
 
@@ -183,7 +191,9 @@ export default function OptionsApp() {
               </span>
             }
           >
-            <InfoView />
+            <div className="max-w-4xl mx-auto w-full px-6">
+              <InfoView />
+            </div>
           </Tab>
         </Tabs>
       </div>
