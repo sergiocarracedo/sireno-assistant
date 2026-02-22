@@ -1,0 +1,82 @@
+packages/extension/src/sidepanel/views/chat/ChatView.tsx
+  f949a78dbbdb2770 519
+packages/extension/src/shared/components/ui/separator.tsx
+  b712ce027812779c 1,5-7
+packages/extension/src/options/views/skills/SkillsView.tsx
+  f949a78dbbdb2770 220,248-249,257-258,265-266
+packages/extension/src/shared/components/ui/label.tsx
+  b712ce027812779c 10
+packages/extension/src/shared/components/ui/checkbox.tsx
+  b712ce027812779c 1,4,9-11
+packages/extension/src/shared/components/ui/slider.tsx
+  b712ce027812779c 1,4-7,14
+packages/extension/src/sidepanel/views/chat/components/FieldChangesMessage.tsx
+  f949a78dbbdb2770 164
+packages/extension/src/options/views/info/tabs/help/components/CodeExample.tsx
+  f949a78dbbdb2770 32,54
+packages/extension/src/options/views/fields/tabs/excluded/ExcludedFieldsTab.tsx
+  f949a78dbbdb2770 326,331
+packages/extension/src/content/components/InlineChatApp.tsx
+  f949a78dbbdb2770 202-203
+packages/extension/src/shared/components/Select.tsx
+  b712ce027812779c 23,37-38,43,57
+packages/extension/src/shared/components/ChatInput.tsx
+  b712ce027812779c 46,49,65,70-72
+packages/extension/src/options/views/info/tabs/help/components/SearchBar.tsx
+  f949a78dbbdb2770 27
+packages/extension/src/options/views/fields/tabs/all-fields/AllFieldsTab.tsx
+  f949a78dbbdb2770 244,247,288
+packages/extension/src/options/views/logs/LogsView.tsx
+  f949a78dbbdb2770 128
+packages/extension/src/options/views/skills/components/SkillEditor.tsx
+  f949a78dbbdb2770 285,301
+packages/extension/src/shared/components/ui/button.tsx
+  b712ce027812779c 1,5,11-14,17-19,25
+packages/extension/src/options/views/skills/components/SkillCard.tsx
+  f949a78dbbdb2770 88-90,97-99,106-108
+packages/extension/src/shared/components/ui/textarea.tsx
+  b712ce027812779c 1,4-6,8-10
+packages/extension/src/shared/components/ui/switch.tsx
+  b712ce027812779c 1,4,9-11
+packages/extension/src/shared/components/ui/input.tsx
+  b712ce027812779c 1,4,6-8
+packages/extension/src/shared/components/ui/card.tsx
+  b712ce027812779c 1-4,6,9,11,17,28,32,34,36
+packages/extension/src/shared/components/ui/button-link.tsx
+  b712ce027812779c 1-2,6,12-15,18-20,26
+packages/extension/src/options/views/settings/SettingsView.tsx
+  f949a78dbbdb2770 417,434
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.4",
+  "base_commit_sha": "8dc78c0d2aa9ad7d8d34364fe2596c5ee6d8972e",
+  "prompts": {
+    "b712ce027812779c": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_3a76e2e7dffeHZB7zI1j1Tnm3i",
+        "model": "github-copilot/claude-sonnet-4.5"
+      },
+      "human_author": "Sergio Carracedo <hi@sergiocarracedo.es>",
+      "messages": [],
+      "total_additions": 75,
+      "total_deletions": 295,
+      "accepted_lines": 81,
+      "overriden_lines": 2
+    },
+    "f949a78dbbdb2770": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_378b1d638ffegZoRAX94fJ61xX",
+        "model": "opencode/minimax-m2.5-free"
+      },
+      "human_author": "Sergio Carracedo <hi@sergiocarracedo.es>",
+      "messages": [],
+      "total_additions": 33,
+      "total_deletions": 35,
+      "accepted_lines": 33,
+      "overriden_lines": 0
+    }
+  }
+}
