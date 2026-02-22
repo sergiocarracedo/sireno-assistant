@@ -1,0 +1,29 @@
+packages/extension/src/options/views/info/InfoView.tsx
+  b712ce027812779c 4,13,17-18,21,27,32
+packages/extension/src/shared/components/ui/PageLayout.tsx
+  b712ce027812779c 1-19
+packages/extension/src/shared/components/ui/index.ts
+  b712ce027812779c 7
+packages/extension/src/options/views/settings/SettingsView.tsx
+  b712ce027812779c 8,250-259,262,535
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.4",
+  "base_commit_sha": "132c80fdb32fc41898c7b8a3959de19333ffc7e5",
+  "prompts": {
+    "b712ce027812779c": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_3a76e2e7dffeHZB7zI1j1Tnm3i",
+        "model": "github-copilot/claude-sonnet-4.5"
+      },
+      "human_author": "Sergio Carracedo <hi@sergiocarracedo.es>",
+      "messages": [],
+      "total_additions": 56,
+      "total_deletions": 31,
+      "accepted_lines": 43,
+      "overriden_lines": 0
+    }
+  }
+}
