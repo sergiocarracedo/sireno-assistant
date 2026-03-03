@@ -1,0 +1,25 @@
+packages/extension/src/sidepanel/views/skills/SkillsView.tsx
+  b712ce027812779c 52-70,73,78
+packages/extension/src/sidepanel/views/fields/tabs/all-fields/AllFieldsTab.tsx
+  b712ce027812779c 84-136
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.7",
+  "base_commit_sha": "c9258943d4b5dd6db8274d6b6d4b2bc55451c675",
+  "prompts": {
+    "b712ce027812779c": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_3a76e2e7dffeHZB7zI1j1Tnm3i",
+        "model": "github-copilot/claude-sonnet-4.5"
+      },
+      "human_author": "Sergio Carracedo <hi@sergiocarracedo.es>",
+      "messages": [],
+      "total_additions": 77,
+      "total_deletions": 1,
+      "accepted_lines": 74,
+      "overriden_lines": 0
+    }
+  }
+}
