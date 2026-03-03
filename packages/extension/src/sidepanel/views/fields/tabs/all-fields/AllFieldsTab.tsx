@@ -81,6 +81,59 @@ export default function AllFieldsTab() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTabId]);
 
+  // Periodic polling to detect DOM changes (e.g., modals opening with new fields)
+  useEffect(() => {
+    if (!currentTabId) return;
+
+    // Poll every 2 seconds to check for field changes
+    const intervalId = setInterval(() => {
+      if (!document.hidden && currentTabId) {
+        logger.debug("[FieldSelector] Polling for field changes...");
+        scanFieldsQuietly();
+      }
+    }, 2000);
+
+    return () => clearInterval(intervalId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentTabId]);
+
+  // Scan fields quietly (without setting loading state)
+  const scanFieldsQuietly = async () => {
+    try {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (!tab.id) return;
+
+      const response = await chrome.tabs.sendMessage(tab.id, {
+        type: "SCAN_FIELDS",
+      });
+
+      if (response?.fields) {
+        // Only update if field count changed to avoid unnecessary re-renders
+        if (response.fields.length !== fields.length) {
+          logger.debug(
+            "[FieldSelector] Field count changed:",
+            fields.length,
+            "→",
+            response.fields.length,
+          );
+          setFields(response.fields);
+
+          // Preserve existing selection, add new fields if they don't exist
+          const existingIds = new Set(selectedIds);
+          const newFields = response.fields.filter((f: FieldRef) => !existingIds.has(f.id));
+          if (newFields.length > 0) {
+            const newIds = [...selectedIds, ...newFields.map((f: FieldRef) => f.id)];
+            setSelectedIds(newIds);
+            saveSelectedIds(newIds);
+          }
+        }
+      }
+    } catch (_error) {
+      // Silently fail for background polling
+      logger.debug("[FieldSelector] Background scan failed (tab might not be ready)");
+    }
+  };
+
   // Load excluded fields for the current URL
   const loadExcludedFields = async () => {
     try {

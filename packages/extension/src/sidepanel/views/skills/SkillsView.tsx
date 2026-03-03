@@ -49,12 +49,33 @@ export default function SkillsView() {
       }
     };
 
+    // Listen for storage changes (skills enabled/disabled, skills added/removed)
+    const handleStorageChanged = (
+      changes: { [key: string]: chrome.storage.StorageChange },
+      areaName: chrome.storage.AreaName,
+    ) => {
+      if (areaName !== "local") return;
+
+      // Check if any skill-related keys changed
+      const skillsChanged = Object.keys(changes).some(
+        (key) => key.startsWith("skill_disabled_") || key === "skills",
+      );
+
+      if (skillsChanged) {
+        logger.debug("Skills or disabled status changed, reloading...");
+        loadSkills();
+        loadDisabledSkills();
+      }
+    };
+
     chrome.tabs.onActivated.addListener(handleTabActivated);
     chrome.tabs.onUpdated.addListener(handleTabUpdated);
+    chrome.storage.onChanged.addListener(handleStorageChanged);
 
     return () => {
       chrome.tabs.onActivated.removeListener(handleTabActivated);
       chrome.tabs.onUpdated.removeListener(handleTabUpdated);
+      chrome.storage.onChanged.removeListener(handleStorageChanged);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
