@@ -1,0 +1,31 @@
+packages/extension/src/content/content_script_v2.ts
+  b712ce027812779c 238,240-243,246-252,254-257,264-265
+packages/extension/src/sidepanel/views/fields/tabs/all-fields/AllFieldsTab.tsx
+  b712ce027812779c 84,86-87,89,94,99,101,105,113-121
+packages/extension/src/shared/components/index.tsx
+  b712ce027812779c 2,4-21
+packages/extension/src/shared/messages.ts
+  b712ce027812779c 11
+packages/extension/src/sidepanel/views/chat/ChatView.tsx
+  b712ce027812779c 119-126,129,134,573-583,591
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.7",
+  "base_commit_sha": "4aba393653536913223f041d46e80be1ab66ca29",
+  "prompts": {
+    "b712ce027812779c": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_3a76e2e7dffeHZB7zI1j1Tnm3i",
+        "model": "github-copilot/claude-sonnet-4.5"
+      },
+      "human_author": "Sergio Carracedo <hi@sergiocarracedo.es>",
+      "messages": [],
+      "total_additions": 94,
+      "total_deletions": 56,
+      "accepted_lines": 78,
+      "overriden_lines": 1
+    }
+  }
+}
