@@ -5,9 +5,13 @@ import type { Skill } from "../../../shared/types";
 import { getSkillDomainMatch } from "../../../shared/skill-utils";
 import { Card } from "../../../shared/components/ui/card";
 import { Button } from "../../../shared/components/ui/button";
-import { Switch } from "../../../shared/components/ui/switch";
 
 const logger = createLogger("SkillsView");
+
+function openSkillDetails(skillId: string) {
+  const url = `${chrome.runtime.getURL("src/options/index.html")}?tab=skills&skillId=${skillId}`;
+  chrome.tabs.create({ url });
+}
 
 function openOptionsPage(tab = "skills") {
   if (chrome.runtime.openOptionsPage) {
@@ -27,6 +31,31 @@ export default function SkillsView() {
   useEffect(() => {
     loadSkills();
     loadDisabledSkills();
+
+    // Listen for tab changes
+    const handleTabActivated = (_activeInfo: chrome.tabs.TabActiveInfo) => {
+      loadSkills();
+      loadDisabledSkills();
+    };
+
+    const handleTabUpdated = (
+      _tabId: number,
+      changeInfo: chrome.tabs.TabChangeInfo,
+      _tab: chrome.tabs.Tab,
+    ) => {
+      if (changeInfo.url) {
+        loadSkills();
+        loadDisabledSkills();
+      }
+    };
+
+    chrome.tabs.onActivated.addListener(handleTabActivated);
+    chrome.tabs.onUpdated.addListener(handleTabUpdated);
+
+    return () => {
+      chrome.tabs.onActivated.removeListener(handleTabActivated);
+      chrome.tabs.onUpdated.removeListener(handleTabUpdated);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -58,20 +87,6 @@ export default function SkillsView() {
       setDisabledSkills(disabledIds);
     } catch (error) {
       logger.error("Failed to load disabled skills:", error);
-    }
-  };
-
-  const handleToggle = async (skillId: string, disabled: boolean) => {
-    try {
-      const key = `skill_disabled_${skillId}`;
-      if (disabled) {
-        await chrome.storage.local.set({ [key]: true });
-      } else {
-        await chrome.storage.local.remove(key);
-      }
-      await loadDisabledSkills();
-    } catch (error) {
-      logger.error("Failed to toggle skill:", error);
     }
   };
 
@@ -121,14 +136,7 @@ export default function SkillsView() {
 
           return (
             <Card key={skill.id} className="p-3">
-              <div className="flex items-start gap-2 mb-2">
-                <div className="pt-0.5">
-                  <Switch
-                    checked={true}
-                    onCheckedChange={(checked) => handleToggle(skill.id, !checked)}
-                    title="Disable this skill"
-                  />
-                </div>
+              <div className="flex items-start gap-2">
                 <div className="flex-1 min-w-0">
                   <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-1">
                     {skill.name}
@@ -146,7 +154,7 @@ export default function SkillsView() {
                 <Button
                   variant="outline"
                   size="xs-icon"
-                  onClick={() => openOptionsPage("skills")}
+                  onClick={() => openSkillDetails(skill.id)}
                   title="View details"
                 >
                   <Eye className="h-3.5 w-3.5" />

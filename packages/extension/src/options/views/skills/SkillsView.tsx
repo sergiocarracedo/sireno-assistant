@@ -31,6 +31,23 @@ export default function SkillsTab() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Handle skillId URL parameter to auto-open skill editor
+  useEffect(() => {
+    if (skills.length === 0) return;
+
+    const params = new URLSearchParams(window.location.search);
+    const skillId = params.get("skillId");
+
+    if (skillId) {
+      const skill = skills.find((s) => s.id === skillId);
+      if (skill) {
+        setEditingSkill(skill);
+        // Clear URL parameter after opening
+        window.history.replaceState({}, "", window.location.pathname + "?tab=skills");
+      }
+    }
+  }, [skills]);
+
   const loadSkills = async () => {
     try {
       const response = await chrome.runtime.sendMessage({ type: "GET_SKILLS" });
