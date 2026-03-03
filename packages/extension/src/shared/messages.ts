@@ -60,7 +60,7 @@ export type SidePanelToServiceWorkerMessage =
   | { type: "REMOVE_EXCLUDED_FIELD"; url: string; fieldId: string }
   | { type: "EXCLUDE_FIELD"; fieldId: string; fieldLabel: string }
   | { type: "IS_FIELD_EXCLUDED"; url: string; fieldId: string }
-  | { type: "FETCH_MODELS"; provider: import("./types").Provider }
+  | { type: "FETCH_MODELS"; provider: import("./types").Provider; apiKey?: string }
   | { type: "GET_CACHED_MODELS"; provider: import("./types").Provider }
   | { type: "DEBUG_DUMP_STORAGE" };
 

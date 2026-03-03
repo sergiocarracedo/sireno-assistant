@@ -12,7 +12,7 @@ export interface ThinkingMessageProps {
 export function ThinkingMessage({ text = "Thinking...", subtle = false }: ThinkingMessageProps) {
   if (subtle) {
     return (
-      <div className="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 text-xs px-1 py-1">
+      <div className="flex items-center gap-1.5 text-gray-700 dark:text-gray-200 text-xs px-1 py-1">
         <Loader2 className="h-3 w-3 animate-spin" />
         <span>{text}</span>
       </div>
@@ -22,7 +22,7 @@ export function ThinkingMessage({ text = "Thinking...", subtle = false }: Thinki
   return (
     <div className="flex justify-start px-1">
       <Card className="max-w-[85%] p-3 bg-white dark:bg-gray-800">
-        <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
+        <div className="flex items-center gap-2 text-gray-700 dark:text-gray-200">
           <Loader2 className="h-4 w-4 animate-spin" />
           <span className="text-sm">{text}</span>
         </div>
@@ -104,8 +104,8 @@ export function EmptyChat({
 }: EmptyChatProps) {
   return (
     <div className="text-center py-12">
-      <div className="text-gray-400 dark:text-gray-500 mb-2 text-2xl">{icon}</div>
-      <div className="text-sm text-gray-500 dark:text-gray-400">{message}</div>
+      <div className="text-gray-700 dark:text-gray-200 mb-2 text-2xl">{icon}</div>
+      <div className="text-sm text-gray-700 dark:text-gray-200">{message}</div>
     </div>
   );
 }

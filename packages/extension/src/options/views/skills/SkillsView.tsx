@@ -1,11 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "../../../shared/i18n";
 import type { Skill } from "../../../shared/types";
-import {
-  skillMatchesDomain,
-  getSkillDomainMatch,
-  getSkillIntentTriggers,
-} from "../../../shared/skill-utils";
+import { getSkillDomainMatch } from "../../../shared/skill-utils";
 import SkillCard from "./components/SkillCard";
 import SkillEditor from "./components/SkillEditor";
 import { Button } from "../../../shared/components/ui/button";
@@ -16,14 +12,12 @@ import { createLogger } from "../../../shared/logger";
 
 const logger = createLogger("SkillsView");
 
-type FilterType = "all" | "active" | "inactive";
+type FilterType = "all" | "enabled" | "disabled";
 
 export default function SkillsTab() {
   const { t } = useTranslation();
   const [skills, setSkills] = useState<Skill[]>([]);
-  const [activeSkills, setActiveSkills] = useState<string[]>([]);
   const [disabledSkills, setDisabledSkills] = useState<string[]>([]);
-  const [currentDomain, setCurrentDomain] = useState<string>("");
   const [editingSkill, setEditingSkill] = useState<Skill | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -33,7 +27,6 @@ export default function SkillsTab() {
 
   useEffect(() => {
     loadSkills();
-    loadCurrentDomain();
     loadDisabledSkills();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -69,22 +62,6 @@ export default function SkillsTab() {
     }
   };
 
-  const loadCurrentDomain = async () => {
-    try {
-      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-      if (tab.url) {
-        const url = new URL(tab.url);
-        setCurrentDomain(url.hostname);
-
-        // Determine which skills are active for this domain
-        const active = skills.filter((skill) => skillMatchesDomain(skill, url.hostname, tab.url!));
-        setActiveSkills(active.map((s) => s.id));
-      }
-    } catch (error) {
-      logger.error("Failed to get current domain:", error);
-    }
-  };
-
   const handleSave = async (skill: Skill) => {
     try {
       await chrome.runtime.sendMessage({ type: "SAVE_SKILL", skill });
@@ -114,7 +91,6 @@ export default function SkillsTab() {
         await chrome.storage.local.remove(key);
       }
       await loadDisabledSkills();
-      await loadCurrentDomain(); // Refresh active skills
     } catch (error) {
       logger.error("Failed to toggle skill:", error);
       alert(`Failed to ${disabled ? "disable" : "enable"} skill`);
@@ -140,49 +116,32 @@ export default function SkillsTab() {
     }
   };
 
-  // Reload active skills when skills change or domain changes
-  useEffect(() => {
-    if (currentDomain && skills.length > 0) {
-      const active = skills.filter((skill) => {
-        try {
-          const mockUrl = `https://${currentDomain}/`;
-          return skillMatchesDomain(skill, currentDomain, mockUrl);
-        } catch {
-          return false;
-        }
-      });
-      setActiveSkills(active.map((s) => s.id));
-    }
-  }, [skills, currentDomain]);
-
   // Filter and search skills
   const filteredSkills = useMemo(() => {
     return skills.filter((skill) => {
-      // Apply filter
-      const isActive = activeSkills.includes(skill.id);
-      if (filterType === "active" && !isActive) return false;
-      if (filterType === "inactive" && isActive) return false;
+      // Apply enabled/disabled filter
+      const isDisabled = disabledSkills.includes(skill.id);
+      if (filterType === "enabled" && isDisabled) return false;
+      if (filterType === "disabled" && !isDisabled) return false;
 
       // Apply search
       if (searchQuery) {
         const query = searchQuery.toLowerCase();
         const domainMatch = getSkillDomainMatch(skill);
-        const triggers = getSkillIntentTriggers(skill);
         return (
           skill.name.toLowerCase().includes(query) ||
           skill.description.toLowerCase().includes(query) ||
           domainMatch.pattern.toLowerCase().includes(query) ||
-          skill.instructions.toLowerCase().includes(query) ||
-          triggers.some((trigger: string) => trigger.toLowerCase().includes(query))
+          skill.instructions.toLowerCase().includes(query)
         );
       }
 
       return true;
     });
-  }, [skills, activeSkills, filterType, searchQuery]);
+  }, [skills, disabledSkills, filterType, searchQuery]);
 
   if (loading) {
-    return <div className="py-8 text-center text-gray-400">Loading...</div>;
+    return <div className="py-8 text-center text-gray-600 dark:text-gray-300">Loading...</div>;
   }
 
   if (editingSkill || isCreating) {
@@ -200,16 +159,6 @@ export default function SkillsTab() {
 
   return (
     <div className="max-w-4xl mx-auto w-full px-6 py-6 flex flex-col h-full">
-      <div className="mb-4 p-3 bg-gray-50 dark:bg-gray-900/50 rounded-lg border border-gray-200 dark:border-gray-800">
-        <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">
-          Current domain:{" "}
-          <strong className="text-gray-900 dark:text-gray-100">{currentDomain || "Unknown"}</strong>
-        </div>
-        <div className="text-xs text-green-600 dark:text-green-400 font-semibold">
-          {activeSkills.length} skill{activeSkills.length !== 1 ? "s" : ""} active on this page
-        </div>
-      </div>
-
       {/* Action Buttons */}
       <div className="mb-4 flex gap-2">
         <Button onClick={() => setIsCreating(true)} className="gap-2">
@@ -233,7 +182,7 @@ export default function SkillsTab() {
       {/* Search and Filter Bar */}
       <div className="mb-4 space-y-3">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-600 dark:text-gray-300" />
           <Input
             type="text"
             placeholder="Search skills..."
@@ -254,20 +203,20 @@ export default function SkillsTab() {
             {t("skills.allCount", { count: skills.length })}
           </Button>
           <Button
-            variant={filterType === "active" ? "default" : "outline"}
+            variant={filterType === "enabled" ? "default" : "outline"}
             size="xs"
-            onClick={() => setFilterType("active")}
+            onClick={() => setFilterType("enabled")}
             className="flex-1"
           >
-            {t("skills.activeCount", { count: activeSkills.length })}
+            Enabled ({skills.length - disabledSkills.length})
           </Button>
           <Button
-            variant={filterType === "inactive" ? "default" : "outline"}
+            variant={filterType === "disabled" ? "default" : "outline"}
             size="xs"
-            onClick={() => setFilterType("inactive")}
+            onClick={() => setFilterType("disabled")}
             className="flex-1"
           >
-            {t("skills.inactiveCount", { count: skills.length - activeSkills.length })}
+            Disabled ({disabledSkills.length})
           </Button>
         </div>
       </div>
@@ -275,14 +224,14 @@ export default function SkillsTab() {
       {/* Skills List */}
       <div className="flex-1 overflow-y-auto">
         {filteredSkills.length === 0 && skills.length > 0 && (
-          <div className="text-center py-12 px-4 text-gray-500 dark:text-gray-400">
+          <div className="text-center py-12 px-4 text-gray-600 dark:text-gray-300">
             <Search className="h-16 w-16 mb-3 mx-auto" />
             <div className="text-sm">{t("skills.noSkillsMatch")}</div>
           </div>
         )}
 
         {skills.length === 0 && (
-          <div className="text-center py-12 px-4 text-gray-500 dark:text-gray-400">
+          <div className="text-center py-12 px-4 text-gray-600 dark:text-gray-300">
             <Target className="h-20 w-20 mb-4 mx-auto" />
             <div className="text-base mb-2">{t("skills.noSkillsYet")}</div>
             <div className="text-sm mb-4">{t("skills.createFirstDescription")}</div>
@@ -297,7 +246,6 @@ export default function SkillsTab() {
           <SkillCard
             key={skill.id}
             skill={skill}
-            isActive={activeSkills.includes(skill.id)}
             isDisabled={disabledSkills.includes(skill.id)}
             onEdit={setEditingSkill}
             onDelete={handleDelete}

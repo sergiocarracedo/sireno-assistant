@@ -12,13 +12,6 @@ export function getSkillDomainMatch(skill: Skill): { type: "exact" | "regex"; pa
 }
 
 /**
- * Get intent triggers from skill metadata
- */
-export function getSkillIntentTriggers(skill: Skill): string[] {
-  return skill.metadata?.intentTriggers || [];
-}
-
-/**
  * Get safety settings from skill metadata
  */
 export function getSkillSafety(skill: Skill): {

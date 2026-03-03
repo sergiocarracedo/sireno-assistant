@@ -16,7 +16,7 @@ import {
 import { Slider } from "../../../shared/components/ui/slider";
 import { Separator } from "../../../shared/components/ui/separator";
 import { Checkbox } from "../../../shared/components/ui/checkbox";
-import { Loader2, RefreshCw, AlertTriangle } from "lucide-react";
+import { Loader2, RefreshCw, AlertTriangle, CheckCircle2, Eye, EyeOff } from "lucide-react";
 import { useTranslation, type SupportedLanguage } from "../../../shared/i18n";
 import { createLogger } from "../../../shared/logger";
 import toast, { Toaster } from "react-hot-toast";
@@ -110,6 +110,7 @@ export default function SettingsTab({ onNavigate }: SettingsTabProps) {
     showSparkOnHover: true,
   });
   const [loading, setLoading] = useState(true);
+  const [showApiKey, setShowApiKey] = useState(false);
 
   // Per-provider model lists (fetched from API or fallback)
   const [fetchedModels, setFetchedModels] = useState<Partial<Record<Provider, string[]>>>({});
@@ -158,6 +159,7 @@ export default function SettingsTab({ onNavigate }: SettingsTabProps) {
       const response = await chrome.runtime.sendMessage({
         type: "FETCH_MODELS",
         provider,
+        apiKey, // Pass the API key directly
       });
       if (response?.type === "MODELS_RESPONSE") {
         setFetchedModels((prev) => ({ ...prev, [provider]: response.models }));
@@ -203,7 +205,7 @@ export default function SettingsTab({ onNavigate }: SettingsTabProps) {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+        <Loader2 className="w-6 h-6 animate-spin text-gray-600 dark:text-gray-300" />
       </div>
     );
   }
@@ -268,16 +270,67 @@ export default function SettingsTab({ onNavigate }: SettingsTabProps) {
                 onChange={(value) => handleProviderChange(value as Provider)}
               />
               {PROVIDER_INFO[config.provider]?.description && (
-                <p className="text-xs text-gray-500 dark:text-gray-400">
+                <p className="text-xs text-gray-600 dark:text-gray-300">
                   {PROVIDER_INFO[config.provider].description}
                 </p>
               )}
             </div>
 
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="model">Model</Label>
-                {hasApiKey && (
+              <Label htmlFor="apiKey">API Key</Label>
+              <div className="relative">
+                <Input
+                  id="apiKey"
+                  type={showApiKey ? "text" : "password"}
+                  value={config.providerConfigs[config.provider]?.apiKey ?? ""}
+                  onChange={(e) => {
+                    const newApiKey = e.target.value;
+                    setConfig({
+                      ...config,
+                      providerConfigs: {
+                        ...config.providerConfigs,
+                        [config.provider]: {
+                          ...config.providerConfigs[config.provider],
+                          apiKey: newApiKey,
+                        },
+                      },
+                    });
+                    // Auto-fetch models when API key is added
+                    if (newApiKey?.trim() && !hasApiKey) {
+                      fetchLiveModels(config.provider, newApiKey);
+                    }
+                  }}
+                  placeholder="Enter your API key"
+                  className="pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowApiKey(!showApiKey)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100"
+                  title={showApiKey ? "Hide API key" : "Show API key"}
+                >
+                  {showApiKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+              <p className="text-xs text-gray-600 dark:text-gray-300">
+                Your API key is stored locally and never shared.{" "}
+                {PROVIDER_INFO[config.provider]?.docsUrl && (
+                  <a
+                    href={PROVIDER_INFO[config.provider].docsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-violet-600 dark:text-violet-400 underline hover:no-underline"
+                  >
+                    Get your API key →
+                  </a>
+                )}
+              </p>
+            </div>
+
+            {hasApiKey ? (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="model">Model</Label>
                   <button
                     onClick={() =>
                       fetchLiveModels(
@@ -294,90 +347,70 @@ export default function SettingsTab({ onNavigate }: SettingsTabProps) {
                     />
                     {fetchState === "fetching" ? "Fetching…" : "Refresh models"}
                   </button>
+                </div>
+
+                {currentModelDeprecated && (
+                  <div className="flex items-start gap-2 p-2.5 bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-md">
+                    <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                    <p className="text-xs text-amber-700 dark:text-amber-300">
+                      The model <strong>{currentModel}</strong> is no longer available from this
+                      provider. Please select a different model.
+                    </p>
+                  </div>
+                )}
+
+                <Select
+                  options={modelOptions.map((m) => ({
+                    value: m.value,
+                    label: m.label,
+                  }))}
+                  value={currentModel}
+                  onChange={(value) =>
+                    setConfig({
+                      ...config,
+                      providerConfigs: {
+                        ...config.providerConfigs,
+                        [config.provider]: {
+                          ...config.providerConfigs[config.provider],
+                          model: value,
+                        },
+                      },
+                    })
+                  }
+                />
+
+                {fetchState === "error" && fetchError && (
+                  <div className="flex items-start gap-2 p-2.5 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-md">
+                    <AlertTriangle className="h-4 w-4 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
+                    <div className="flex-1">
+                      <p className="text-xs font-medium text-red-700 dark:text-red-300 mb-1">
+                        Failed to fetch models from {PROVIDER_NAMES[config.provider]}
+                      </p>
+                      <p className="text-xs text-red-600 dark:text-red-400">
+                        {fetchError}. Using fallback list.
+                      </p>
+                    </div>
+                  </div>
+                )}
+                {fetchState === "success" && (
+                  <p className="text-xs text-green-600 dark:text-green-400 flex items-center gap-1">
+                    <CheckCircle2 className="h-3 w-3" />
+                    Model list updated from {PROVIDER_NAMES[config.provider]} API.
+                  </p>
                 )}
               </div>
-
-              {currentModelDeprecated && (
-                <div className="flex items-start gap-2 p-2.5 bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-md">
-                  <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
-                  <p className="text-xs text-amber-700 dark:text-amber-300">
-                    The model <strong>{currentModel}</strong> is no longer available from this
-                    provider. Please select a different model.
-                  </p>
-                </div>
-              )}
-
-              <Select
-                options={modelOptions.map((m) => ({
-                  value: m.value,
-                  label: m.label,
-                }))}
-                value={currentModel}
-                onChange={(value) =>
-                  setConfig({
-                    ...config,
-                    providerConfigs: {
-                      ...config.providerConfigs,
-                      [config.provider]: {
-                        ...config.providerConfigs[config.provider],
-                        model: value,
-                      },
-                    },
-                  })
-                }
-              />
-
-              {fetchState === "error" && fetchError && (
-                <p className="text-xs text-red-600 dark:text-red-400">
-                  Failed to fetch models: {fetchError}. Using fallback list.
+            ) : (
+              <div className="p-4 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-md">
+                <p className="text-sm text-gray-700 dark:text-gray-200 mb-2">
+                  Model selection requires an API key
                 </p>
-              )}
-              {fetchState === "success" && (
-                <p className="text-xs text-green-600 dark:text-green-400">
-                  Model list updated from {PROVIDER_NAMES[config.provider]} API.
+                <p className="text-xs text-gray-600 dark:text-gray-300">
+                  Enter your {PROVIDER_NAMES[config.provider]} API key above to see available
+                  models. Your API key will be used to fetch the latest model list from the
+                  provider.
                 </p>
-              )}
-              {!hasApiKey && (
-                <p className="text-xs text-gray-400 dark:text-gray-500">
-                  Add an API key to fetch the latest models from {PROVIDER_NAMES[config.provider]}.
-                </p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="apiKey">API Key</Label>
-              <Input
-                id="apiKey"
-                type="password"
-                value={config.providerConfigs[config.provider]?.apiKey ?? ""}
-                onChange={(e) =>
-                  setConfig({
-                    ...config,
-                    providerConfigs: {
-                      ...config.providerConfigs,
-                      [config.provider]: {
-                        ...config.providerConfigs[config.provider],
-                        apiKey: e.target.value,
-                      },
-                    },
-                  })
-                }
-                placeholder="Enter your API key"
-              />
-              <p className="text-xs text-gray-500 dark:text-gray-400">
-                Your API key is stored locally and never shared.{" "}
-                {PROVIDER_INFO[config.provider]?.docsUrl && (
-                  <a
-                    href={PROVIDER_INFO[config.provider].docsUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-violet-600 dark:text-violet-400 underline hover:no-underline"
-                  >
-                    Get your API key →
-                  </a>
-                )}
-              </p>
-            </div>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -390,7 +423,7 @@ export default function SettingsTab({ onNavigate }: SettingsTabProps) {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <Label htmlFor="temperature">Temperature</Label>
-                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                <span className="text-sm font-medium text-gray-600 dark:text-gray-600 dark:text-gray-300">
                   {(config.temperature ?? 0.7).toFixed(1)}
                 </span>
               </div>
@@ -402,7 +435,7 @@ export default function SettingsTab({ onNavigate }: SettingsTabProps) {
                 value={[config.temperature ?? 0.7]}
                 onValueChange={(value) => setConfig({ ...config, temperature: value[0] ?? 0.7 })}
               />
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <p className="text-xs text-gray-600 dark:text-gray-300">
                 Lower values make output more focused and deterministic
               </p>
             </div>
@@ -419,7 +452,7 @@ export default function SettingsTab({ onNavigate }: SettingsTabProps) {
                 min={1}
                 max={10000}
               />
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <p className="text-xs text-gray-600 dark:text-gray-300">
                 Maximum length of the generated response
               </p>
             </div>
@@ -438,7 +471,7 @@ export default function SettingsTab({ onNavigate }: SettingsTabProps) {
                 min={1000}
                 max={100000}
               />
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <p className="text-xs text-gray-600 dark:text-gray-300">
                 Maximum page context to send when using &quot;all page text&quot; mode
               </p>
             </div>
@@ -464,7 +497,7 @@ export default function SettingsTab({ onNavigate }: SettingsTabProps) {
                   window.location.reload();
                 }}
               />
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <p className="text-xs text-gray-600 dark:text-gray-300">
                 {t("settings.languageHelp")}
               </p>
             </div>
@@ -491,7 +524,7 @@ export default function SettingsTab({ onNavigate }: SettingsTabProps) {
                 <Label htmlFor="showSparkOnHover" className="cursor-pointer font-medium">
                   Show assistant button on hover
                 </Label>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
+                <p className="text-xs text-gray-600 dark:text-gray-300">
                   Display the assistant button when hovering over fields. If disabled, buttons only
                   appear when a field is focused.
                 </p>
@@ -512,7 +545,7 @@ export default function SettingsTab({ onNavigate }: SettingsTabProps) {
                 <Label htmlFor="enableLogging" className="cursor-pointer font-medium">
                   Enable LLM logging
                 </Label>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
+                <p className="text-xs text-gray-600 dark:text-gray-300">
                   Store all LLM requests and responses for transparency. Logs are kept locally and
                   limited to the last 100 entries.
                 </p>

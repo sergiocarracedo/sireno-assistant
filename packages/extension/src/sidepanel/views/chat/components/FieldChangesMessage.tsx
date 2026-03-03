@@ -87,11 +87,11 @@ export default function FieldChangesMessage({
               className="bg-gray-50 dark:bg-gray-900/50 p-3 rounded border border-gray-200 dark:border-gray-800"
             >
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-[11px] font-semibold text-gray-500 dark:text-gray-400">
+                <span className="text-[11px] font-semibold text-gray-700 dark:text-gray-200">
                   Field #{change.fieldIndex + 1}
                 </span>
                 {field?.labelHint && (
-                  <span className="text-[11px] text-gray-600 dark:text-gray-400 truncate flex-1">
+                  <span className="text-[11px] text-gray-600 dark:text-gray-600 dark:text-gray-300 truncate flex-1">
                     {field.labelHint}
                   </span>
                 )}
@@ -126,7 +126,7 @@ export default function FieldChangesMessage({
               </div>
 
               {change.rationale && (
-                <div className="text-[11px] text-gray-600 dark:text-gray-400 mt-2 italic">
+                <div className="text-[11px] text-gray-600 dark:text-gray-600 dark:text-gray-300 mt-2 italic">
                   {change.rationale}
                 </div>
               )}

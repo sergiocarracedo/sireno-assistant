@@ -484,8 +484,12 @@ IMPORTANT: Provide ONLY the new/transformed text value for the field. Do not inc
 
       case "FETCH_MODELS": {
         try {
-          const config = await getConfig();
-          const apiKey = config.providerConfigs[message.provider]?.apiKey ?? "";
+          // Use provided API key or fall back to stored config
+          let apiKey = message.apiKey;
+          if (!apiKey) {
+            const config = await getConfig();
+            apiKey = config.providerConfigs[message.provider]?.apiKey ?? "";
+          }
           const models = await fetchModels(message.provider, apiKey);
           sendResponse({
             type: "MODELS_RESPONSE",

@@ -13,7 +13,7 @@ export default function SearchBar({ value, onChange }: SearchBarProps) {
 
   return (
     <div className="relative mb-4">
-      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-600 dark:text-gray-300" />
       <Input
         type="text"
         placeholder={t("help.searchPlaceholder")}

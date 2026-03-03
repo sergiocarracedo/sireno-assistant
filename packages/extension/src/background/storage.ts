@@ -13,15 +13,15 @@ const DEFAULT_CONFIG: ExtensionConfig = {
       apiKey: "",
     },
     openai: {
-      model: "gpt-5.2",
+      model: "gpt-4o",
       apiKey: "",
     },
     anthropic: {
-      model: "claude-opus-4-6",
+      model: "claude-opus-4-5",
       apiKey: "",
     },
     google: {
-      model: "gemini-3-pro-preview",
+      model: "gemini-2.5-pro",
       apiKey: "",
     },
   },

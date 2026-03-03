@@ -114,7 +114,7 @@ export default function LogsTab() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <p className="text-gray-500">Loading logs...</p>
+        <p className="text-gray-600 dark:text-gray-300">Loading logs...</p>
       </div>
     );
   }
@@ -136,7 +136,7 @@ export default function LogsTab() {
           </Button>
         </div>
         <div className="relative">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-400" />
+          <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-600 dark:text-gray-300" />
           <Input
             type="text"
             placeholder="Search logs..."
@@ -152,7 +152,7 @@ export default function LogsTab() {
         {filteredLogs.length === 0 ? (
           <Card>
             <CardContent className="pt-6">
-              <div className="text-center text-gray-500">
+              <div className="text-center text-gray-600 dark:text-gray-300">
                 {logs.length === 0 ? (
                   <>
                     <p className="mb-2">No logs yet.</p>
@@ -222,7 +222,7 @@ export default function LogsTab() {
                       </h4>
                       {log.request.messages.map((msg, idx) => (
                         <div key={idx} className="mb-2">
-                          <div className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                          <div className="text-xs font-medium text-gray-600 dark:text-gray-600 dark:text-gray-300 mb-1">
                             {msg.role}:
                           </div>
                           <pre className="text-xs bg-gray-50 dark:bg-gray-800 p-2 rounded overflow-x-auto whitespace-pre-wrap break-words">
@@ -231,7 +231,7 @@ export default function LogsTab() {
                         </div>
                       ))}
                       {log.request.temperature !== undefined && (
-                        <div className="text-xs text-gray-500 mt-1">
+                        <div className="text-xs text-gray-600 dark:text-gray-300 mt-1">
                           Temperature: {log.request.temperature}
                         </div>
                       )}

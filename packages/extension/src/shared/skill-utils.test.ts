@@ -1,10 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  skillMatchesDomain,
-  getSkillDomainMatch,
-  getSkillIntentTriggers,
-  getSkillSafety,
-} from "./skill-utils";
+import { skillMatchesDomain, getSkillDomainMatch, getSkillSafety } from "./skill-utils";
 import type { Skill } from "./types";
 
 // Helper to create test skills
@@ -33,25 +28,6 @@ describe("skill-utils", () => {
 
       const match = getSkillDomainMatch(skill);
       expect(match).toEqual({ type: "exact", pattern: "example.com" });
-    });
-  });
-
-  describe("getSkillIntentTriggers", () => {
-    it("should return empty array for skills without triggers", () => {
-      const skill = createSkill();
-      const triggers = getSkillIntentTriggers(skill);
-      expect(triggers).toEqual([]);
-    });
-
-    it("should return configured intent triggers", () => {
-      const skill = createSkill({
-        metadata: {
-          intentTriggers: ["translate", "convert"],
-        },
-      });
-
-      const triggers = getSkillIntentTriggers(skill);
-      expect(triggers).toEqual(["translate", "convert"]);
     });
   });
 

@@ -4,7 +4,6 @@ import { ThemeToggle } from "../shared/components/ThemeToggle";
 import { useTheme } from "../shared/hooks/useTheme";
 import { createLogger } from "../shared/logger";
 import type { ExtensionConfig } from "../shared/types";
-import FieldsView from "./views/fields/FieldsView";
 import InfoView from "./views/info/InfoView";
 import LogsView from "./views/logs/LogsView";
 import SettingsView from "./views/settings/SettingsView";
@@ -12,12 +11,12 @@ import SkillsView from "./views/skills/SkillsView";
 
 const logger = createLogger("OptionsApp");
 
-type TabKey = "settings" | "skills" | "fields" | "logs" | "info";
+type TabKey = "settings" | "skills" | "logs" | "info";
 
 function getInitialTab(): TabKey {
   const params = new URLSearchParams(window.location.search);
   const tab = params.get("tab") as TabKey | null;
-  const valid: TabKey[] = ["settings", "skills", "fields", "logs", "info"];
+  const valid: TabKey[] = ["settings", "skills", "logs", "info"];
   return tab && valid.includes(tab) ? tab : "settings";
 }
 
@@ -53,21 +52,48 @@ export default function OptionsApp() {
 
   const showLogs = config?.enableLogging === true;
 
+  const renderContent = () => {
+    switch (activeTab) {
+      case "settings":
+        return <SettingsView onNavigate={() => {}} />;
+      case "skills":
+        return <SkillsView />;
+      case "logs":
+        return <LogsView />;
+      case "info":
+        return <InfoView />;
+      default:
+        return <SettingsView onNavigate={() => {}} />;
+    }
+  };
+
   return (
     /*
      * Layout: fixed-height viewport column
-     *   - Navbar (fixed height, never scrolls)
+     *   - Navbar with tabs (fixed height, never scrolls)
      *   - Onboarding banner (fixed, only when present)
-     *   - Tabs header row (fixed, never scrolls)
      *   - Scrollable content area (flex-1 overflow-y-auto)
      */
     <div className="h-screen flex flex-col bg-gray-50 dark:bg-gray-950 overflow-hidden">
-      {/* ── Navbar ── */}
+      {/* ── Navbar with Tabs ── */}
       <Navbar isBordered maxWidth="full">
         <NavbarBrand>
           <img src={chrome.runtime.getURL("icons/logo.svg")} alt="Sireno" className="w-6 h-6" />
           <span className="font-semibold">Sireno Assistant</span>
         </NavbarBrand>
+        <NavbarContent className="hidden sm:flex gap-4" justify="center">
+          <Tabs
+            selectedKey={activeTab}
+            onSelectionChange={(key) => handleTabChange(key as TabKey)}
+            variant="solid"
+            color="primary"
+          >
+            <Tab key="settings" title="Settings" />
+            <Tab key="skills" title="Skills" />
+            {showLogs && <Tab key="logs" title="Logs" />}
+            <Tab key="info" title="Help & About" />
+          </Tabs>
+        </NavbarContent>
         <NavbarContent justify="end">
           <span className="text-xs">v{chrome.runtime.getManifest().version}</span>
           <ThemeToggle />
@@ -96,35 +122,8 @@ export default function OptionsApp() {
         </div>
       )}
 
-      {/* ── Tabs ── */}
-      <Tabs
-        selectedKey={activeTab}
-        onSelectionChange={(key) => handleTabChange(key as TabKey)}
-        variant="solid"
-        color="secondary"
-      >
-        <Tab key="settings" title="Settings">
-          <SettingsView onNavigate={() => {}} />
-        </Tab>
-
-        <Tab key="skills" title="Skills">
-          <SkillsView />
-        </Tab>
-
-        <Tab key="fields" title="Fields">
-          <FieldsView />
-        </Tab>
-
-        {showLogs ? (
-          <Tab key="logs" title="Logs">
-            <LogsView />
-          </Tab>
-        ) : null}
-
-        <Tab key="info" title="Help & About">
-          <InfoView />
-        </Tab>
-      </Tabs>
+      {/* ── Content ── */}
+      <div className="flex-1 overflow-y-auto">{renderContent()}</div>
     </div>
   );
 }

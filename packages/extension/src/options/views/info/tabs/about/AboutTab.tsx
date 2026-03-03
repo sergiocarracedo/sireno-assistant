@@ -15,7 +15,7 @@ export default function AboutTab() {
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">
           {t("about.title")}
         </h1>
-        <div className="text-sm text-gray-500 dark:text-gray-400">
+        <div className="text-sm text-gray-600 dark:text-gray-300">
           {t("about.version")} {version}
         </div>
       </div>
@@ -37,7 +37,7 @@ export default function AboutTab() {
                 if (parent && !parent.querySelector(".fallback-initials")) {
                   const fallback = document.createElement("div");
                   fallback.className =
-                    "fallback-initials text-4xl font-bold text-gray-500 dark:text-gray-400";
+                    "fallback-initials text-4xl font-bold text-gray-600 dark:text-gray-300";
                   fallback.textContent = "SC";
                   parent.appendChild(fallback);
                 }
@@ -46,7 +46,7 @@ export default function AboutTab() {
           </div>
           <div>
             <div className="font-semibold text-gray-900 dark:text-gray-100">Sergio Carracedo</div>
-            <div className="text-sm text-gray-500 dark:text-gray-400">{t("about.creator")}</div>
+            <div className="text-sm text-gray-600 dark:text-gray-300">{t("about.creator")}</div>
           </div>
           <div className="flex flex-col gap-2 w-full">
             <a
@@ -78,7 +78,7 @@ export default function AboutTab() {
               <Lock className="h-5 w-5" />
               {t("about.privacy.title")}
             </h2>
-            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+            <p className="text-sm text-gray-700 dark:text-gray-200 leading-relaxed">
               {t("about.privacy.text")}
             </p>
           </section>
@@ -89,7 +89,7 @@ export default function AboutTab() {
               <Github className="h-5 w-5" />
               {t("about.openSource.title")}
             </h2>
-            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
+            <p className="text-sm text-gray-700 dark:text-gray-200 leading-relaxed mb-3">
               {t("about.openSource.text")}
             </p>
             <div className="flex gap-2 flex-wrap">
@@ -122,7 +122,7 @@ export default function AboutTab() {
               <AlertTriangle className="h-5 w-5" />
               {t("about.disclaimer.title")}
             </h2>
-            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+            <p className="text-sm text-gray-700 dark:text-gray-200 leading-relaxed">
               {t("about.disclaimer.text")}
             </p>
           </section>
@@ -133,7 +133,7 @@ export default function AboutTab() {
               <Heart className="h-5 w-5 text-red-500" />
               {t("about.support.title")}
             </h2>
-            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
+            <p className="text-sm text-gray-700 dark:text-gray-200 leading-relaxed mb-3">
               {t("about.support.text")}
             </p>
             <div className="flex gap-2">
@@ -152,7 +152,7 @@ export default function AboutTab() {
 
           {/* License */}
           <section className="pt-4 border-t border-gray-200 dark:border-gray-800">
-            <div className="text-xs text-gray-500 dark:text-gray-500">
+            <div className="text-xs text-gray-600 dark:text-gray-300">
               {t("about.license")}{" "}
               <a
                 href="https://github.com/sergiocarracedo/sireno-assistant/blob/main/LICENSE"

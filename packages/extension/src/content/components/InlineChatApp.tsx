@@ -177,11 +177,14 @@ export function InlineChatApp({
                   {activeSkillsCount} active skill{activeSkillsCount !== 1 ? "s" : ""}
                 </p>
                 {skills.map((skill, i) => (
-                  <div key={i} className="text-xs text-gray-300 dark:text-gray-400">
+                  <div
+                    key={i}
+                    className="text-xs text-gray-300 dark:text-gray-600 dark:text-gray-300"
+                  >
                     • {skill.name}
                   </div>
                 ))}
-                {/* <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">Click to manage</p> */}
+                {/* <p className="text-xs text-gray-700 dark:text-gray-200 mt-1">Click to manage</p> */}
               </div>
             }
             placement="bottom"
@@ -225,7 +228,7 @@ export function InlineChatApp({
             <Tooltip content="Hide assistant button for this field" placement="top">
               <button
                 onClick={handleExcludeField}
-                className="text-xs text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:underline flex items-center gap-1"
+                className="text-xs text-gray-700 dark:text-gray-200 hover:text-red-600 dark:hover:text-red-400 hover:underline flex items-center gap-1"
               >
                 <EyeOff className="h-3 w-3" />
                 Exclude field

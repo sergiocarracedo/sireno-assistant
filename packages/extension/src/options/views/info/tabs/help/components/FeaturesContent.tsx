@@ -23,7 +23,7 @@ export default function FeaturesContent({ searchQuery }: FeaturesContentProps) {
             <MessageSquare className="h-5 w-5" />
             Inline Chat
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
+          <p className="text-gray-700 dark:text-gray-200 leading-relaxed mb-3">
             Inline Chat provides AI assistance directly on form fields. Perfect for quick,
             single-field fills.
           </p>
@@ -56,7 +56,7 @@ export default function FeaturesContent({ searchQuery }: FeaturesContentProps) {
             <MessagesSquare className="h-5 w-5" />
             Sidepanel Chat
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
+          <p className="text-gray-700 dark:text-gray-200 leading-relaxed mb-3">
             Sidepanel Chat lets you fill multiple fields at once with a single prompt. It provides
             three context levels for different scenarios:
           </p>
@@ -67,7 +67,7 @@ export default function FeaturesContent({ searchQuery }: FeaturesContentProps) {
                 <Target className="h-4 w-4" />
                 Selected Fields Only
               </div>
-              <div className="text-xs text-gray-600 dark:text-gray-400">
+              <div className="text-xs text-gray-700 dark:text-gray-200">
                 AI sees only the fields you&apos;ve selected. Best for focused, specific fills.
               </div>
             </div>
@@ -77,7 +77,7 @@ export default function FeaturesContent({ searchQuery }: FeaturesContentProps) {
                 <FileText className="h-4 w-4" />
                 All Form Fields
               </div>
-              <div className="text-xs text-gray-600 dark:text-gray-400">
+              <div className="text-xs text-gray-700 dark:text-gray-200">
                 AI sees all detectable form fields on the page. Better context for related fields.
               </div>
             </div>
@@ -87,7 +87,7 @@ export default function FeaturesContent({ searchQuery }: FeaturesContentProps) {
                 <Globe className="h-4 w-4" />
                 Full Page Content
               </div>
-              <div className="text-xs text-gray-600 dark:text-gray-400">
+              <div className="text-xs text-gray-700 dark:text-gray-200">
                 AI sees the entire page content. Most context, useful for complex forms.
               </div>
             </div>
@@ -115,7 +115,7 @@ export default function FeaturesContent({ searchQuery }: FeaturesContentProps) {
             <Target className="h-5 w-5" />
             Skills System
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
+          <p className="text-gray-700 dark:text-gray-200 leading-relaxed mb-3">
             Skills are pre-configured AI assistants that activate automatically on specific
             websites. They provide domain-specific knowledge and shortcuts.
           </p>
@@ -124,7 +124,7 @@ export default function FeaturesContent({ searchQuery }: FeaturesContentProps) {
             <div className="font-medium text-gray-900 dark:text-gray-100 mb-2">
               Built-in skills include:
             </div>
-            <ul className="space-y-1 text-gray-600 dark:text-gray-400 ml-4">
+            <ul className="space-y-1 text-gray-700 dark:text-gray-200 ml-4">
               <li className="flex gap-2">
                 <span>•</span>
                 <span>Job application helper for LinkedIn and Indeed</span>
@@ -150,7 +150,7 @@ export default function FeaturesContent({ searchQuery }: FeaturesContentProps) {
             <div className="font-medium text-gray-900 dark:text-gray-100">
               You can also create custom skills for:
             </div>
-            <ul className="space-y-1 text-gray-600 dark:text-gray-400 ml-4">
+            <ul className="space-y-1 text-gray-700 dark:text-gray-200 ml-4">
               <li className="flex gap-2">
                 <span>•</span>
                 <span>Internal company tools</span>
@@ -175,11 +175,11 @@ export default function FeaturesContent({ searchQuery }: FeaturesContentProps) {
             <List className="h-5 w-5" />
             Fields View
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
+          <p className="text-gray-700 dark:text-gray-200 leading-relaxed mb-3">
             The Fields tab shows all detectable form fields on the current page. Use it to:
           </p>
 
-          <ul className="space-y-2 text-gray-600 dark:text-gray-400 ml-4">
+          <ul className="space-y-2 text-gray-700 dark:text-gray-200 ml-4">
             <li className="flex gap-2">
               <span>•</span>
               <span>
@@ -218,11 +218,11 @@ export default function FeaturesContent({ searchQuery }: FeaturesContentProps) {
             <EyeOff className="h-5 w-5" />
             Field Exclusion
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
+          <p className="text-gray-700 dark:text-gray-200 leading-relaxed mb-3">
             Exclude fields to prevent AI from accessing them. Useful for:
           </p>
 
-          <ul className="space-y-1 text-gray-600 dark:text-gray-400 ml-4 mb-3">
+          <ul className="space-y-1 text-gray-700 dark:text-gray-200 ml-4 mb-3">
             <li className="flex gap-2">
               <span>•</span>
               <span>Password fields</span>

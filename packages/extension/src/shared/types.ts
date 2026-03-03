@@ -46,8 +46,6 @@ export interface Skill {
       type: "exact" | "regex";
       pattern: string;
     };
-    /** Intent keywords for activation */
-    intentTriggers?: string[];
     /** Safety settings */
     safety?: {
       neverModifyPasswords?: boolean;

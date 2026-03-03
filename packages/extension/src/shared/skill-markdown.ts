@@ -35,14 +35,6 @@ export function skillToMarkdown(skill: Skill): string {
       lines.push(`    pattern: "${skill.metadata.domainMatch.pattern}"`);
     }
 
-    // Intent triggers
-    if (skill.metadata.intentTriggers && skill.metadata.intentTriggers.length > 0) {
-      lines.push(`  intentTriggers:`);
-      skill.metadata.intentTriggers.forEach((trigger) => {
-        lines.push(`    - ${trigger}`);
-      });
-    }
-
     // Safety settings
     if (skill.metadata.safety) {
       lines.push(`  safety:`);
@@ -56,7 +48,7 @@ export function skillToMarkdown(skill: Skill): string {
 
     // Other custom metadata
     Object.keys(skill.metadata).forEach((key) => {
-      if (key !== "domainMatch" && key !== "intentTriggers" && key !== "safety") {
+      if (key !== "domainMatch" && key !== "safety") {
         const value = skill.metadata![key];
         if (typeof value === "string") {
           lines.push(`  ${key}: "${value}"`);
@@ -88,7 +80,6 @@ export function markdownToSkill(markdown: string): Skill {
   let license: string | undefined;
   let compatibility: string | undefined;
   let domainMatch: { type: "exact" | "regex"; pattern: string } | undefined;
-  let intentTriggers: string[] = [];
   let safety: { neverModifyPasswords?: boolean; maxFieldLength?: number } = {};
   let customMetadata: Record<string, any> = {};
   let instructions = "";
@@ -138,8 +129,6 @@ export function markdownToSkill(markdown: string): Skill {
 
           if (currentMetadataKey === "domainMatch") {
             domainMatch = { type: "exact", pattern: "*" };
-          } else if (currentMetadataKey === "intentTriggers") {
-            intentTriggers = [];
           } else if (currentMetadataKey === "safety") {
             safety = {};
           } else if (value) {
@@ -167,8 +156,6 @@ export function markdownToSkill(markdown: string): Skill {
               safety.maxFieldLength = parseInt(value, 10);
             }
           }
-        } else if (trimmed.startsWith("- ") && currentMetadataKey === "intentTriggers") {
-          intentTriggers.push(trimmed.substring(2));
         }
       }
     }
@@ -199,10 +186,6 @@ export function markdownToSkill(markdown: string): Skill {
 
   if (domainMatch) {
     metadata.domainMatch = domainMatch;
-  }
-
-  if (intentTriggers.length > 0) {
-    metadata.intentTriggers = intentTriggers;
   }
 
   if (Object.keys(safety).length > 0) {

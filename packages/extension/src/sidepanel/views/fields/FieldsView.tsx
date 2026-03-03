@@ -9,17 +9,17 @@ export default function FieldsView() {
   const [activeTab, setActiveTab] = useState("fields");
 
   return (
-    <div className="max-w-4xl mx-auto w-full px-6 py-6 flex flex-col h-full">
+    <div className="w-full px-4 py-4 flex flex-col h-full">
       <div className="mb-4">
-        <h1 className="text-xl font-bold mb-2">{t("fieldsView.title")}</h1>
-        <p className="text-sm">{t("fieldsView.subtitle")}</p>
+        <h1 className="text-lg font-bold mb-2">{t("fieldsView.title")}</h1>
+        <p className="text-sm text-gray-600 dark:text-gray-300">{t("fieldsView.subtitle")}</p>
       </div>
 
       <Tabs
         selectedKey={activeTab}
         onSelectionChange={(key) => setActiveTab(key as string)}
-        variant="underlined"
-        color="secondary"
+        variant="solid"
+        color="primary"
       >
         <Tab key="fields" title={t("fieldsView.allFieldsTab")}>
           <div className="mt-4">

@@ -19,7 +19,7 @@ export default function HelpTab() {
           <BookOpen className="h-5 w-5" />
           {t("help.title")}
         </h1>
-        <p className="text-sm text-gray-600 dark:text-gray-400">{t("help.subtitle")}</p>
+        <p className="text-sm text-gray-700 dark:text-gray-200">{t("help.subtitle")}</p>
       </div>
 
       <SearchBar value={searchQuery} onChange={setSearchQuery} />

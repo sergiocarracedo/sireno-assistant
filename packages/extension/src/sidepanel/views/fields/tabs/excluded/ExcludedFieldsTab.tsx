@@ -308,7 +308,7 @@ export default function ExcludedFieldsTab() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <p className="text-gray-500">{t("fieldsView.loadingExcluded")}</p>
+        <p className="text-gray-600 dark:text-gray-300">{t("fieldsView.loadingExcluded")}</p>
       </div>
     );
   }
@@ -345,7 +345,7 @@ export default function ExcludedFieldsTab() {
         {excludedFields.length === 0 ? (
           <Card>
             <CardContent className="pt-6">
-              <div className="text-center text-gray-500">
+              <div className="text-center text-gray-600 dark:text-gray-300">
                 <EyeOff className="h-12 w-12 mx-auto mb-3 text-gray-300" />
                 <p className="mb-2">{t("fieldsView.noExcludedFields")}</p>
                 <p className="text-sm">
@@ -378,7 +378,7 @@ export default function ExcludedFieldsTab() {
                 </div>
               </CardHeader>
               <CardContent className="pt-0">
-                <div className="text-xs text-gray-500 font-mono bg-gray-50 dark:bg-gray-800 p-2 rounded">
+                <div className="text-xs text-gray-600 dark:text-gray-300 font-mono bg-gray-50 dark:bg-gray-800 p-2 rounded">
                   {field.fieldId}
                 </div>
               </CardContent>
@@ -390,7 +390,7 @@ export default function ExcludedFieldsTab() {
       {/* Footer info */}
       {excludedFields.length > 0 && (
         <div className="p-4 border-t">
-          <div className="flex items-center justify-between text-xs text-gray-500">
+          <div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-300">
             <span>
               {excludedFields.length} {excludedFields.length === 1 ? "field" : "fields"} excluded
             </span>

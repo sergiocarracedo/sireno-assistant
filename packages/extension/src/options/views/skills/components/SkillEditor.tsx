@@ -1,11 +1,7 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "../../../../shared/i18n";
 import type { Skill } from "../../../../shared/types";
-import {
-  getSkillDomainMatch,
-  getSkillIntentTriggers,
-  getSkillSafety,
-} from "../../../../shared/skill-utils";
+import { getSkillDomainMatch, getSkillSafety } from "../../../../shared/skill-utils";
 import { Button } from "../../../../shared/components/ui/button";
 import { Input } from "../../../../shared/components/ui/input";
 import { Label } from "../../../../shared/components/ui/label";
@@ -18,7 +14,6 @@ import {
   CardHeader,
   CardTitle,
 } from "../../../../shared/components/ui/card";
-import { Checkbox } from "../../../../shared/components/ui/checkbox";
 import { Separator } from "../../../../shared/components/ui/separator";
 import { ArrowLeft, AlertCircle, Save, X } from "lucide-react";
 
@@ -34,9 +29,7 @@ export default function SkillEditor({ skill, onSave, onCancel }: SkillEditorProp
   const [description, setDescription] = useState("");
   const [domainType, setDomainType] = useState<"exact" | "regex">("exact");
   const [domainPattern, setDomainPattern] = useState("*");
-  const [intentTriggers, setIntentTriggers] = useState("");
   const [instructions, setInstructions] = useState("");
-  const [neverModifyPasswords, setNeverModifyPasswords] = useState(true);
   const [maxFieldLength, setMaxFieldLength] = useState(1000);
   const [error, setError] = useState<string | null>(null);
 
@@ -47,11 +40,8 @@ export default function SkillEditor({ skill, onSave, onCancel }: SkillEditorProp
       const domainMatch = getSkillDomainMatch(skill);
       setDomainType(domainMatch.type);
       setDomainPattern(domainMatch.pattern);
-      const triggers = getSkillIntentTriggers(skill);
-      setIntentTriggers(triggers.join(", "));
       setInstructions(skill.instructions);
       const safety = getSkillSafety(skill);
-      setNeverModifyPasswords(safety.neverModifyPasswords ?? true);
       setMaxFieldLength(safety.maxFieldLength || 1000);
     }
   }, [skill]);
@@ -102,12 +92,8 @@ export default function SkillEditor({ skill, onSave, onCancel }: SkillEditorProp
           type: domainType,
           pattern: domainPattern.trim(),
         },
-        intentTriggers: intentTriggers
-          .split(",")
-          .map((t) => t.trim())
-          .filter((t) => t.length > 0),
         safety: {
-          neverModifyPasswords,
+          neverModifyPasswords: true, // Always true - password fields are always protected
           maxFieldLength,
         },
       },
@@ -176,7 +162,7 @@ export default function SkillEditor({ skill, onSave, onCancel }: SkillEditorProp
                 placeholder="Describe what this skill does and when to use it..."
                 rows={3}
               />
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <p className="text-xs text-gray-600 dark:text-gray-300">
                 This helps the agent decide when to use this skill (1-1024 characters)
               </p>
             </div>
@@ -209,26 +195,10 @@ export default function SkillEditor({ skill, onSave, onCancel }: SkillEditorProp
                   onChange={(e) => setDomainPattern(e.target.value)}
                   placeholder={domainType === "exact" ? "linkedin.com" : "(twitter\\.com|x\\.com)"}
                 />
-                <p className="text-xs text-gray-500 dark:text-gray-400">
+                <p className="text-xs text-gray-600 dark:text-gray-300">
                   Use &quot;*&quot; to match all domains, or specify exact domain/regex pattern
                 </p>
               </div>
-            </div>
-
-            <Separator />
-
-            <div className="space-y-2">
-              <Label htmlFor="intentTriggers">Intent Triggers (optional)</Label>
-              <Input
-                id="intentTriggers"
-                type="text"
-                value={intentTriggers}
-                onChange={(e) => setIntentTriggers(e.target.value)}
-                placeholder="professional, formal, business (comma-separated)"
-              />
-              <p className="text-xs text-gray-500 dark:text-gray-400">
-                Keywords that help activate this skill when mentioned in user instructions
-              </p>
             </div>
           </CardContent>
         </Card>
@@ -251,7 +221,7 @@ export default function SkillEditor({ skill, onSave, onCancel }: SkillEditorProp
               placeholder="Detailed instructions for the AI on how to behave when this skill is active..."
               className="font-mono text-xs"
             />
-            <p className="text-xs text-gray-500 dark:text-gray-400">
+            <p className="text-xs text-gray-600 dark:text-gray-300">
               {instructions.length} characters
             </p>
           </CardContent>
@@ -264,19 +234,6 @@ export default function SkillEditor({ skill, onSave, onCancel }: SkillEditorProp
             <CardDescription>Configure safety constraints for this skill</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center gap-3">
-              <Checkbox
-                id="neverModifyPasswords"
-                checked={neverModifyPasswords}
-                onCheckedChange={(checked) => setNeverModifyPasswords(checked === true)}
-              />
-              <Label htmlFor="neverModifyPasswords" className="text-sm font-normal cursor-pointer">
-                Never modify password fields
-              </Label>
-            </div>
-
-            <Separator />
-
             <div className="space-y-2">
               <Label htmlFor="maxFieldLength">Max Field Length</Label>
               <Input
@@ -288,7 +245,7 @@ export default function SkillEditor({ skill, onSave, onCancel }: SkillEditorProp
                 max={10000}
                 step={100}
               />
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <p className="text-xs text-gray-600 dark:text-gray-300">
                 Maximum characters the AI can generate for a single field
               </p>
             </div>

@@ -23,7 +23,7 @@ export default function AdvancedContent({ searchQuery }: AdvancedContentProps) {
             <Wrench className="h-5 w-5" />
             Creating Custom Skills
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
+          <p className="text-gray-700 dark:text-gray-200 leading-relaxed mb-3">
             Skills are domain-specific AI assistants that activate automatically. Here&apos;s how to
             create one:
           </p>
@@ -33,7 +33,7 @@ export default function AdvancedContent({ searchQuery }: AdvancedContentProps) {
               <div className="font-medium text-gray-900 dark:text-gray-100 mb-2">
                 Step 1: Open Skills Tab
               </div>
-              <p className="text-gray-600 dark:text-gray-400">
+              <p className="text-gray-700 dark:text-gray-200">
                 Navigate to the Skills tab and click &quot;Create New&quot;
               </p>
             </div>
@@ -42,7 +42,7 @@ export default function AdvancedContent({ searchQuery }: AdvancedContentProps) {
               <div className="font-medium text-gray-900 dark:text-gray-100 mb-2">
                 Step 2: Fill in Basic Info
               </div>
-              <ul className="space-y-1 text-gray-600 dark:text-gray-400 ml-4">
+              <ul className="space-y-1 text-gray-700 dark:text-gray-200 ml-4">
                 <li className="flex gap-2">
                   <span>•</span>
                   <span>
@@ -69,7 +69,7 @@ export default function AdvancedContent({ searchQuery }: AdvancedContentProps) {
               <div className="font-medium text-gray-900 dark:text-gray-100 mb-2">
                 Step 3: Write Instructions
               </div>
-              <p className="text-gray-600 dark:text-gray-400 mb-2">
+              <p className="text-gray-700 dark:text-gray-200 mb-2">
                 Instructions tell the AI how to behave. Be specific:
               </p>
               <CodeExample
@@ -95,7 +95,7 @@ Keep responses concise unless explicitly asked for longer form content.`}
               <div className="font-medium text-gray-900 dark:text-gray-100 mb-2">
                 Step 4: Add Intent Triggers (Optional)
               </div>
-              <p className="text-gray-600 dark:text-gray-400 mb-2">
+              <p className="text-gray-700 dark:text-gray-200 mb-2">
                 Intent triggers are keywords that suggest this skill in inline chat:
               </p>
               <CodeExample
@@ -120,7 +120,7 @@ Keep responses concise unless explicitly asked for longer form content.`}
             <Globe className="h-5 w-5" />
             Domain Matching
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
+          <p className="text-gray-700 dark:text-gray-200 leading-relaxed mb-3">
             Skills can activate on specific domains using exact matches or regex patterns:
           </p>
 
@@ -150,7 +150,7 @@ Keep responses concise unless explicitly asked for longer form content.`}
                 code="/(linkedin|indeed|glassdoor)\.com/"
                 title="Activates on multiple job sites"
               />
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+              <p className="text-xs text-gray-600 dark:text-gray-300 mt-2">
                 Regex must start and end with forward slashes
               </p>
             </div>
@@ -180,7 +180,7 @@ Keep responses concise unless explicitly asked for longer form content.`}
             <Target className="h-5 w-5" />
             Context Strategies
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
+          <p className="text-gray-700 dark:text-gray-200 leading-relaxed mb-3">
             Choose the right context level for your use case:
           </p>
 
@@ -189,13 +189,13 @@ Keep responses concise unless explicitly asked for longer form content.`}
               <div className="font-medium text-gray-900 dark:text-gray-100 mb-1">
                 Selected Fields Only
               </div>
-              <div className="text-xs text-gray-600 dark:text-gray-400 mb-2">
+              <div className="text-xs text-gray-700 dark:text-gray-200 mb-2">
                 <strong>When to use:</strong> Quick fills, unrelated fields
               </div>
-              <div className="text-xs text-gray-600 dark:text-gray-400 mb-2">
+              <div className="text-xs text-gray-700 dark:text-gray-200 mb-2">
                 <strong>Pros:</strong> Fastest, lowest token usage, focused responses
               </div>
-              <div className="text-xs text-gray-600 dark:text-gray-400">
+              <div className="text-xs text-gray-700 dark:text-gray-200">
                 <strong>Cons:</strong> AI lacks broader form context
               </div>
             </div>
@@ -204,13 +204,13 @@ Keep responses concise unless explicitly asked for longer form content.`}
               <div className="font-medium text-gray-900 dark:text-gray-100 mb-1">
                 All Form Fields
               </div>
-              <div className="text-xs text-gray-600 dark:text-gray-400 mb-2">
+              <div className="text-xs text-gray-700 dark:text-gray-200 mb-2">
                 <strong>When to use:</strong> Related fields, multi-section forms
               </div>
-              <div className="text-xs text-gray-600 dark:text-gray-400 mb-2">
+              <div className="text-xs text-gray-700 dark:text-gray-200 mb-2">
                 <strong>Pros:</strong> Balanced context, understands field relationships
               </div>
-              <div className="text-xs text-gray-600 dark:text-gray-400">
+              <div className="text-xs text-gray-700 dark:text-gray-200">
                 <strong>Cons:</strong> May include irrelevant fields
               </div>
             </div>
@@ -219,13 +219,13 @@ Keep responses concise unless explicitly asked for longer form content.`}
               <div className="font-medium text-gray-900 dark:text-gray-100 mb-1">
                 Full Page Content
               </div>
-              <div className="text-xs text-gray-600 dark:text-gray-400 mb-2">
+              <div className="text-xs text-gray-700 dark:text-gray-200 mb-2">
                 <strong>When to use:</strong> Complex forms, job applications with context
               </div>
-              <div className="text-xs text-gray-600 dark:text-gray-400 mb-2">
+              <div className="text-xs text-gray-700 dark:text-gray-200 mb-2">
                 <strong>Pros:</strong> Maximum context, best for tailored responses
               </div>
-              <div className="text-xs text-gray-600 dark:text-gray-400">
+              <div className="text-xs text-gray-700 dark:text-gray-200">
                 <strong>Cons:</strong> Highest token usage, slower, more expensive
               </div>
             </div>
@@ -249,25 +249,25 @@ Keep responses concise unless explicitly asked for longer form content.`}
           </h2>
           <div className="space-y-2">
             <div className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-900 rounded">
-              <span className="text-gray-600 dark:text-gray-400">Open inline chat</span>
+              <span className="text-gray-700 dark:text-gray-200">Open inline chat</span>
               <kbd className="px-2 py-1 bg-gray-200 dark:bg-gray-800 rounded text-xs font-mono">
                 Ctrl+Space
               </kbd>
             </div>
             <div className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-900 rounded">
-              <span className="text-gray-600 dark:text-gray-400">Close inline chat</span>
+              <span className="text-gray-700 dark:text-gray-200">Close inline chat</span>
               <kbd className="px-2 py-1 bg-gray-200 dark:bg-gray-800 rounded text-xs font-mono">
                 Esc
               </kbd>
             </div>
             <div className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-900 rounded">
-              <span className="text-gray-600 dark:text-gray-400">Send message</span>
+              <span className="text-gray-700 dark:text-gray-200">Send message</span>
               <kbd className="px-2 py-1 bg-gray-200 dark:bg-gray-800 rounded text-xs font-mono">
                 Enter
               </kbd>
             </div>
             <div className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-900 rounded">
-              <span className="text-gray-600 dark:text-gray-400">New line in message</span>
+              <span className="text-gray-700 dark:text-gray-200">New line in message</span>
               <kbd className="px-2 py-1 bg-gray-200 dark:bg-gray-800 rounded text-xs font-mono">
                 Shift+Enter
               </kbd>
@@ -289,7 +289,7 @@ Keep responses concise unless explicitly asked for longer form content.`}
               <div className="font-medium text-gray-900 dark:text-gray-100 mb-1">
                 AI not responding
               </div>
-              <ul className="space-y-1 text-gray-600 dark:text-gray-400 ml-4 text-xs">
+              <ul className="space-y-1 text-gray-700 dark:text-gray-200 ml-4 text-xs">
                 <li>• Check that API key is configured in Settings</li>
                 <li>• Verify API key is valid (try copying it fresh)</li>
                 <li>• Check browser console for errors (F12 → Console)</li>
@@ -301,7 +301,7 @@ Keep responses concise unless explicitly asked for longer form content.`}
               <div className="font-medium text-gray-900 dark:text-gray-100 mb-1">
                 Fields not detected
               </div>
-              <ul className="space-y-1 text-gray-600 dark:text-gray-400 ml-4 text-xs">
+              <ul className="space-y-1 text-gray-700 dark:text-gray-200 ml-4 text-xs">
                 <li>• Refresh the page after opening sidepanel</li>
                 <li>• Some fields load dynamically - wait a moment</li>
                 <li>• Check if field is inside an iframe (limited support)</li>
@@ -313,7 +313,7 @@ Keep responses concise unless explicitly asked for longer form content.`}
               <div className="font-medium text-gray-900 dark:text-gray-100 mb-1">
                 Skill not activating
               </div>
-              <ul className="space-y-1 text-gray-600 dark:text-gray-400 ml-4 text-xs">
+              <ul className="space-y-1 text-gray-700 dark:text-gray-200 ml-4 text-xs">
                 <li>• Check domain pattern matches current URL</li>
                 <li>• Ensure skill toggle is ON (not disabled)</li>
                 <li>• Try refreshing the page</li>
@@ -325,7 +325,7 @@ Keep responses concise unless explicitly asked for longer form content.`}
               <div className="font-medium text-gray-900 dark:text-gray-100 mb-1">
                 Extension stopped working after update
               </div>
-              <ul className="space-y-1 text-gray-600 dark:text-gray-400 ml-4 text-xs">
+              <ul className="space-y-1 text-gray-700 dark:text-gray-200 ml-4 text-xs">
                 <li>• Hard refresh the page (Ctrl+Shift+R)</li>
                 <li>• Close and reopen the sidepanel</li>
                 <li>• Reload the extension in chrome://extensions</li>
@@ -335,7 +335,7 @@ Keep responses concise unless explicitly asked for longer form content.`}
           </div>
 
           <div className="p-3 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 mt-4">
-            <div className="text-xs text-gray-600 dark:text-gray-400">
+            <div className="text-xs text-gray-700 dark:text-gray-200">
               <strong>Still having issues?</strong> Report bugs on{" "}
               <a
                 href="https://github.com/sergiocarracedo/sireno-assistant/issues"

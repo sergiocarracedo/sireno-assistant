@@ -26,7 +26,6 @@ IMPORTANT: User must edit this skill and add their actual information before usi
         type: "exact" as const,
         pattern: "*", // Works on all domains
       },
-      intentTriggers: ["fill", "autofill", "personal", "info"],
       safety: {
         neverModifyPasswords: true,
         maxFieldLength: 500,
@@ -53,7 +52,6 @@ IMPORTANT: User must edit this skill and add their actual information before usi
         type: "exact" as const,
         pattern: "linkedin.com",
       },
-      intentTriggers: ["professional", "formal", "business"],
       safety: {
         maxFieldLength: 2000,
       },
@@ -79,7 +77,6 @@ IMPORTANT: User must edit this skill and add their actual information before usi
         type: "regex" as const,
         pattern: "(twitter\\.com|x\\.com|facebook\\.com|instagram\\.com)",
       },
-      intentTriggers: ["casual", "friendly", "social"],
       safety: {
         maxFieldLength: 1000,
       },
@@ -106,7 +103,6 @@ IMPORTANT: User must edit this skill and add their actual information before usi
         type: "exact" as const,
         pattern: "*", // Works on all domains
       },
-      intentTriggers: ["fix", "correct", "grammar", "spelling", "proofread"],
       safety: {
         maxFieldLength: 5000,
       },
@@ -147,7 +143,6 @@ Email:
         type: "exact" as const,
         pattern: "*", // Works on all domains
       },
-      intentTriggers: ["format", "standardize", "normalize"],
       safety: {
         neverModifyPasswords: true,
         maxFieldLength: 500,

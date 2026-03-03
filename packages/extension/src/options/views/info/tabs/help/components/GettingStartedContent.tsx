@@ -23,12 +23,12 @@ export default function GettingStartedContent({ searchQuery }: GettingStartedCon
             <Hand className="h-5 w-5" />
             Welcome to Sireno Assistant
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
+          <p className="text-gray-700 dark:text-gray-200 leading-relaxed mb-3">
             Sireno Assistant is an AI-powered Chrome extension that helps you fill web forms
             intelligently. It uses your own API key to communicate with leading AI providers
             (OpenAI, Claude, or Gemini) to generate contextual, accurate responses.
           </p>
-          <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+          <p className="text-gray-700 dark:text-gray-200 leading-relaxed">
             Get started by configuring your AI model in the Settings tab, then explore the powerful
             features below.
           </p>
@@ -42,7 +42,7 @@ export default function GettingStartedContent({ searchQuery }: GettingStartedCon
             <Settings className="h-5 w-5" />
             Configure Your AI Model
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
+          <p className="text-gray-700 dark:text-gray-200 leading-relaxed mb-3">
             To use Sireno Assistant, you need an API key from one of these providers:
           </p>
 
@@ -53,7 +53,7 @@ export default function GettingStartedContent({ searchQuery }: GettingStartedCon
                   <div className="font-medium text-gray-900 dark:text-gray-100 mb-1">
                     OpenAI (GPT-4, GPT-3.5)
                   </div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400">
+                  <div className="text-xs text-gray-600 dark:text-gray-300">
                     Most popular and versatile
                   </div>
                 </div>
@@ -76,7 +76,7 @@ export default function GettingStartedContent({ searchQuery }: GettingStartedCon
                   <div className="font-medium text-gray-900 dark:text-gray-100 mb-1">
                     Anthropic Claude
                   </div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400">
+                  <div className="text-xs text-gray-600 dark:text-gray-300">
                     Advanced reasoning capabilities
                   </div>
                 </div>
@@ -99,7 +99,7 @@ export default function GettingStartedContent({ searchQuery }: GettingStartedCon
                   <div className="font-medium text-gray-900 dark:text-gray-100 mb-1">
                     Google Gemini
                   </div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400">Fast and efficient</div>
+                  <div className="text-xs text-gray-600 dark:text-gray-300">Fast and efficient</div>
                 </div>
                 <ButtonLink
                   variant="outline"
@@ -138,11 +138,11 @@ export default function GettingStartedContent({ searchQuery }: GettingStartedCon
             <MessageSquare className="h-5 w-5" />
             Your First Inline Chat
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
+          <p className="text-gray-700 dark:text-gray-200 leading-relaxed mb-3">
             Inline Chat is the quickest way to fill individual form fields:
           </p>
 
-          <ol className="space-y-3 text-gray-600 dark:text-gray-400">
+          <ol className="space-y-3 text-gray-700 dark:text-gray-200">
             <li className="flex gap-2">
               <span className="font-semibold text-gray-900 dark:text-gray-100 min-w-[1.5rem]">
                 1.

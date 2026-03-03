@@ -249,7 +249,7 @@ export default function AllFieldsTab() {
         </Button>
       </div>
 
-      <div className="mb-3 text-sm text-gray-500">
+      <div className="mb-3 text-sm text-gray-600 dark:text-gray-300">
         {t("fields.fieldsSelected", { count: selectedIds.length, total: fields.length })}
       </div>
 
@@ -295,7 +295,9 @@ export default function AllFieldsTab() {
         </div>
 
         {fields.length === 0 && !loading && (
-          <div className="text-center py-8 text-gray-400">{t("fields.noFieldsFound")}</div>
+          <div className="text-center py-8 text-gray-600 dark:text-gray-300">
+            {t("fields.noFieldsFound")}
+          </div>
         )}
       </div>
     </div>

@@ -456,7 +456,7 @@ export default function ChatTab({ onNavigate, initData }: ChatTabProps) {
                 }
                 placement="right"
               >
-                <Info className="h-3.5 w-3.5 text-gray-400 cursor-help" />
+                <Info className="h-3.5 w-3.5 text-gray-600 dark:text-gray-300 cursor-help" />
               </Tooltip>
             </div>
             <Select
@@ -491,13 +491,15 @@ export default function ChatTab({ onNavigate, initData }: ChatTabProps) {
                         page
                       </p>
                       {activeSkillNames.length > 0 && (
-                        <ul className="text-xs text-gray-400 dark:text-gray-500 mt-1 space-y-0.5">
+                        <ul className="text-xs text-gray-700 dark:text-gray-200 mt-1 space-y-0.5">
                           {activeSkillNames.map((name, i) => (
                             <li key={i}>• {name}</li>
                           ))}
                         </ul>
                       )}
-                      <p className="text-xs text-gray-400 dark:text-gray-600 mt-2">Click to view</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-300 dark:text-gray-600 mt-2">
+                        Click to view
+                      </p>
                     </div>
                   }
                 >
