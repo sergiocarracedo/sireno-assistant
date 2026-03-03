@@ -8,6 +8,7 @@ import type { ChatMessage, ExcludedField } from "../background/storage";
 // Content script -> Side panel
 export type ContentToSidePanelMessage =
   | { type: "FIELDS_SCANNED"; fields: FieldRef[] }
+  | { type: "FIELDS_DISCOVERED"; fields: FieldRef[] }
   | { type: "SELECTION_UPDATED"; selectedIds: string[] }
   | { type: "CONTEXT_EXTRACTED"; context: ContextBundle };
 

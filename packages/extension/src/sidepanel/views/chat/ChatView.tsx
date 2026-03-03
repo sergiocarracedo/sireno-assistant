@@ -116,12 +116,22 @@ export default function ChatTab({ onNavigate, initData }: ChatTabProps) {
       }
     };
 
+    // Listen for field changes from content script
+    const handleMessage = (message: any) => {
+      if (message.type === "FIELDS_DISCOVERED") {
+        logger.debug("Fields discovered:", message.fields.length);
+        setTotalFields(message.fields.length);
+      }
+    };
+
     chrome.tabs.onActivated.addListener(handleTabActivated);
     chrome.tabs.onUpdated.addListener(handleTabUpdated);
+    chrome.runtime.onMessage.addListener(handleMessage);
 
     return () => {
       chrome.tabs.onActivated.removeListener(handleTabActivated);
       chrome.tabs.onUpdated.removeListener(handleTabUpdated);
+      chrome.runtime.onMessage.removeListener(handleMessage);
     };
   }, []);
 
@@ -560,14 +570,25 @@ export default function ChatTab({ onNavigate, initData }: ChatTabProps) {
 
       {/* Input Area */}
       <div className="border-t border-gray-200 dark:border-gray-800 pt-3">
-        <ChatInput
-          ref={chatInputRef}
-          value={input}
-          onChange={setInput}
-          onSubmit={handleSend}
-          placeholder="What do you want to do?"
-          loading={loading}
-        />
+        {totalFields === 0 ? (
+          <div className="text-center py-4 px-3 bg-gray-50 dark:bg-gray-900/50 rounded-lg border border-gray-200 dark:border-gray-800">
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
+              No editable fields detected on this page
+            </p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              Navigate to a page with input fields to start chatting
+            </p>
+          </div>
+        ) : (
+          <ChatInput
+            ref={chatInputRef}
+            value={input}
+            onChange={setInput}
+            onSubmit={handleSend}
+            placeholder="What do you want to do?"
+            loading={loading}
+          />
+        )}
       </div>
     </div>
   );

@@ -235,19 +235,34 @@ function setupFieldInteraction(field: HTMLElement, button: AssistantButton) {
 }
 
 /**
- * Update discovered fields for sidepanel
+ * Debounced update to avoid performance issues
+ */
+let updateFieldsTimeout: number | null = null;
+
+/**
+ * Update discovered fields for sidepanel (debounced)
  */
 function updateDiscoveredFields() {
-  const fields = fieldDetector.getFields();
-  discoveredFields = fields.map((f) => f.fieldRef);
+  // Clear existing timeout
+  if (updateFieldsTimeout !== null) {
+    clearTimeout(updateFieldsTimeout);
+  }
 
-  // Notify sidepanel
-  safeSendMessage({
-    type: "FIELDS_DISCOVERED",
-    fields: discoveredFields,
-  }).catch(() => {
-    // Ignore errors (sidepanel might not be open)
-  });
+  // Debounce for 300ms to avoid excessive updates during rapid DOM changes
+  updateFieldsTimeout = window.setTimeout(() => {
+    const fields = fieldDetector.getFields();
+    discoveredFields = fields.map((f) => f.fieldRef);
+
+    logger.debug("[Sireno] Fields updated, notifying sidepanel:", discoveredFields.length);
+
+    // Notify sidepanel
+    safeSendMessage({
+      type: "FIELDS_DISCOVERED",
+      fields: discoveredFields,
+    }).catch(() => {
+      // Ignore errors (sidepanel might not be open)
+    });
+  }, 300);
 }
 
 /**

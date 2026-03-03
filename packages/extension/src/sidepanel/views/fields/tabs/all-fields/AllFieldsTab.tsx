@@ -81,46 +81,28 @@ export default function AllFieldsTab() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTabId]);
 
-  // Periodic polling to detect DOM changes (e.g., modals opening with new fields)
+  // Listen for field changes from content script
   useEffect(() => {
-    if (!currentTabId) return;
+    const handleMessage = (message: any) => {
+      if (message.type === "FIELDS_DISCOVERED") {
+        logger.debug(
+          "[FieldSelector] Fields discovered from content script:",
+          message.fields.length,
+        );
 
-    // Poll every 2 seconds to check for field changes
-    const intervalId = setInterval(() => {
-      if (!document.hidden && currentTabId) {
-        logger.debug("[FieldSelector] Polling for field changes...");
-        scanFieldsQuietly();
-      }
-    }, 2000);
-
-    return () => clearInterval(intervalId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentTabId]);
-
-  // Scan fields quietly (without setting loading state)
-  const scanFieldsQuietly = async () => {
-    try {
-      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-      if (!tab.id) return;
-
-      const response = await chrome.tabs.sendMessage(tab.id, {
-        type: "SCAN_FIELDS",
-      });
-
-      if (response?.fields) {
-        // Only update if field count changed to avoid unnecessary re-renders
-        if (response.fields.length !== fields.length) {
+        // Only update if field count changed
+        if (message.fields.length !== fields.length) {
           logger.debug(
             "[FieldSelector] Field count changed:",
             fields.length,
             "→",
-            response.fields.length,
+            message.fields.length,
           );
-          setFields(response.fields);
+          setFields(message.fields);
 
           // Preserve existing selection, add new fields if they don't exist
           const existingIds = new Set(selectedIds);
-          const newFields = response.fields.filter((f: FieldRef) => !existingIds.has(f.id));
+          const newFields = message.fields.filter((f: FieldRef) => !existingIds.has(f.id));
           if (newFields.length > 0) {
             const newIds = [...selectedIds, ...newFields.map((f: FieldRef) => f.id)];
             setSelectedIds(newIds);
@@ -128,11 +110,15 @@ export default function AllFieldsTab() {
           }
         }
       }
-    } catch (_error) {
-      // Silently fail for background polling
-      logger.debug("[FieldSelector] Background scan failed (tab might not be ready)");
-    }
-  };
+    };
+
+    chrome.runtime.onMessage.addListener(handleMessage);
+
+    return () => {
+      chrome.runtime.onMessage.removeListener(handleMessage);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fields.length, selectedIds]);
 
   // Load excluded fields for the current URL
   const loadExcludedFields = async () => {
