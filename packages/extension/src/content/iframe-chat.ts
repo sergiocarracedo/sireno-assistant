@@ -163,40 +163,58 @@ async function loadActiveSkills(): Promise<void> {
  * Open inline chat for a field
  */
 export async function openInlineChat(fieldId: string, field: HTMLElement, fieldLabel?: string) {
-  logger.debug("[IFrame Chat] Opening chat for field:", fieldId);
-
-  // Close existing chat if open
-  if (activeIframe) {
-    closeInlineChat();
-  }
-
-  activeField = field;
-  activeFieldId = fieldId;
-
-  // Load skills
-  await loadActiveSkills();
-
-  // Detect dark mode: check stored theme preference, fall back to system
   try {
-    const stored = await chrome.storage.local.get("ui_theme");
-    const theme = stored["ui_theme"] as string | undefined;
-    if (theme === "dark") {
-      isDarkMode = true;
-    } else if (theme === "light") {
-      isDarkMode = false;
-    } else {
-      // 'system' or unset — use OS preference
+    logger.info("[IFrame Chat] Opening chat for field:", fieldId, fieldLabel);
+
+    // Close existing chat if open
+    if (activeIframe) {
+      logger.debug("[IFrame Chat] Closing existing chat before opening new one");
+      closeInlineChat();
+    }
+
+    activeField = field;
+    activeFieldId = fieldId;
+
+    // Load skills
+    logger.debug("[IFrame Chat] Loading active skills...");
+    await loadActiveSkills();
+    logger.debug("[IFrame Chat] Active skills loaded:", activeSkills.length);
+
+    // Detect dark mode: check stored theme preference, fall back to system
+    try {
+      const stored = await chrome.storage.local.get("ui_theme");
+      const theme = stored["ui_theme"] as string | undefined;
+      if (theme === "dark") {
+        isDarkMode = true;
+      } else if (theme === "light") {
+        isDarkMode = false;
+      } else {
+        // 'system' or unset — use OS preference
+        isDarkMode = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+      }
+      logger.debug("[IFrame Chat] Dark mode:", isDarkMode, "(theme:", theme, ")");
+    } catch (error) {
+      logger.error("[IFrame Chat] Failed to detect theme, using system default:", error);
       isDarkMode = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
     }
-  } catch {
-    isDarkMode = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+    // Highlight field
+    logger.debug("[IFrame Chat] Highlighting field");
+    highlightField(field);
+
+    // Create iframe with fieldId
+    logger.debug("[IFrame Chat] Creating iframe");
+    createIFrame(field, fieldLabel || "Input field", fieldId);
+    logger.info("[IFrame Chat] Chat opened successfully");
+  } catch (error) {
+    logger.error("[IFrame Chat] Failed to open chat:", error);
+    // Clean up on error
+    if (activeField) {
+      unhighlightField(activeField);
+    }
+    activeField = null;
+    activeFieldId = null;
   }
-
-  // Highlight field
-  highlightField(field);
-
-  // Create iframe with fieldId
-  createIFrame(field, fieldLabel || "Input field", fieldId);
 }
 
 /**

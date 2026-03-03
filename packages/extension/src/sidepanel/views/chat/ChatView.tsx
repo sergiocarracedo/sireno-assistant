@@ -117,10 +117,40 @@ export default function ChatTab({ onNavigate, initData }: ChatTabProps) {
     };
 
     // Listen for field changes from content script
-    const handleMessage = (message: any) => {
+    const handleMessage = async (message: any) => {
       if (message.type === "FIELDS_DISCOVERED") {
         logger.debug("Fields discovered:", message.fields.length);
-        setTotalFields(message.fields.length);
+        const newFields = message.fields;
+        setTotalFields(newFields.length);
+
+        // Get the current tab to access storage
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (!tab.id) return;
+
+        // Load current selection from storage
+        const result = await chrome.storage.local.get(`selectedFields_${tab.id}`);
+        const currentSelection = result[`selectedFields_${tab.id}`] || [];
+
+        // Filter to only include field IDs that still exist
+        const newFieldIds = new Set(newFields.map((f: any) => f.id));
+        const validSelectedIds = currentSelection.filter((id: string) => newFieldIds.has(id));
+
+        // Update state and storage if selection changed
+        if (validSelectedIds.length !== currentSelection.length) {
+          logger.debug(
+            "Filtered selected fields:",
+            currentSelection.length,
+            "→",
+            validSelectedIds.length,
+          );
+          setSelectedFieldIds(validSelectedIds);
+          await chrome.storage.local.set({
+            [`selectedFields_${tab.id}`]: validSelectedIds,
+          });
+        } else {
+          // Just update state to match storage
+          setSelectedFieldIds(currentSelection);
+        }
       }
     };
 

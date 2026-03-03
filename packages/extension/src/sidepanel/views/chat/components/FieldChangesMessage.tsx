@@ -80,53 +80,72 @@ export default function FieldChangesMessage({
           const oldValue = field?.value || "";
           const newValue = change.value;
           const diff = calculateDiff(oldValue, newValue);
+          const isSkipped = change.action === "skip";
 
           return (
             <div
               key={idx}
-              className="bg-gray-50 dark:bg-gray-900/50 p-3 rounded border border-gray-200 dark:border-gray-800"
+              className={`p-3 rounded border ${
+                isSkipped
+                  ? "bg-yellow-50 dark:bg-yellow-950/30 border-yellow-200 dark:border-yellow-800"
+                  : "bg-gray-50 dark:bg-gray-900/50 border-gray-200 dark:border-gray-800"
+              }`}
             >
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-[11px] font-semibold text-gray-700 dark:text-gray-200">
                   Field #{change.fieldIndex + 1}
                 </span>
                 {field?.labelHint && (
-                  <span className="text-[11px] text-gray-600 dark:text-gray-600 dark:text-gray-300 truncate flex-1">
+                  <span className="text-[11px] text-gray-600 dark:text-gray-300 truncate flex-1">
                     {field.labelHint}
                   </span>
                 )}
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 font-medium capitalize">
+                <span
+                  className={`text-[10px] px-2 py-0.5 rounded-full font-medium capitalize ${
+                    isSkipped
+                      ? "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400"
+                      : "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400"
+                  }`}
+                >
                   {change.action}
                 </span>
               </div>
 
-              {/* Diff view */}
-              <div className="font-mono text-xs bg-white dark:bg-gray-950 p-2 rounded border border-gray-200 dark:border-gray-700 space-y-1">
-                {diff.map((segment, segIdx) => (
-                  <div key={segIdx}>
-                    {segment.type === "removed" && (
-                      <div className="bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 px-2 py-1 rounded">
-                        <span className="select-none mr-1">-</span>
-                        <span className="line-through">{segment.text || "(empty)"}</span>
-                      </div>
-                    )}
-                    {segment.type === "added" && (
-                      <div className="bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-400 px-2 py-1 rounded">
-                        <span className="select-none mr-1">+</span>
-                        {segment.text || "(empty)"}
-                      </div>
-                    )}
-                    {segment.type === "unchanged" && (
-                      <div className="text-gray-700 dark:text-gray-300 px-2 py-1">
-                        {segment.text}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
+              {/* Only show diff for non-skipped fields */}
+              {!isSkipped && (
+                <div className="font-mono text-xs bg-white dark:bg-gray-950 p-2 rounded border border-gray-200 dark:border-gray-700 space-y-1">
+                  {diff.map((segment, segIdx) => (
+                    <div key={segIdx}>
+                      {segment.type === "removed" && (
+                        <div className="bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 px-2 py-1 rounded">
+                          <span className="select-none mr-1">-</span>
+                          <span className="line-through">{segment.text || "(empty)"}</span>
+                        </div>
+                      )}
+                      {segment.type === "added" && (
+                        <div className="bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-400 px-2 py-1 rounded">
+                          <span className="select-none mr-1">+</span>
+                          {segment.text || "(empty)"}
+                        </div>
+                      )}
+                      {segment.type === "unchanged" && (
+                        <div className="text-gray-700 dark:text-gray-300 px-2 py-1">
+                          {segment.text}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
 
               {change.rationale && (
-                <div className="text-[11px] text-gray-600 dark:text-gray-600 dark:text-gray-300 mt-2 italic">
+                <div
+                  className={`text-[11px] mt-2 italic ${
+                    isSkipped
+                      ? "text-yellow-700 dark:text-yellow-300"
+                      : "text-gray-600 dark:text-gray-300"
+                  }`}
+                >
                   {change.rationale}
                 </div>
               )}
