@@ -1,0 +1,57 @@
+packages/extension/src/options/views/skills/components/SkillEditor.tsx
+  b712ce027812779c 96
+packages/extension/src/options/views/skills/components/SkillCard.tsx
+  b712ce027812779c 31,44-46,91
+packages/extension/src/options/App.tsx
+  b712ce027812779c 55-69,73,78,84,89-96,125-126
+packages/extension/src/options/views/skills/SkillsView.tsx
+  b712ce027812779c 15,122-125,141,206,208,211,214,216,219
+packages/extension/src/shared/components/ui/card.tsx
+  b712ce027812779c 42
+packages/extension/src/sidepanel/App.tsx
+  b712ce027812779c 1,5-6,20-21,34,46-52,71-83,100,102-107,110,112-117
+packages/extension/src/hero.ts
+  b712ce027812779c 7-20,22-33,36-104,106-108,110-124,129-142,144-155,158-183,185-197,199-246,250-271,273-275
+packages/extension/src/background/storage.ts
+  b712ce027812779c 16,20,24
+packages/extension/src/shared/components/ui/textarea.tsx
+  b712ce027812779c 12
+packages/extension/src/sidepanel/views/skills/SkillsView.tsx
+  b712ce027812779c 5
+packages/extension/src/sidepanel/views/fields/FieldsView.tsx
+  b712ce027812779c 12,14-15,21-22
+packages/extension/src/shared/components/ui/input.tsx
+  b712ce027812779c 13
+packages/extension/src/background/message-handler.ts
+  b712ce027812779c 487-490,492
+packages/extension/src/options/views/info/tabs/about/AboutTab.tsx
+  b712ce027812779c 81,92,125,136,155
+packages/extension/src/options/views/info/tabs/help/HelpTab.tsx
+  b712ce027812779c 22
+packages/extension/src/shared/components/ui/button.tsx
+  b712ce027812779c 8,13,22
+packages/extension/src/options/views/settings/SettingsView.tsx
+  b712ce027812779c 19,113,162,281-282,284,286-287,294-295,297-302,304-311,313-314,329-333,381-393,395-397,401-410
+packages/extension/src/shared/messages.ts
+  b712ce027812779c 63
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.7",
+  "base_commit_sha": "bc9dbb2c304abfbc69b5e874eb445cacc93f4256",
+  "prompts": {
+    "b712ce027812779c": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_3a76e2e7dffeHZB7zI1j1Tnm3i",
+        "model": "github-copilot/claude-sonnet-4.5"
+      },
+      "human_author": "Sergio Carracedo <hi@sergiocarracedo.es>",
+      "messages": [],
+      "total_additions": 563,
+      "total_deletions": 440,
+      "accepted_lines": 447,
+      "overriden_lines": 1
+    }
+  }
+}
