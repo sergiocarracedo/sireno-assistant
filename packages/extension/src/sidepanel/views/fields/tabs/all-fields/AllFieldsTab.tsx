@@ -83,7 +83,7 @@ export default function AllFieldsTab() {
 
   // Listen for field changes from content script
   useEffect(() => {
-    const handleMessage = (message: any) => {
+    const handleMessage = async (message: any) => {
       if (message.type === "FIELDS_DISCOVERED") {
         logger.debug(
           "[FieldSelector] Fields discovered from content script:",
@@ -100,9 +100,19 @@ export default function AllFieldsTab() {
           );
           setFields(message.fields);
 
-          // Preserve existing selection, add new fields if they don't exist
+          // Load deselected fields
+          const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+          if (!tab.id) return;
+
+          const result = await chrome.storage.local.get(`deselectedFields_${tab.id}`);
+          const deselectedFields = new Set(result[`deselectedFields_${tab.id}`] || []);
+
+          // Preserve existing selection, add new fields if they weren't previously deselected
           const existingIds = new Set(selectedIds);
-          const newFields = message.fields.filter((f: FieldRef) => !existingIds.has(f.id));
+          const newFields = message.fields.filter(
+            (f: FieldRef) => !existingIds.has(f.id) && !deselectedFields.has(f.id),
+          );
+
           if (newFields.length > 0) {
             const newIds = [...selectedIds, ...newFields.map((f: FieldRef) => f.id)];
             setSelectedIds(newIds);
@@ -156,14 +166,25 @@ export default function AllFieldsTab() {
   };
 
   // Save selected IDs to storage
-  const saveSelectedIds = async (ids: string[]) => {
+  const saveSelectedIds = async (ids: string[], deselectedId?: string) => {
     try {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
       if (!tab.id) return;
 
-      await chrome.storage.local.set({
+      const updates: Record<string, any> = {
         [`selectedFields_${tab.id}`]: ids,
-      });
+      };
+
+      // Track explicitly deselected field
+      if (deselectedId) {
+        const result = await chrome.storage.local.get(`deselectedFields_${tab.id}`);
+        const deselectedFields = result[`deselectedFields_${tab.id}`] || [];
+        if (!deselectedFields.includes(deselectedId)) {
+          updates[`deselectedFields_${tab.id}`] = [...deselectedFields, deselectedId];
+        }
+      }
+
+      await chrome.storage.local.set(updates);
     } catch (error) {
       logger.error("Failed to save selected IDs:", error);
     }
@@ -194,16 +215,22 @@ export default function AllFieldsTab() {
         logger.debug("[FieldSelector] Found", response.fields.length, "fields");
         setFields(response.fields);
 
-        // Load saved selection for THIS tab
-        const result = await chrome.storage.local.get(`selectedFields_${tab.id}`);
-        if (result[`selectedFields_${tab.id}`] && result[`selectedFields_${tab.id}`].length > 0) {
+        // Load saved selection and deselection history for THIS tab
+        const storageKeys = [`selectedFields_${tab.id}`, `deselectedFields_${tab.id}`];
+        const result = await chrome.storage.local.get(storageKeys);
+        const savedSelection = result[`selectedFields_${tab.id}`];
+        const deselectedFields = new Set(result[`deselectedFields_${tab.id}`] || []);
+
+        if (savedSelection && savedSelection.length > 0) {
           // Use saved selection
           logger.debug("[FieldSelector] Using saved selection for tab", tab.id);
-          setSelectedIds(result[`selectedFields_${tab.id}`]);
+          setSelectedIds(savedSelection);
         } else if (response.fields.length > 0) {
-          // No saved selection, select all by default
-          logger.debug("[FieldSelector] No saved selection, selecting all fields for tab", tab.id);
-          const allIds = response.fields.map((f: FieldRef) => f.id);
+          // No saved selection, select all by default EXCEPT previously deselected fields
+          logger.debug("[FieldSelector] No saved selection, selecting new fields for tab", tab.id);
+          const allIds = response.fields
+            .map((f: FieldRef) => f.id)
+            .filter((id: string) => !deselectedFields.has(id));
           setSelectedIds(allIds);
           saveSelectedIds(allIds);
         } else {
@@ -237,22 +264,48 @@ export default function AllFieldsTab() {
   };
 
   const toggleField = (fieldId: string) => {
-    const newSelection = selectedIds.includes(fieldId)
+    const isDeselecting = selectedIds.includes(fieldId);
+    const newSelection = isDeselecting
       ? selectedIds.filter((id) => id !== fieldId)
       : [...selectedIds, fieldId];
     setSelectedIds(newSelection);
-    saveSelectedIds(newSelection);
+    saveSelectedIds(newSelection, isDeselecting ? fieldId : undefined);
   };
 
-  const selectAll = () => {
+  const selectAll = async () => {
     const allIds = fields.map((f) => f.id);
     setSelectedIds(allIds);
-    saveSelectedIds(allIds);
+
+    try {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (!tab.id) return;
+
+      // Clear deselected fields when selecting all
+      await chrome.storage.local.set({
+        [`selectedFields_${tab.id}`]: allIds,
+        [`deselectedFields_${tab.id}`]: [],
+      });
+    } catch (error) {
+      logger.error("Failed to save selection:", error);
+    }
   };
 
-  const selectNone = () => {
+  const selectNone = async () => {
     setSelectedIds([]);
-    saveSelectedIds([]);
+
+    try {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (!tab.id) return;
+
+      // Mark all current fields as deselected
+      const allIds = fields.map((f) => f.id);
+      await chrome.storage.local.set({
+        [`selectedFields_${tab.id}`]: [],
+        [`deselectedFields_${tab.id}`]: allIds,
+      });
+    } catch (error) {
+      logger.error("Failed to save selection:", error);
+    }
   };
 
   const focusField = async (fieldId: string) => {

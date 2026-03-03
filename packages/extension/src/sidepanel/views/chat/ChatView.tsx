@@ -127,25 +127,47 @@ export default function ChatTab({ onNavigate, initData }: ChatTabProps) {
         const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
         if (!tab.id) return;
 
-        // Load current selection from storage
-        const result = await chrome.storage.local.get(`selectedFields_${tab.id}`);
+        // Load current selection and deselection history from storage
+        const storageKeys = [`selectedFields_${tab.id}`, `deselectedFields_${tab.id}`];
+        const result = await chrome.storage.local.get(storageKeys);
         const currentSelection = result[`selectedFields_${tab.id}`] || [];
+        const deselectedFields = new Set(result[`deselectedFields_${tab.id}`] || []);
 
-        // Filter to only include field IDs that still exist
+        // Get all current field IDs
         const newFieldIds = new Set(newFields.map((f: any) => f.id));
+
+        // Keep valid selected IDs from previous selection
         const validSelectedIds = currentSelection.filter((id: string) => newFieldIds.has(id));
 
+        // Find newly discovered fields (not in current selection and not previously deselected)
+        const newlyDiscoveredIds = Array.from(newFieldIds).filter(
+          (id) => !currentSelection.includes(id) && !deselectedFields.has(id),
+        );
+
+        // Auto-select newly discovered fields (default behavior)
+        const updatedSelection = [...validSelectedIds, ...newlyDiscoveredIds];
+
+        // Clean up deselected fields list (remove field IDs that no longer exist)
+        const validDeselectedFields = Array.from(deselectedFields).filter((id) =>
+          newFieldIds.has(id),
+        );
+
         // Update state and storage if selection changed
-        if (validSelectedIds.length !== currentSelection.length) {
+        if (
+          updatedSelection.length !== currentSelection.length ||
+          !updatedSelection.every((id) => currentSelection.includes(id))
+        ) {
           logger.debug(
-            "Filtered selected fields:",
+            "Updated selected fields:",
             currentSelection.length,
             "→",
-            validSelectedIds.length,
+            updatedSelection.length,
+            `(+${newlyDiscoveredIds.length} new)`,
           );
-          setSelectedFieldIds(validSelectedIds);
+          setSelectedFieldIds(updatedSelection);
           await chrome.storage.local.set({
-            [`selectedFields_${tab.id}`]: validSelectedIds,
+            [`selectedFields_${tab.id}`]: updatedSelection,
+            [`deselectedFields_${tab.id}`]: validDeselectedFields,
           });
         } else {
           // Just update state to match storage
