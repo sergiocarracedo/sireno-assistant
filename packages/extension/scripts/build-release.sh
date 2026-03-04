@@ -42,7 +42,7 @@ ZIP_PATH="${RELEASES_DIR}/${ZIP_NAME}"
 
 echo -e "${YELLOW}📦 Creating release package...${NC}"
 cd dist
-zip -r "$ZIP_PATH" ./* -x "*.map" -x "*.DS_Store"
+zip -r "$ZIP_PATH" ./* -x "*.map" -x "*.DS_Store" -x "screenshots/*" -x "images/*"
 cd ..
 
 # Get file size

@@ -457,6 +457,10 @@ IMPORTANT: Provide ONLY the new/transformed text value for the field. Do not inc
             },
           });
 
+          // Set a badge on the extension icon to notify the user
+          await chrome.action.setBadgeText({ text: "1" });
+          await chrome.action.setBadgeBackgroundColor({ color: "#4285F4" }); // Google Blue
+
           // Notify sidebar if it's already open
           const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
           if (tab?.id) {

@@ -1,6 +1,6 @@
 {
   "name": "@sireno/extension",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "description": "AI-powered assistant for web forms and content. Use your own API keys (OpenAI, Anthropic, Google, Groq) for privacy-first AI assistance on any website.",
   "license": "GPL-3.0",

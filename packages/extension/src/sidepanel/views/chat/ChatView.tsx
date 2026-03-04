@@ -98,8 +98,9 @@ export default function ChatTab({ onNavigate, initData }: ChatTabProps) {
             }
           }
 
-          // Clear the pending message
+          // Clear the pending message and badge
           chrome.storage.local.remove("sidebar_pending_message");
+          chrome.action.setBadgeText({ text: "" });
         }
       } catch (err) {
         logger.error("Failed to check pending message:", err);

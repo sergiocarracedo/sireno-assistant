@@ -1427,28 +1427,94 @@ async function handleOpenSidePanel(fieldId: string | undefined, message: string 
   logger.debug("[IFrame Chat] Opening side panel for field:", fieldId, "with message:", message);
 
   try {
-    // Open the side panel
-    await safeSendMessage({
-      type: "OPEN_SIDEBAR",
-    });
-
-    // If there's a message to send, send it to the side panel
+    // Store the message first
     if (message && message.trim()) {
-      // Wait a bit for the side panel to open before sending the message
-      setTimeout(async () => {
-        await safeSendMessage({
-          type: "SEND_TO_SIDEBAR",
-          message: message.trim(),
-          fieldId: fieldId || activeFieldId,
-        });
-      }, 300);
+      await safeSendMessage({
+        type: "SEND_TO_SIDEBAR",
+        message: message.trim(),
+        fieldId: fieldId || activeFieldId,
+      });
     }
 
     // Close the inline chat
     closeInlineChat();
+
+    // Show a visual notification to the user
+    showExtensionIconNotification();
   } catch (error) {
-    logger.error("[IFrame Chat] Failed to open side panel:", error);
+    logger.error("[IFrame Chat] Failed to send message to side panel:", error);
   }
+}
+
+/**
+ * Show a notification near the extension icon to guide the user
+ */
+function showExtensionIconNotification() {
+  // Create a temporary notification element
+  const notification = document.createElement("div");
+  notification.style.cssText = `
+    position: fixed;
+    top: 60px;
+    right: 20px;
+    background: #4285F4;
+    color: white;
+    padding: 16px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 2147483647;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 14px;
+    line-height: 1.4;
+    max-width: 300px;
+    animation: slideIn 0.3s ease-out;
+  `;
+
+  notification.innerHTML = `
+    <div style="display: flex; align-items: start; gap: 12px;">
+      <div style="flex-shrink: 0; font-size: 20px;">📌</div>
+      <div>
+        <div style="font-weight: 600; margin-bottom: 4px;">Message saved!</div>
+        <div style="opacity: 0.9;">Click the Sireno extension icon to continue in the side panel</div>
+      </div>
+    </div>
+  `;
+
+  // Add animation
+  const style = document.createElement("style");
+  style.textContent = `
+    @keyframes slideIn {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    @keyframes slideOut {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+    }
+  `;
+  document.head.appendChild(style);
+
+  document.body.appendChild(notification);
+
+  // Remove after 5 seconds with animation
+  setTimeout(() => {
+    notification.style.animation = "slideOut 0.3s ease-in";
+    setTimeout(() => {
+      notification.remove();
+      style.remove();
+    }, 300);
+  }, 5000);
 }
 
 /**
