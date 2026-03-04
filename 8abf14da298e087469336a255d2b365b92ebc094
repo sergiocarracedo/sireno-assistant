@@ -1,0 +1,39 @@
+packages/web/src/components/Logo.astro
+  b712ce027812779c 1-17
+.github/agents.md
+  b712ce027812779c 77,81-86
+packages/web/package.json
+  b712ce027812779c 13-15
+packages/web/src/pages/index.astro
+  b712ce027812779c 2-6,14-18,20-21,23-34,36-268,271-335,337-410,412-421
+packages/web/src/styles/custom.css
+  b712ce027812779c 1-104
+packages/web/src/pages/getting-started.astro
+  b712ce027812779c 1-29,31-382,384-385,387-407,409-420
+packages/web/src/pages/privacy.astro
+  b712ce027812779c 1-29,31-341,343-364,367-387,389-400
+packages/web/src/components/HeroShader.astro
+  b712ce027812779c 1-147
+README.md
+  b712ce027812779c 80,82
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.8",
+  "base_commit_sha": "8abf14da298e087469336a255d2b365b92ebc094",
+  "prompts": {
+    "b712ce027812779c": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_3a76e2e7dffeHZB7zI1j1Tnm3i",
+        "model": "github-copilot/claude-sonnet-4.5"
+      },
+      "human_author": "Sergio Carracedo <hi@sergiocarracedo.es>",
+      "messages": [],
+      "total_additions": 1602,
+      "total_deletions": 162,
+      "accepted_lines": 1498,
+      "overriden_lines": 11
+    }
+  }
+}
