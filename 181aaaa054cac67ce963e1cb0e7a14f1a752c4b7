@@ -1,0 +1,23 @@
+releases/BETA_TESTING_INSTRUCTIONS.md
+  b712ce027812779c 1-18,20-24,26-31,33-37,39-87,89-95,97-100,102-114,116-142,144-146,148-151,153-157,159-163,165-169,171-179,181-186,188-211,213-217
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.8",
+  "base_commit_sha": "181aaaa054cac67ce963e1cb0e7a14f1a752c4b7",
+  "prompts": {
+    "b712ce027812779c": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_3a76e2e7dffeHZB7zI1j1Tnm3i",
+        "model": "github-copilot/claude-sonnet-4.5"
+      },
+      "human_author": "Sergio Carracedo <hi@sergiocarracedo.es>",
+      "messages": [],
+      "total_additions": 200,
+      "total_deletions": 0,
+      "accepted_lines": 200,
+      "overriden_lines": 0
+    }
+  }
+}
