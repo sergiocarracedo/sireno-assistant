@@ -1,6 +1,9 @@
 ---
-// Sireno Assistant Landing Page - Placeholder
-import '../styles/global.css'
+import '../styles/global.css';
+import '../styles/custom.css';
+import HeroShader from '../components/HeroShader.astro';
+import Logo from '../components/Logo.astro';
+import { ViewTransitions } from 'astro:transitions';
 ---
 
 <!doctype html>
@@ -8,19 +11,413 @@ import '../styles/global.css'
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="AI-powered assistant for web forms and content. Use your own API keys for privacy-first AI assistance." />
+    <meta name="description" content="Privacy-first AI assistant for web forms and content. Use your own API keys with OpenAI, Anthropic, Google, or Groq. Open source Chrome extension." />
+    <meta name="keywords" content="AI assistant, Chrome extension, OpenAI, Anthropic, Google Gemini, Groq, privacy-first, open source, web forms, content generation" />
+    <meta property="og:title" content="Sireno Assistant - Privacy-First AI for the Web" />
+    <meta property="og:description" content="AI-powered assistant for web forms and content. Use your own API keys for privacy-first AI assistance on any website." />
+    <meta property="og:type" content="website" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>Sireno Assistant - AI-Powered Web Forms & Content Assistant</title>
+    <title>Sireno Assistant - Privacy-First AI for the Web</title>
+    <ViewTransitions />
   </head>
-  <body class="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800 text-white">
-    <main class="container mx-auto px-4 py-16">
-      <div class="text-center">
-        <h1 class="text-5xl font-bold mb-6">Sireno Assistant</h1>
-        <p class="text-xl text-slate-300 mb-8 max-w-2xl mx-auto">
-          AI-powered assistant for web forms and content. Use your own API keys (OpenAI, Anthropic, Google, Groq) for privacy-first AI assistance on any website.
-        </p>
-        <p class="text-slate-400">Landing page coming soon...</p>
+  <body class="min-h-screen bg-slate-950 text-white antialiased">
+    
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 z-50 glass border-b border-white/10">
+      <nav class="container mx-auto px-4 py-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <Logo class="w-10 h-10" color="#fff" />
+            <span class="text-xl font-bold">Sireno Assistant</span>
+          </div>
+          <div class="hidden md:flex items-center gap-6">
+            <a href="/getting-started" class="hover:text-purple-400 transition-colors">Docs</a>
+            <a href="https://github.com/sergiocarracedo/sireno-assistant" target="_blank" rel="noopener" class="hover:text-purple-400 transition-colors">GitHub</a>
+            <a href="https://chromewebstore.google.com/detail/ppnecnomfnadhbcpacgkfldiapoejogo" target="_blank" rel="noopener" class="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 px-6 py-2 rounded-lg font-medium transition-all border-2 border-white">
+              Install Extension
+            </a>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+      <HeroShader />
+      <div class="container mx-auto px-4 relative z-10">
+        <div class="max-w-4xl mx-auto text-center">
+          <div class="flex flex-wrap justify-center gap-3 mb-8 animate-fade-in-up">
+            <span class="glass px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+              Open Source
+            </span>
+            <span class="glass px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
+              Privacy-First
+            </span>
+            <span class="glass px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M12 8v8"/><path d="m8 12 4 4 4-4"/></svg>
+              4 AI Providers
+            </span>
+          </div>
+          
+          <h1 class="text-5xl md:text-7xl font-bold mb-6 animate-fade-in-up [animation-delay:0.1s] [text-shadow:0_2px_24px_rgba(0,0,0,0.8)]">
+            AI Assistant for the Web,<br />
+            <span class="bg-white text-slate-950 px-4 py-2 inline-block [text-shadow:none]">Your Keys, Your Privacy</span>
+          </h1>
+          
+          <p class="text-xl md:text-2xl text-slate-200 mb-10 max-w-3xl mx-auto animate-fade-in-up [animation-delay:0.2s] [text-shadow:0_2px_16px_rgba(0,0,0,0.5)]">
+            Fill forms, generate content, and chat with AI on any website. Use your own API keys with OpenAI, Anthropic, Google, or Groq for complete privacy.
+          </p>
+          
+          <div class="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up [animation-delay:0.3s]">
+            <a href="https://chromewebstore.google.com/detail/ppnecnomfnadhbcpacgkfldiapoejogo" target="_blank" rel="noopener" class="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 px-8 py-4 rounded-lg font-semibold text-lg transition-all transform hover:scale-105 shadow-lg border-2 border-white">
+              Install for Free
+            </a>
+            <a href="/getting-started" class="glass hover:bg-white/10 px-8 py-4 rounded-lg font-semibold text-lg transition-all border-2 border-white">
+              Get Started
+            </a>
+          </div>
+
+          <p class="text-sm text-slate-400 mt-6 animate-fade-in-up [animation-delay:0.4s] flex items-center justify-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-400"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            <strong class="text-purple-400">NEW in v0.2.1:</strong> Side panel transfer, visual notifications, and more!
+          </p>
+        </div>
       </div>
-    </main>
+    </section>
+
+    <!-- Features Section -->
+    <section class="section-padding bg-slate-900/50">
+      <div class="container mx-auto px-4">
+        <h2 class="text-4xl md:text-5xl font-bold text-center mb-16">
+          Powerful Features for <span class="gradient-text-alt">Every Workflow</span>
+        </h2>
+        
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <!-- Feature 1: Inline AI Chat -->
+          <div class="glass p-8 rounded-2xl card-hover">
+            <div class="w-12 h-12 mb-4 flex items-center justify-center bg-purple-500/20 rounded-lg">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-400"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            </div>
+            <h3 class="text-2xl font-bold mb-3">Inline AI Chat</h3>
+            <p class="text-slate-300">
+              Chat with AI directly in any text field. Right-click any input, textarea, or contenteditable element to start.
+            </p>
+          </div>
+
+          <!-- Feature 2: Multi-Provider Support -->
+          <div class="glass p-8 rounded-2xl card-hover">
+            <div class="w-12 h-12 mb-4 flex items-center justify-center bg-purple-500/20 rounded-lg">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-400"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M12 8v8"/><path d="m8 12 4 4 4-4"/></svg>
+            </div>
+            <h3 class="text-2xl font-bold mb-3">Multi-Provider Support</h3>
+            <p class="text-slate-300">
+              Choose from OpenAI, Anthropic Claude, Google Gemini, or Groq. Switch providers anytime with your own API keys.
+            </p>
+          </div>
+
+          <!-- Feature 3: Skills System -->
+          <div class="glass p-8 rounded-2xl card-hover">
+            <div class="w-12 h-12 mb-4 flex items-center justify-center bg-purple-500/20 rounded-lg">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-400"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+            </div>
+            <h3 class="text-2xl font-bold mb-3">Skills System</h3>
+            <p class="text-slate-300">
+              Pre-defined prompts for common tasks: fix grammar, make formal/casual, translate, summarize, and more.
+            </p>
+          </div>
+
+          <!-- Feature 4: Privacy-First -->
+          <div class="glass p-8 rounded-2xl card-hover">
+            <div class="w-12 h-12 mb-4 flex items-center justify-center bg-purple-500/20 rounded-lg">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-400"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
+            </div>
+            <h3 class="text-2xl font-bold mb-3">Privacy-First</h3>
+            <p class="text-slate-300">
+              Your API keys stay in your browser. No third-party servers. Direct communication with AI providers only.
+            </p>
+          </div>
+
+          <!-- Feature 5: Side Panel Transfer (NEW) -->
+          <div class="glass p-8 rounded-2xl card-hover border-2 border-purple-500/30">
+            <div class="flex items-center gap-2 mb-4">
+              <div class="w-12 h-12 flex items-center justify-center bg-purple-500/20 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-400"><path d="M21 3H3v7h18V3z"/><path d="M21 14h-5v7h5v-7z"/><path d="M12 14H3v7h9v-7z"/></svg>
+              </div>
+              <span class="text-xs font-bold text-purple-400 bg-purple-500/20 px-2 py-1 rounded">v0.2.1</span>
+            </div>
+            <h3 class="text-2xl font-bold mb-3">Side Panel Transfer</h3>
+            <p class="text-slate-300">
+              Transfer conversations from inline chat to side panel with one click. Continue complex discussions seamlessly.
+            </p>
+          </div>
+
+          <!-- Feature 6: Dynamic Detection -->
+          <div class="glass p-8 rounded-2xl card-hover">
+            <div class="w-12 h-12 mb-4 flex items-center justify-center bg-purple-500/20 rounded-lg">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-400"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+            </div>
+            <h3 class="text-2xl font-bold mb-3">Dynamic Detection</h3>
+            <p class="text-slate-300">
+              Works on any website, even with dynamically loaded content. Detects new fields automatically.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="section-padding bg-slate-950">
+      <div class="container mx-auto px-4">
+        <h2 class="text-4xl md:text-5xl font-bold text-center mb-16">
+          Get Started in <span class="gradient-text">3 Simple Steps</span>
+        </h2>
+        
+        <div class="grid md:grid-cols-3 gap-12 max-w-5xl mx-auto">
+          <div class="text-center">
+            <div class="w-20 h-20 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center text-3xl font-bold mx-auto mb-6">
+              1
+            </div>
+            <h3 class="text-2xl font-bold mb-4">Install Extension</h3>
+            <p class="text-slate-300">
+              Add Sireno Assistant to Chrome from the Chrome Web Store with one click.
+            </p>
+          </div>
+
+          <div class="text-center">
+            <div class="w-20 h-20 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center text-3xl font-bold mx-auto mb-6">
+              2
+            </div>
+            <h3 class="text-2xl font-bold mb-4">Configure API Keys</h3>
+            <p class="text-slate-300">
+              Add your API key from OpenAI, Anthropic, Google, or Groq. Keys are stored securely in your browser.
+            </p>
+          </div>
+
+          <div class="text-center">
+            <div class="w-20 h-20 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center text-3xl font-bold mx-auto mb-6">
+              3
+            </div>
+            <h3 class="text-2xl font-bold mb-4">Start Using AI</h3>
+            <p class="text-slate-300">
+              Right-click any text field on any website and start chatting with AI or using skills.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Provider Comparison -->
+    <section class="section-padding bg-slate-900/50">
+      <div class="container mx-auto px-4">
+        <h2 class="text-4xl md:text-5xl font-bold text-center mb-16">
+          Choose Your <span class="gradient-text-alt">AI Provider</span>
+        </h2>
+        
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+          <!-- OpenAI -->
+          <div class="glass p-6 rounded-xl">
+            <h3 class="text-xl font-bold mb-2">OpenAI</h3>
+            <p class="text-sm text-slate-400 mb-4">GPT-4o, GPT-4</p>
+            <ul class="space-y-2 text-sm text-slate-300">
+              <li>✓ Most versatile</li>
+              <li>✓ Industry standard</li>
+              <li>✓ Pay-as-you-go</li>
+            </ul>
+          </div>
+
+          <!-- Anthropic -->
+          <div class="glass p-6 rounded-xl">
+            <h3 class="text-xl font-bold mb-2">Anthropic</h3>
+            <p class="text-sm text-slate-400 mb-4">Sonnet 4.6, Haiku 4.6</p>
+            <ul class="space-y-2 text-sm text-slate-300">
+              <li>✓ Long context</li>
+              <li>✓ Highly capable</li>
+              <li>✓ Great for analysis</li>
+            </ul>
+          </div>
+
+          <!-- Google -->
+          <div class="glass p-6 rounded-xl">
+            <h3 class="text-xl font-bold mb-2">Google</h3>
+            <p class="text-sm text-slate-400 mb-4">Gemini Pro, Flash</p>
+            <ul class="space-y-2 text-sm text-slate-300">
+              <li>✓ Fast responses</li>
+              <li>✓ Multimodal</li>
+              <li>✓ Generous limits</li>
+            </ul>
+          </div>
+
+          <!-- Groq -->
+          <div class="glass p-6 rounded-xl border-2 border-green-500/30">
+            <div class="flex items-center gap-2 mb-2">
+              <h3 class="text-xl font-bold">Groq</h3>
+              <span class="text-xs font-bold text-green-400 bg-green-500/20 px-2 py-1 rounded">FREE</span>
+            </div>
+            <p class="text-sm text-slate-400 mb-4">Llama 3, Mixtral</p>
+            <ul class="space-y-2 text-sm text-slate-300">
+              <li>✓ <strong>Free tier</strong></li>
+              <li>✓ Lightning fast</li>
+              <li>✓ No credit card</li>
+            </ul>
+          </div>
+        </div>
+
+        <p class="text-center text-slate-400 mt-8">
+          All providers support streaming responses for real-time feedback.
+        </p>
+      </div>
+    </section>
+
+    <!-- What's New in v0.2.1 -->
+    <section class="section-padding bg-slate-950">
+      <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+          <div class="flex items-center justify-center gap-3 mb-8">
+            <div class="w-16 h-16 flex items-center justify-center bg-purple-500/20 rounded-full">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-400"><path d="M5.8 11.3 2 22l10.7-3.79"/><path d="M4 3h.01"/><path d="M22 8h.01"/><path d="M15 2h.01"/><path d="M22 20h.01"/><circle cx="12" cy="12" r="2"/><path d="m4.5 9.5 6-6"/><path d="m19.5 14.5-6 6"/></svg>
+            </div>
+            <h2 class="text-4xl md:text-5xl font-bold">
+              What's New in <span class="gradient-text">v0.2.1</span>
+            </h2>
+          </div>
+          
+          <div class="space-y-6">
+            <div class="glass p-6 rounded-xl">
+              <h3 class="text-2xl font-bold mb-3 flex items-center gap-3">
+                <div class="w-10 h-10 flex items-center justify-center bg-purple-500/20 rounded-lg">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-400"><path d="M21 3H3v7h18V3z"/><path d="M21 14h-5v7h5v-7z"/><path d="M12 14H3v7h9v-7z"/></svg>
+                </div>
+                Side Panel Transfer Button
+              </h3>
+              <p class="text-slate-300">
+                New button in inline chat allows you to transfer the current conversation to the side panel. Perfect for when you need more space or want to continue a complex discussion.
+              </p>
+            </div>
+
+            <div class="glass p-6 rounded-xl">
+              <h3 class="text-2xl font-bold mb-3 flex items-center gap-3">
+                <div class="w-10 h-10 flex items-center justify-center bg-purple-500/20 rounded-lg">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-400"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+                </div>
+                Visual Notifications
+              </h3>
+              <p class="text-slate-300">
+                Beautiful animated slide-in notifications keep you informed about transfer status and other important events without being intrusive.
+              </p>
+            </div>
+
+            <div class="glass p-6 rounded-xl">
+              <h3 class="text-2xl font-bold mb-3 flex items-center gap-3">
+                <div class="w-10 h-10 flex items-center justify-center bg-blue-500/20 rounded-lg">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-400"><circle cx="12" cy="12" r="10"/><text x="12" y="16" text-anchor="middle" font-size="12" font-weight="bold" fill="currentColor">1</text></svg>
+                </div>
+                Badge Indicators
+              </h3>
+              <p class="text-slate-300">
+                Extension icon shows a blue "1" badge when there's a transferred message waiting in the side panel, so you never miss a conversation.
+              </p>
+            </div>
+
+            <div class="glass p-6 rounded-xl">
+              <h3 class="text-2xl font-bold mb-3 flex items-center gap-3">
+                <div class="w-10 h-10 flex items-center justify-center bg-purple-500/20 rounded-lg">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-400"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                </div>
+                Smart Message Auto-fill
+              </h3>
+              <p class="text-slate-300">
+                Transferred messages are automatically pre-filled in the side panel for 5 seconds with a countdown timer, making it seamless to continue your conversation.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Privacy Section -->
+    <section class="section-padding bg-slate-900/50">
+      <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto text-center">
+          <div class="w-20 h-20 mx-auto mb-6 flex items-center justify-center bg-purple-500/20 rounded-full">
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-400"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
+          </div>
+          <h2 class="text-4xl md:text-5xl font-bold mb-8">
+            Your Privacy is <span class="gradient-text-alt">Our Priority</span>
+          </h2>
+          
+          <div class="grid md:grid-cols-2 gap-6 mb-12">
+            <div class="glass p-6 rounded-xl text-left">
+              <h3 class="text-xl font-bold mb-3 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-400"><path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"/><path d="m21 2-9.6 9.6"/><circle cx="7.5" cy="15.5" r="5.5"/></svg>
+                Your API Keys
+              </h3>
+              <p class="text-slate-300">
+                API keys are stored locally in your browser using Chrome's secure storage. Never sent to our servers because we don't have any.
+              </p>
+            </div>
+
+            <div class="glass p-6 rounded-xl text-left">
+              <h3 class="text-xl font-bold mb-3 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-400"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></svg>
+                No Third-Party Servers
+              </h3>
+              <p class="text-slate-300">
+                Direct communication with AI providers. No intermediary servers. No tracking. No analytics.
+              </p>
+            </div>
+
+            <div class="glass p-6 rounded-xl text-left">
+              <h3 class="text-xl font-bold mb-3 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-400"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+                Open Source
+              </h3>
+              <p class="text-slate-300">
+                Fully open source on GitHub. Inspect the code, verify our claims, or contribute improvements.
+              </p>
+            </div>
+
+            <div class="glass p-6 rounded-xl text-left">
+              <h3 class="text-xl font-bold mb-3 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-400"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
+                LLM Provider Logging
+              </h3>
+              <p class="text-slate-300">
+                AI providers may log your requests per their policies. We recommend reviewing each provider's privacy policy.
+              </p>
+            </div>
+          </div>
+
+          <a href="/privacy" class="text-purple-400 hover:text-purple-300 underline">
+            Read our full Privacy Policy →
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 border-t border-slate-800 py-12">
+      <div class="container mx-auto px-4">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+          <div class="flex items-center gap-3">
+            <Logo class="w-8 h-8" color="#fff" />
+            <span class="text-lg font-semibold">Sireno Assistant</span>
+          </div>
+          
+          <div class="flex flex-wrap justify-center gap-6 text-sm">
+            <a href="/getting-started" class="hover:text-purple-400 transition-colors">Getting Started</a>
+            <a href="/privacy" class="hover:text-purple-400 transition-colors">Privacy</a>
+            <a href="https://github.com/sergiocarracedo/sireno-assistant" target="_blank" rel="noopener" class="hover:text-purple-400 transition-colors">GitHub</a>
+            <a href="https://chromewebstore.google.com/detail/ppnecnomfnadhbcpacgkfldiapoejogo" target="_blank" rel="noopener" class="hover:text-purple-400 transition-colors">Chrome Web Store</a>
+          </div>
+          
+          <div class="text-sm text-slate-400">
+            Made with ❤️ by Sergio Carracedo
+          </div>
+        </div>
+      </div>
+    </footer>
+
   </body>
 </html>
