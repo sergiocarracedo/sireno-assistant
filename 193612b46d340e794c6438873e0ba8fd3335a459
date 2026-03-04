@@ -1,0 +1,27 @@
+.gitignore
+  b712ce027812779c 44-47
+packages/extension/scripts/build-release.sh
+  b712ce027812779c 1-65
+packages/extension/package.json
+  b712ce027812779c 13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.8",
+  "base_commit_sha": "193612b46d340e794c6438873e0ba8fd3335a459",
+  "prompts": {
+    "b712ce027812779c": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_3a76e2e7dffeHZB7zI1j1Tnm3i",
+        "model": "github-copilot/claude-sonnet-4.5"
+      },
+      "human_author": "Sergio Carracedo <hi@sergiocarracedo.es>",
+      "messages": [],
+      "total_additions": 72,
+      "total_deletions": 2,
+      "accepted_lines": 70,
+      "overriden_lines": 0
+    }
+  }
+}
