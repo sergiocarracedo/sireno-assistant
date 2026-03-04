@@ -36,6 +36,9 @@ const fieldButtons = new Map<HTMLElement, AssistantButton>();
 // Track discovered fields for sidepanel
 let discoveredFields: FieldRef[] = [];
 
+// Track which field has inline chat open
+let inlineChatOpenForFieldId: string | null = null;
+
 // Settings
 let showButtonOnHover = true;
 let showButtonOnFocus = true;
@@ -73,36 +76,40 @@ async function safeSendMessage(message: any): Promise<any> {
 }
 
 /**
- * Show reload notification
+ * Show reload notification (orange warning)
  */
 function showReloadNotification() {
+  // Don't show multiple notifications
+  if (document.querySelector("[data-sireno-reload-notification]")) {
+    return;
+  }
+
   const notification = document.createElement("div");
+  notification.setAttribute("data-sireno-reload-notification", "true");
   notification.style.cssText = `
     position: fixed;
     top: 20px;
     right: 20px;
     padding: 16px 24px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
     color: white;
     border-radius: 8px;
-    box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 10px 40px rgba(249, 115, 22, 0.4);
     z-index: 2147483647;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
+    transition: opacity 0.3s ease;
   `;
-  notification.textContent = "✨ Sireno Assistant was updated. Click to reload.";
+  notification.textContent = "⚠️ Sireno Assistant needs to reload. Click here to reload the page.";
   notification.addEventListener("click", () => {
     window.location.reload();
   });
 
   document.body.appendChild(notification);
 
-  setTimeout(() => {
-    notification.style.opacity = "0";
-    setTimeout(() => notification.remove(), 300);
-  }, 5000);
+  // Stay until clicked (no auto-dismiss)
 }
 
 /**
@@ -132,6 +139,13 @@ async function handleFieldDetected(detectedField: DetectedField) {
 
   logger.debug("[Sireno] Field detected:", fieldRef.id, element);
 
+  // Check minimum width - skip very narrow fields (less than 80px)
+  const rect = element.getBoundingClientRect();
+  if (rect.width < 80) {
+    logger.debug("[Sireno] Field too narrow, skipping button:", fieldRef.id, `(${rect.width}px)`);
+    return;
+  }
+
   // Check if field is excluded
   try {
     const response = await safeSendMessage({
@@ -158,8 +172,8 @@ async function handleFieldDetected(detectedField: DetectedField) {
 
     fieldButtons.set(element, button);
 
-    // Setup hover and focus behavior
-    setupFieldInteraction(element, button);
+    // Setup hover and focus behavior (pass fieldId to check if chat is open)
+    setupFieldInteraction(element, button, fieldRef.id);
   }
 
   // Update discovered fields list
@@ -184,9 +198,14 @@ function handleFieldRemoved(element: HTMLElement) {
 /**
  * Setup field interaction (hover, focus)
  */
-function setupFieldInteraction(field: HTMLElement, button: AssistantButton) {
-  // Initially hide button
-  hideButton(button);
+function setupFieldInteraction(field: HTMLElement, button: AssistantButton, fieldId: string) {
+  // Initially hide button (unless chat is open for this field)
+  if (inlineChatOpenForFieldId !== fieldId) {
+    hideButton(button);
+  }
+
+  // Helper to check if button should stay visible
+  const shouldKeepVisible = () => inlineChatOpenForFieldId === fieldId;
 
   // Hover behavior
   if (showButtonOnHover) {
@@ -195,6 +214,11 @@ function setupFieldInteraction(field: HTMLElement, button: AssistantButton) {
     });
 
     field.addEventListener("mouseleave", () => {
+      // Don't hide if chat is open for this field
+      if (shouldKeepVisible()) {
+        return;
+      }
+
       // Only hide if not focused
       if (
         document.activeElement !== field &&
@@ -213,6 +237,11 @@ function setupFieldInteraction(field: HTMLElement, button: AssistantButton) {
     });
 
     field.addEventListener("blur", () => {
+      // Don't hide if chat is open for this field
+      if (shouldKeepVisible()) {
+        return;
+      }
+
       // Hide after a delay (allow button click)
       setTimeout(() => {
         // Only hide if not hovered
@@ -360,7 +389,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
         );
 
         fieldButtons.set(field.element, button);
-        setupFieldInteraction(field.element, button);
+        setupFieldInteraction(field.element, button, field.fieldRef.id);
         logger.debug("[Sireno] Button created for un-excluded field:", field.fieldRef.id);
       } else {
         logger.debug("[Sireno] Button already exists for field:", field.fieldRef.id);
@@ -443,7 +472,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
 });
 
 /**
- * Listen for field exclusion events from iframe-chat
+ * Listen for events from iframe-chat
  */
 window.addEventListener("message", (event) => {
   logger.debug("[Sireno] Window message received:", event.data);
@@ -451,28 +480,36 @@ window.addEventListener("message", (event) => {
   if (event.data?.type === "FIELD_EXCLUDED") {
     const excludedFieldId = event.data.fieldId;
     logger.debug("[Sireno] Field excluded, removing button:", excludedFieldId);
-    logger.debug("[Sireno] Current field buttons:", fieldButtons);
-    logger.debug("[Sireno] Current detected fields:", fieldDetector.getFields());
 
-    // Find and remove button for this field
-    const fields = fieldDetector.getFields();
-    const excludedField = fields.find((f) => f.fieldRef.id === excludedFieldId);
+    // Get the field element from the global variable set by iframe-chat
+    const excludedFieldElement = (window as any).__SIRENO_EXCLUDED_FIELD__;
 
-    logger.debug("[Sireno] Found excluded field:", excludedField);
+    // Clean up the global
+    delete (window as any).__SIRENO_EXCLUDED_FIELD__;
 
-    if (excludedField) {
-      const button = fieldButtons.get(excludedField.element);
-      logger.debug("[Sireno] Found button:", button);
+    if (excludedFieldElement) {
+      logger.debug("[Sireno] Found excluded field element from global:", excludedFieldElement);
+      const button = fieldButtons.get(excludedFieldElement);
 
       if (button) {
         removeButton(button);
-        fieldButtons.delete(excludedField.element);
+        fieldButtons.delete(excludedFieldElement);
         logger.debug("[Sireno] Button removed for excluded field:", excludedFieldId);
       } else {
-        logger.warn("[Sireno] No button found for field element");
+        logger.warn("[Sireno] No button found for excluded field element");
       }
     } else {
-      logger.warn("[Sireno] No field found with ID:", excludedFieldId);
+      logger.warn("[Sireno] No excluded field element found in global");
+    }
+  } else if (event.data?.type === "INLINE_CHAT_OPENED") {
+    const fieldId = event.data.fieldId;
+    logger.debug("[Sireno] Inline chat opened for field:", fieldId);
+    inlineChatOpenForFieldId = fieldId;
+  } else if (event.data?.type === "INLINE_CHAT_CLOSED") {
+    const fieldId = event.data.fieldId;
+    logger.debug("[Sireno] Inline chat closed for field:", fieldId);
+    if (inlineChatOpenForFieldId === fieldId) {
+      inlineChatOpenForFieldId = null;
     }
   }
 });

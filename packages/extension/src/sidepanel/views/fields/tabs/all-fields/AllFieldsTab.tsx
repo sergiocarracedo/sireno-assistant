@@ -203,6 +203,17 @@ export default function AllFieldsTab() {
         return;
       }
 
+      // Check if this is a valid tab for content scripts
+      if (
+        !tab.url ||
+        tab.url.startsWith("chrome://") ||
+        tab.url.startsWith("chrome-extension://")
+      ) {
+        logger.debug("[FieldSelector] Skipping field scan for chrome:// or extension page");
+        setLoading(false);
+        return;
+      }
+
       logger.debug("[FieldSelector] Scanning fields for tab", tab.id);
 
       const response = await chrome.tabs.sendMessage(tab.id, {
@@ -240,7 +251,17 @@ export default function AllFieldsTab() {
         logger.warn("[FieldSelector] No fields in response");
         setSelectedIds([]);
       }
-    } catch (error) {
+    } catch (error: any) {
+      // Silently handle connection errors (content script not loaded)
+      if (
+        error?.message?.includes("Could not establish connection") ||
+        error?.message?.includes("Receiving end does not exist")
+      ) {
+        logger.debug("[FieldSelector] Content script not loaded yet, skipping field scan");
+        setLoading(false);
+        return;
+      }
+
       logger.error("[FieldSelector] Failed to scan fields:", error);
       // Try to inject content script if it's not loaded
       try {

@@ -1,18 +1,51 @@
-import { ArrowUp, LoaderCircle } from "lucide-react";
-import { forwardRef, KeyboardEvent, useImperativeHandle, useRef } from "react";
+import { ArrowUp, X } from "lucide-react";
+import { forwardRef, KeyboardEvent, useEffect, useImperativeHandle, useRef } from "react";
 import { useControllable, UseControllableProps } from "use-controllable";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
 
+// Inject keyframes for gradient animation
+const injectGradientAnimation = () => {
+  if (typeof document === "undefined") return;
+  if (document.getElementById("spin-gradient-keyframes")) return;
+
+  const style = document.createElement("style");
+  style.id = "spin-gradient-keyframes";
+  style.textContent = `
+    @keyframes spin-gradient {
+      0% {
+        background: conic-gradient(from 0deg, #8b5cf6, #3b82f6, #06b6d4, transparent 270deg);
+      }
+      25% {
+        background: conic-gradient(from 90deg, #8b5cf6, #3b82f6, #06b6d4, transparent 270deg);
+      }
+      50% {
+        background: conic-gradient(from 180deg, #8b5cf6, #3b82f6, #06b6d4, transparent 270deg);
+      }
+      75% {
+        background: conic-gradient(from 270deg, #8b5cf6, #3b82f6, #06b6d4, transparent 270deg);
+      }
+      100% {
+        background: conic-gradient(from 360deg, #8b5cf6, #3b82f6, #06b6d4, transparent 270deg);
+      }
+    }
+  `;
+  document.head.appendChild(style);
+};
+
 export type ChatInputProps = UseControllableProps<string> & {
   /** Callback when user submits the message */
   onSubmit: (message: string) => void;
+  /** Callback when user cancels the request */
+  onCancel?: () => void;
   /** Placeholder text */
   placeholder?: string;
   /** Disabled state */
   loading?: boolean;
   /** Custom className for the container */
   className?: string;
+  /** Last sent message for recovery with arrow up */
+  lastMessage?: string;
 };
 
 export interface ChatInputRef {
@@ -33,10 +66,23 @@ export interface ChatInputRef {
  * <ChatInput defaultValue="" onSubmit={handleSend} />
  */
 export const ChatInput = forwardRef<ChatInputRef, ChatInputProps>(function ChatInput(
-  { onSubmit, placeholder = "Type your message...", loading, className, ...props },
+  {
+    onSubmit,
+    onCancel,
+    placeholder = "Type your message...",
+    loading,
+    className,
+    lastMessage,
+    ...props
+  },
   ref,
 ) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Inject animation keyframes
+  useEffect(() => {
+    injectGradientAnimation();
+  }, []);
 
   // Expose focus method to parent
   useImperativeHandle(ref, () => ({
@@ -64,10 +110,21 @@ export const ChatInput = forwardRef<ChatInputRef, ChatInputProps>(function ChatI
     setValue(""); // Clear input after submit
   };
 
+  const handleCancel = () => {
+    if (onCancel) {
+      onCancel();
+    }
+  };
+
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSubmit();
+    }
+    // Arrow up to recover last message (only when textarea is empty)
+    if (e.key === "ArrowUp" && !value?.trim() && lastMessage) {
+      e.preventDefault();
+      setValue(lastMessage);
     }
   };
 
@@ -83,18 +140,29 @@ export const ChatInput = forwardRef<ChatInputRef, ChatInputProps>(function ChatI
           disabled={loading}
           className="min-h-19 max-h-32 resize-none"
         />
-        <Button
-          onClick={handleSubmit}
-          disabled={loading || !value?.trim()}
-          size="icon"
-          className="absolute bottom-1 right-1"
-        >
-          {loading ? (
-            <LoaderCircle className="h-3 w-3 animate-spin" />
-          ) : (
-            <ArrowUp className="h-3 w-3" />
-          )}
-        </Button>
+        <div className="absolute bottom-1 right-1">
+          <div
+            className={loading ? "relative p-[2px] rounded-md" : ""}
+            style={
+              loading
+                ? {
+                    background:
+                      "conic-gradient(from 0deg, #8b5cf6, #3b82f6, #06b6d4, transparent 270deg)",
+                    animation: "spin-gradient 1.5s linear infinite",
+                  }
+                : undefined
+            }
+          >
+            <Button
+              onClick={loading ? handleCancel : handleSubmit}
+              disabled={!loading && !value?.trim()}
+              size="icon"
+              className={loading ? "bg-white dark:bg-gray-900" : ""}
+            >
+              {loading ? <X className="h-3 w-3" /> : <ArrowUp className="h-3 w-3" />}
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );

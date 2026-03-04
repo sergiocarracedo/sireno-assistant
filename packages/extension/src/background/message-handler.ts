@@ -244,14 +244,28 @@ export async function handleMessage(
           const contextInfo = `Current date and time: ${dateTime}\nBrowser language: ${language}\n\n`;
 
           // Create a prompt with context about the current value
-          const currentValueContext = message.currentValue
-            ? `Current field value: "${message.currentValue}"\n\n`
-            : "The field is currently empty.\n\n";
+          let currentValueContext = "";
+          if (message.selectedText && message.selectionRange) {
+            // Selection-only mode: only transform the selected portion
+            currentValueContext = `Current field value: "${message.currentValue}"\n`;
+            currentValueContext += `Selected text (to be transformed): "${message.selectedText}"\n`;
+            currentValueContext += `Selection position: characters ${message.selectionRange.start} to ${message.selectionRange.end}\n\n`;
+            currentValueContext += `IMPORTANT: Transform ONLY the selected text. Return ONLY the replacement for the selected portion, not the entire field value.\n\n`;
+          } else if (message.currentValue) {
+            currentValueContext = `Current field value: "${message.currentValue}"\n\n`;
+          } else {
+            currentValueContext = "The field is currently empty.\n\n";
+          }
 
           // Build system prompt with skills
           let systemPrompt = `You are a helpful assistant that transforms field values based on user instructions.
 
 IMPORTANT: Provide ONLY the new/transformed text value for the field. Do not include any explanations, quotes, or markdown. Just output the raw result text.`;
+
+          // Add rich text handling instruction
+          if (message.isRichText) {
+            systemPrompt += `\n\nThis field supports HTML formatting. Preserve all HTML tags including <br>, <strong>, <em>, <b>, <i>, <u>, <span>, <div>, <p>, etc. Return valid HTML that maintains line breaks and text formatting.`;
+          }
 
           // Add active skills to system prompt
           if (activeSkills.length > 0) {
@@ -308,6 +322,14 @@ IMPORTANT: Provide ONLY the new/transformed text value for the field. Do not inc
             error: error instanceof Error ? error.message : "Unknown error",
           });
         }
+        break;
+      }
+
+      case "CANCEL_INLINE_LLM": {
+        // For now, we just acknowledge the cancellation
+        // The actual cancellation logic is handled by the requestId check in the content script
+        logger.debug("Inline LLM request cancelled:", message.requestId);
+        // No response needed - the content script handles the state
         break;
       }
 

@@ -46,12 +46,17 @@ export type SidePanelToServiceWorkerMessage =
   | { type: "CLEAR_CHAT_MESSAGES"; tabId: number }
   | {
       type: "RUN_INLINE_LLM";
+      requestId?: string;
       fieldId: string;
-      fieldLabel: string;
+      fieldLabel?: string;
       fieldPlaceholder?: string;
       instruction: string;
       currentValue: string;
+      isRichText?: boolean;
+      selectedText?: string;
+      selectionRange?: { start: number; end: number };
     }
+  | { type: "CANCEL_INLINE_LLM"; requestId: string }
   | { type: "GET_LLM_LOGS" }
   | { type: "CLEAR_LLM_LOGS" }
   | { type: "OPEN_SIDEBAR_CHAT"; fieldId: string; inputText: string }

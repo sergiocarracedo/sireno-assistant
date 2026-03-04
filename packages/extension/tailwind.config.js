@@ -36,6 +36,15 @@ export default {
           950: "#2e1065",
         },
       },
+      animation: {
+        "spin-gradient": "spin-gradient 1.5s linear infinite",
+      },
+      keyframes: {
+        "spin-gradient": {
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(360deg)" },
+        },
+      },
     },
   },
   plugins: [],

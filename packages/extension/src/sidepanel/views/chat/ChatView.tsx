@@ -208,6 +208,16 @@ export default function ChatTab({ onNavigate, initData }: ChatTabProps) {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
       if (!tab.id) return;
 
+      // Check if this is a valid tab for content scripts
+      if (
+        !tab.url ||
+        tab.url.startsWith("chrome://") ||
+        tab.url.startsWith("chrome-extension://")
+      ) {
+        logger.debug("Skipping field scan for chrome:// or extension page");
+        return;
+      }
+
       logger.debug("Scanning fields for tab", tab.id);
       const response = await chrome.tabs.sendMessage(tab.id, {
         type: "SCAN_FIELDS",
@@ -217,7 +227,16 @@ export default function ChatTab({ onNavigate, initData }: ChatTabProps) {
         logger.debug("Found", response.fields.length, "fields");
         setTotalFields(response.fields.length);
       }
-    } catch (err) {
+    } catch (err: any) {
+      // Silently handle connection errors (content script not loaded)
+      if (
+        err?.message?.includes("Could not establish connection") ||
+        err?.message?.includes("Receiving end does not exist")
+      ) {
+        logger.debug("Content script not loaded yet, skipping field scan");
+        return;
+      }
+      // Log other errors
       logger.error("Failed to scan fields:", err);
     }
   };
@@ -227,6 +246,12 @@ export default function ChatTab({ onNavigate, initData }: ChatTabProps) {
     try {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
       if (!tab.url) return;
+
+      // Skip chrome:// and extension pages
+      if (tab.url.startsWith("chrome://") || tab.url.startsWith("chrome-extension://")) {
+        logger.debug("Skipping active skills load for chrome:// or extension page");
+        return;
+      }
 
       const url = new URL(tab.url);
       const domain = url.hostname;
@@ -242,7 +267,15 @@ export default function ChatTab({ onNavigate, initData }: ChatTabProps) {
 
       setActiveSkillsCount(activeSkills.length);
       setActiveSkillNames(activeSkills.map((s: any) => s.name));
-    } catch (err) {
+    } catch (err: any) {
+      // Silently handle connection errors
+      if (
+        err?.message?.includes("Could not establish connection") ||
+        err?.message?.includes("Receiving end does not exist")
+      ) {
+        logger.debug("Content script not loaded yet, skipping active skills load");
+        return;
+      }
       logger.error("Failed to load active skills:", err);
     }
   };
