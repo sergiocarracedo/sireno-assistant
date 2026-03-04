@@ -1,0 +1,418 @@
+import { useState, useEffect } from "react";
+import { useTranslation } from "../../../../../shared/i18n";
+import type { FieldRef } from "../../../../../shared/types";
+import type { ExcludedField } from "../../../../../background/storage";
+import { Button } from "../../../../../shared/components/ui/button";
+import { RotateCw, Focus, EyeOff } from "lucide-react";
+import { createLogger } from "../../../../../shared/logger";
+
+const logger = createLogger("AllFieldsTab");
+
+export default function AllFieldsTab() {
+  const { t } = useTranslation();
+  const [fields, setFields] = useState<FieldRef[]>([]);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [currentTabId, setCurrentTabId] = useState<number | null>(null);
+  const [excludedFieldIds, setExcludedFieldIds] = useState<Set<string>>(new Set());
+
+  // Track the current active tab
+  useEffect(() => {
+    const updateCurrentTab = async () => {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (tab.id && tab.id !== currentTabId) {
+        logger.debug("[FieldSelector] Tab changed from", currentTabId, "to", tab.id);
+        setCurrentTabId(tab.id);
+      }
+    };
+
+    // Initial tab detection
+    updateCurrentTab();
+
+    // Listen for tab activation (user switches tabs)
+    const handleTabActivated = (activeInfo: chrome.tabs.TabActiveInfo) => {
+      logger.debug("[FieldSelector] Tab activated:", activeInfo.tabId);
+      setCurrentTabId(activeInfo.tabId);
+    };
+
+    // Listen for tab updates (URL changes, page loads)
+    const handleTabUpdated = (
+      tabId: number,
+      changeInfo: chrome.tabs.TabChangeInfo,
+      tab: chrome.tabs.Tab,
+    ) => {
+      if (changeInfo.status === "complete" && tab.active) {
+        logger.debug("[FieldSelector] Tab updated and complete:", tabId);
+        setCurrentTabId(tabId);
+      }
+    };
+
+    // Auto-rescan when tab becomes visible
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        logger.debug("[FieldSelector] Tab visible, updating current tab...");
+        updateCurrentTab();
+      }
+    };
+
+    chrome.tabs.onActivated.addListener(handleTabActivated);
+    chrome.tabs.onUpdated.addListener(handleTabUpdated);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      chrome.tabs.onActivated.removeListener(handleTabActivated);
+      chrome.tabs.onUpdated.removeListener(handleTabUpdated);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [currentTabId]);
+
+  // Reload fields and selections whenever currentTabId changes
+  useEffect(() => {
+    if (currentTabId) {
+      logger.debug(
+        "[FieldSelector] Current tab changed to",
+        currentTabId,
+        "- reloading fields and selections",
+      );
+      scanFields();
+      loadSelectedIds();
+      loadExcludedFields();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentTabId]);
+
+  // Listen for field changes from content script
+  useEffect(() => {
+    const handleMessage = async (message: any) => {
+      if (message.type === "FIELDS_DISCOVERED") {
+        logger.debug(
+          "[FieldSelector] Fields discovered from content script:",
+          message.fields.length,
+        );
+
+        // Only update if field count changed
+        if (message.fields.length !== fields.length) {
+          logger.debug(
+            "[FieldSelector] Field count changed:",
+            fields.length,
+            "→",
+            message.fields.length,
+          );
+          setFields(message.fields);
+
+          // Load deselected fields
+          const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+          if (!tab.id) return;
+
+          const result = await chrome.storage.local.get(`deselectedFields_${tab.id}`);
+          const deselectedFields = new Set(result[`deselectedFields_${tab.id}`] || []);
+
+          // Preserve existing selection, add new fields if they weren't previously deselected
+          const existingIds = new Set(selectedIds);
+          const newFields = message.fields.filter(
+            (f: FieldRef) => !existingIds.has(f.id) && !deselectedFields.has(f.id),
+          );
+
+          if (newFields.length > 0) {
+            const newIds = [...selectedIds, ...newFields.map((f: FieldRef) => f.id)];
+            setSelectedIds(newIds);
+            saveSelectedIds(newIds);
+          }
+        }
+      }
+    };
+
+    chrome.runtime.onMessage.addListener(handleMessage);
+
+    return () => {
+      chrome.runtime.onMessage.removeListener(handleMessage);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fields.length, selectedIds]);
+
+  // Load excluded fields for the current URL
+  const loadExcludedFields = async () => {
+    try {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (!tab.url) return;
+
+      const key = `excluded_fields_${tab.url}`;
+      const result = await chrome.storage.local.get(key);
+      const excludedFields: ExcludedField[] = result[key] || [];
+
+      // Create a set of excluded field IDs
+      const excludedIds = new Set(excludedFields.map((f) => f.fieldId));
+      setExcludedFieldIds(excludedIds);
+
+      logger.debug("[FieldSelector] Loaded", excludedIds.size, "excluded fields for", tab.url);
+    } catch (error) {
+      logger.error("Failed to load excluded fields:", error);
+    }
+  };
+
+  // Load selected IDs from storage
+  const loadSelectedIds = async () => {
+    try {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (!tab.id) return;
+
+      const result = await chrome.storage.local.get(`selectedFields_${tab.id}`);
+      if (result[`selectedFields_${tab.id}`]) {
+        setSelectedIds(result[`selectedFields_${tab.id}`]);
+      }
+    } catch (error) {
+      logger.error("Failed to load selected IDs:", error);
+    }
+  };
+
+  // Save selected IDs to storage
+  const saveSelectedIds = async (ids: string[], deselectedId?: string) => {
+    try {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (!tab.id) return;
+
+      const updates: Record<string, any> = {
+        [`selectedFields_${tab.id}`]: ids,
+      };
+
+      // Track explicitly deselected field
+      if (deselectedId) {
+        const result = await chrome.storage.local.get(`deselectedFields_${tab.id}`);
+        const deselectedFields = result[`deselectedFields_${tab.id}`] || [];
+        if (!deselectedFields.includes(deselectedId)) {
+          updates[`deselectedFields_${tab.id}`] = [...deselectedFields, deselectedId];
+        }
+      }
+
+      await chrome.storage.local.set(updates);
+    } catch (error) {
+      logger.error("Failed to save selected IDs:", error);
+    }
+  };
+
+  const scanFields = async () => {
+    setLoading(true);
+    // Clear old data immediately when scanning new tab
+    setFields([]);
+
+    try {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (!tab.id) {
+        logger.error("[FieldSelector] No active tab found");
+        setLoading(false);
+        return;
+      }
+
+      // Check if this is a valid tab for content scripts
+      if (
+        !tab.url ||
+        tab.url.startsWith("chrome://") ||
+        tab.url.startsWith("chrome-extension://")
+      ) {
+        logger.debug("[FieldSelector] Skipping field scan for chrome:// or extension page");
+        setLoading(false);
+        return;
+      }
+
+      logger.debug("[FieldSelector] Scanning fields for tab", tab.id);
+
+      const response = await chrome.tabs.sendMessage(tab.id, {
+        type: "SCAN_FIELDS",
+      });
+
+      logger.debug("[FieldSelector] Scan response:", response);
+
+      if (response?.fields) {
+        logger.debug("[FieldSelector] Found", response.fields.length, "fields");
+        setFields(response.fields);
+
+        // Load saved selection and deselection history for THIS tab
+        const storageKeys = [`selectedFields_${tab.id}`, `deselectedFields_${tab.id}`];
+        const result = await chrome.storage.local.get(storageKeys);
+        const savedSelection = result[`selectedFields_${tab.id}`];
+        const deselectedFields = new Set(result[`deselectedFields_${tab.id}`] || []);
+
+        if (savedSelection && savedSelection.length > 0) {
+          // Use saved selection
+          logger.debug("[FieldSelector] Using saved selection for tab", tab.id);
+          setSelectedIds(savedSelection);
+        } else if (response.fields.length > 0) {
+          // No saved selection, select all by default EXCEPT previously deselected fields
+          logger.debug("[FieldSelector] No saved selection, selecting new fields for tab", tab.id);
+          const allIds = response.fields
+            .map((f: FieldRef) => f.id)
+            .filter((id: string) => !deselectedFields.has(id));
+          setSelectedIds(allIds);
+          saveSelectedIds(allIds);
+        } else {
+          setSelectedIds([]);
+        }
+      } else {
+        logger.warn("[FieldSelector] No fields in response");
+        setSelectedIds([]);
+      }
+    } catch (error: any) {
+      // Silently handle connection errors (content script not loaded)
+      if (
+        error?.message?.includes("Could not establish connection") ||
+        error?.message?.includes("Receiving end does not exist")
+      ) {
+        logger.debug("[FieldSelector] Content script not loaded yet, skipping field scan");
+        setLoading(false);
+        return;
+      }
+
+      logger.error("[FieldSelector] Failed to scan fields:", error);
+      // Try to inject content script if it's not loaded
+      try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (tab.id) {
+          logger.debug("[FieldSelector] Attempting to inject content script...");
+          await chrome.scripting.executeScript({
+            target: { tabId: tab.id },
+            files: ["content_script.js"],
+          });
+          logger.debug("[FieldSelector] Content script injected, retrying scan...");
+          // Wait a bit for content script to initialize
+          setTimeout(() => scanFields(), 500);
+        }
+      } catch (injectError) {
+        logger.error("[FieldSelector] Failed to inject content script:", injectError);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const toggleField = (fieldId: string) => {
+    const isDeselecting = selectedIds.includes(fieldId);
+    const newSelection = isDeselecting
+      ? selectedIds.filter((id) => id !== fieldId)
+      : [...selectedIds, fieldId];
+    setSelectedIds(newSelection);
+    saveSelectedIds(newSelection, isDeselecting ? fieldId : undefined);
+  };
+
+  const selectAll = async () => {
+    const allIds = fields.map((f) => f.id);
+    setSelectedIds(allIds);
+
+    try {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (!tab.id) return;
+
+      // Clear deselected fields when selecting all
+      await chrome.storage.local.set({
+        [`selectedFields_${tab.id}`]: allIds,
+        [`deselectedFields_${tab.id}`]: [],
+      });
+    } catch (error) {
+      logger.error("Failed to save selection:", error);
+    }
+  };
+
+  const selectNone = async () => {
+    setSelectedIds([]);
+
+    try {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (!tab.id) return;
+
+      // Mark all current fields as deselected
+      const allIds = fields.map((f) => f.id);
+      await chrome.storage.local.set({
+        [`selectedFields_${tab.id}`]: [],
+        [`deselectedFields_${tab.id}`]: allIds,
+      });
+    } catch (error) {
+      logger.error("Failed to save selection:", error);
+    }
+  };
+
+  const focusField = async (fieldId: string) => {
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    if (!tab.id) return;
+
+    // Focus the field
+    await chrome.tabs.sendMessage(tab.id, {
+      type: "FOCUS_FIELD",
+      fieldId,
+    });
+
+    // Also highlight it for 10 seconds
+    await chrome.tabs.sendMessage(tab.id, {
+      type: "HIGHLIGHT_FIELD",
+      fieldId,
+      duration: 10000,
+    });
+  };
+
+  return (
+    <div className="flex flex-col h-full">
+      <div className="mb-4 flex gap-2 items-center">
+        <Button onClick={scanFields} disabled={loading}>
+          <RotateCw className={`h-4 w-4 mr-1 ${loading ? "animate-spin" : ""}`} />
+          {loading ? t("fields.scanning") : t("fields.rescan")}
+        </Button>
+        <Button variant="secondary" onClick={selectAll}>
+          {t("fields.selectAll")}
+        </Button>
+        <Button variant="secondary" onClick={selectNone}>
+          {t("fields.selectNone")}
+        </Button>
+      </div>
+
+      <div className="mb-3 text-sm text-gray-600 dark:text-gray-300">
+        {t("fields.fieldsSelected", { count: selectedIds.length, total: fields.length })}
+      </div>
+
+      <div className="flex-1 overflow-y-auto">
+        <div className="field-list">
+          {fields.map((field) => {
+            const isExcluded = excludedFieldIds.has(field.id);
+
+            return (
+              <div key={field.id} className="field-item">
+                <input
+                  type="checkbox"
+                  checked={selectedIds.includes(field.id)}
+                  onChange={() => toggleField(field.id)}
+                />
+                <div className="field-info">
+                  <div className="field-label">
+                    {field.labelHint}
+                    {isExcluded && (
+                      <span
+                        className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-200 text-gray-700"
+                        title="This field is excluded from assistant buttons"
+                      >
+                        <EyeOff className="h-3 w-3 mr-1" />
+                        {t("fields.excluded")}
+                      </span>
+                    )}
+                  </div>
+                  <div className="field-meta">
+                    {field.kind}
+                    {field.inputType && ` · ${field.inputType}`}
+                    {field.value &&
+                      ` · "${field.value.slice(0, 30)}${field.value.length > 30 ? "..." : ""}"`}
+                  </div>
+                </div>
+                <Button variant="secondary" size="sm" onClick={() => focusField(field.id)}>
+                  <Focus className="h-4 w-4 mr-1" />
+                  {t("fields.focus")}
+                </Button>
+              </div>
+            );
+          })}
+        </div>
+
+        {fields.length === 0 && !loading && (
+          <div className="text-center py-8 text-gray-600 dark:text-gray-300">
+            {t("fields.noFieldsFound")}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

@@ -5,6 +5,36 @@ All notable changes to Sireno Assistant will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.1] - 2026-03-04
+
+### Added
+
+- **Side Panel Transfer Button**: New "Open in side panel" button in inline chat
+  - Click the PanelRight button to transfer your message to the side panel for full chat experience
+  - Visual notification guides user to click extension icon
+  - Blue badge "1" appears on extension icon when message is pending
+  - Message auto-fills in side panel with 5-second expiry for security
+  - Field context preserved when transferring messages
+- **Chrome Web Store Release System**: Complete build and documentation workflow
+  - `build:release` script creates production-ready zip packages
+  - Comprehensive submission guides (SUBMISSION_CHECKLIST.md, QUICK_START.md)
+  - Beta testing instructions for friends and early adopters
+  - Professional release documentation in `releases/` folder
+
+### Changed
+
+- **Inline Chat UX**: Added notification system for better user guidance
+  - Animated slide-in notifications from top-right corner
+  - Auto-dismiss after 5 seconds with smooth animations
+  - Clear visual feedback when messages are saved
+
+### Technical
+
+- Enhanced message passing between inline chat and side panel
+- Added badge API integration for extension icon notifications
+- Implemented message expiry mechanism (5-second timeout)
+- Created comprehensive testing guide (TESTING_SIDEPANEL_BUTTON.md)
+
 ## [0.2.0] - 2026-02-10
 
 ### Added
