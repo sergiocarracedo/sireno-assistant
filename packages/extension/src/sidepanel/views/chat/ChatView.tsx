@@ -76,6 +76,39 @@ export default function ChatTab({ onNavigate, initData }: ChatTabProps) {
     }
   }, [initData]);
 
+  // Check for pending messages from inline chat
+  useEffect(() => {
+    const checkPendingMessage = async () => {
+      try {
+        const result = await chrome.storage.local.get("sidebar_pending_message");
+        if (result.sidebar_pending_message) {
+          const { message, fieldId, timestamp } = result.sidebar_pending_message;
+
+          // Only use if recent (within last 5 seconds)
+          if (Date.now() - timestamp < 5000) {
+            setInput(message);
+
+            // Set selected field if provided
+            if (fieldId) {
+              setSelectedFieldIds([fieldId]);
+              const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+              if (tab.id) {
+                chrome.storage.local.set({ [`selectedFields_${tab.id}`]: [fieldId] });
+              }
+            }
+          }
+
+          // Clear the pending message
+          chrome.storage.local.remove("sidebar_pending_message");
+        }
+      } catch (err) {
+        logger.error("Failed to check pending message:", err);
+      }
+    };
+
+    checkPendingMessage();
+  }, []);
+
   // Auto-scroll to bottom
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });

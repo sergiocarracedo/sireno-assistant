@@ -419,6 +419,62 @@ IMPORTANT: Provide ONLY the new/transformed text value for the field. Do not inc
         break;
       }
 
+      case "OPEN_SIDEBAR": {
+        logger.debug("Opening sidebar (general)");
+
+        try {
+          // Open sidebar for current tab
+          const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+
+          if (!tab || !tab.id) {
+            throw new Error("No active tab found");
+          }
+
+          await chrome.sidePanel.open({ tabId: tab.id });
+          logger.debug("Sidebar opened successfully");
+
+          sendResponse({ type: "SIDEBAR_OPENED", view: "chat" });
+        } catch (error) {
+          logger.error("Failed to open sidebar:", error);
+          sendResponse({
+            type: "LLM_ERROR",
+            error: error instanceof Error ? error.message : "Failed to open sidebar",
+          });
+        }
+        break;
+      }
+
+      case "SEND_TO_SIDEBAR": {
+        logger.debug("Sending message to sidebar:", message.message);
+
+        try {
+          // Store the message for the sidebar to pick up
+          await chrome.storage.local.set({
+            sidebar_pending_message: {
+              message: message.message,
+              fieldId: message.fieldId,
+              timestamp: Date.now(),
+            },
+          });
+
+          // Notify sidebar if it's already open
+          const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+          if (tab?.id) {
+            // Try to send a message to the sidebar
+            chrome.runtime.sendMessage({
+              type: "SIDEBAR_MESSAGE_READY",
+              message: message.message,
+              fieldId: message.fieldId,
+            });
+          }
+
+          sendResponse({ type: "SIDEBAR_MESSAGE_SENT" });
+        } catch (error) {
+          logger.error("Failed to send message to sidebar:", error);
+        }
+        break;
+      }
+
       case "GET_EXCLUDED_FIELDS": {
         logger.debug("GET_EXCLUDED_FIELDS for URL:", message.url);
         const fields = await getExcludedFields(message.url);

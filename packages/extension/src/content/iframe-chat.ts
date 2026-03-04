@@ -864,6 +864,8 @@ function setupIFrameCommunication(iframe: HTMLIFrameElement, fieldLabel: string,
     } else if (action === "open-skills") {
       handleOpenSkills();
       window.removeEventListener("message", handleMessages);
+    } else if (action === "open-sidepanel") {
+      handleOpenSidePanel(event.data.fieldId, event.data.message);
     } else if (action === "exclude-field") {
       handleExcludeField(event.data.fieldId, event.data.fieldLabel);
       window.removeEventListener("message", handleMessages);
@@ -1415,6 +1417,37 @@ async function handleOpenSkills() {
     closeInlineChat();
   } catch (error) {
     logger.error("[IFrame Chat] Failed to open skills:", error);
+  }
+}
+
+/**
+ * Handle "Open side panel" action
+ */
+async function handleOpenSidePanel(fieldId: string | undefined, message: string | undefined) {
+  logger.debug("[IFrame Chat] Opening side panel for field:", fieldId, "with message:", message);
+
+  try {
+    // Open the side panel
+    await safeSendMessage({
+      type: "OPEN_SIDEBAR",
+    });
+
+    // If there's a message to send, send it to the side panel
+    if (message && message.trim()) {
+      // Wait a bit for the side panel to open before sending the message
+      setTimeout(async () => {
+        await safeSendMessage({
+          type: "SEND_TO_SIDEBAR",
+          message: message.trim(),
+          fieldId: fieldId || activeFieldId,
+        });
+      }, 300);
+    }
+
+    // Close the inline chat
+    closeInlineChat();
+  } catch (error) {
+    logger.error("[IFrame Chat] Failed to open side panel:", error);
   }
 }
 

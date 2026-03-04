@@ -61,6 +61,8 @@ export type SidePanelToServiceWorkerMessage =
   | { type: "CLEAR_LLM_LOGS" }
   | { type: "OPEN_SIDEBAR_CHAT"; fieldId: string; inputText: string }
   | { type: "OPEN_SIDEBAR_SKILLS" }
+  | { type: "OPEN_SIDEBAR" }
+  | { type: "SEND_TO_SIDEBAR"; message: string; fieldId?: string }
   | { type: "GET_EXCLUDED_FIELDS"; url: string }
   | { type: "ADD_EXCLUDED_FIELD"; fieldId: string; fieldLabel: string; url: string }
   | { type: "REMOVE_EXCLUDED_FIELD"; url: string; fieldId: string }
@@ -84,6 +86,7 @@ export type ServiceWorkerToSidePanelMessage =
   | { type: "LLM_LOGS_RESPONSE"; logs: LLMLogEntry[] }
   | { type: "LLM_LOGS_CLEARED" }
   | { type: "SIDEBAR_OPENED"; view: "chat" | "skills" }
+  | { type: "SIDEBAR_MESSAGE_SENT" }
   | { type: "EXCLUDED_FIELDS_RESPONSE"; fields: ExcludedField[] }
   | { type: "EXCLUDED_FIELD_ADDED" }
   | { type: "EXCLUDED_FIELD_REMOVED" }

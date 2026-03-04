@@ -1,4 +1,4 @@
-import { EyeOff, Pin, X, Zap } from "lucide-react";
+import { EyeOff, PanelRight, Pin, X, Zap } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { ChatInput, ChatInputRef, ErrorMessage, Tooltip } from "../../shared/components";
 import { Button } from "../../shared/components/ui/button";
@@ -193,6 +193,19 @@ export function InlineChatApp({
     );
   };
 
+  const handleOpenSidePanel = () => {
+    console.log("[InlineChatApp] Opening side panel", { fieldId, message: message.trim() });
+    window.parent.postMessage(
+      {
+        type: "sireno-chat",
+        action: "open-sidepanel",
+        fieldId,
+        message: message.trim(),
+      },
+      "*",
+    );
+  };
+
   const handleDragStart = (e: React.MouseEvent) => {
     // Prevent text selection during drag
     e.preventDefault();
@@ -260,6 +273,7 @@ export function InlineChatApp({
           >
             <button
               onClick={handleOpenSkills}
+              onMouseDown={(e) => e.stopPropagation()}
               className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded bg-green-100 text-green-700 dark:bg-green-950/30 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-900/40 transition-colors whitespace-nowrap"
             >
               <Zap className="h-3 w-3" />
@@ -281,6 +295,7 @@ export function InlineChatApp({
             variant="ghost"
             size="xs-icon"
             onClick={handleStickyToggle}
+            onMouseDown={(e) => e.stopPropagation()}
             className={`flex-shrink-0 h-6 w-6 ${
               isSticky
                 ? "text-violet-600 dark:text-violet-400 bg-violet-100 dark:bg-violet-950/30"
@@ -291,11 +306,25 @@ export function InlineChatApp({
           </Button>
         </Tooltip>
 
+        {/* Open Side Panel */}
+        <Tooltip content="Open in side panel for full chat" placement="bottom">
+          <Button
+            variant="ghost"
+            size="xs-icon"
+            onClick={handleOpenSidePanel}
+            onMouseDown={(e) => e.stopPropagation()}
+            className="flex-shrink-0 h-6 w-6 text-gray-700 dark:text-gray-300"
+          >
+            <PanelRight className="h-3.5 w-3.5" />
+          </Button>
+        </Tooltip>
+
         {/* Close Button */}
         <Button
           variant="ghost"
           size="xs-icon"
           onClick={handleClose}
+          onMouseDown={(e) => e.stopPropagation()}
           className="flex-shrink-0 h-6 w-6 opacity-100 text-gray-700 dark:text-gray-300"
         >
           <X className="h-3.5 w-3.5" />
