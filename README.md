@@ -77,9 +77,9 @@ Create custom AI behaviors for different websites. For example:
 
 ## 📦 Installation
 
-### From Chrome Web Store (Coming Soon)
+### From Chrome Web Store
 
-_Chrome Web Store listing pending approval_
+Install directly from the [Chrome Web Store](https://chromewebstore.google.com/detail/ppnecnomfnadhbcpacgkfldiapoejogo)
 
 ### From Source
 
@@ -154,42 +154,6 @@ _Chrome Web Store listing pending approval_
 5. Optionally set URL pattern to auto-activate (e.g., `*linkedin.com*`)
 6. Save and activate the skill
 
-## 🎥 Screenshots
-
-_Screenshots coming soon! Check back after Chrome Web Store approval._
-
-## 🏗️ Architecture
-
-```
-src/
-├── manifest.json           # Chrome extension manifest
-├── background/             # Service worker (background script)
-│   ├── service_worker.ts   # Entry point
-│   ├── llm-client.ts       # AI SDK wrapper for OpenAI/Anthropic/Google
-│   ├── storage.ts          # chrome.storage helpers
-│   └── message-handler.ts  # Runtime message handling
-├── content/                # Content scripts (injected into pages)
-│   ├── content_script_v2.ts   # Entry point with field detection
-│   ├── field-detector.ts      # Multi-strategy field discovery
-│   ├── assistant-button.ts    # Grammarly-style AI button
-│   ├── iframe-chat.ts         # Isolated inline chat UI
-│   └── context-extractor.ts   # Extract page context
-├── sidepanel/              # React UI (side panel)
-│   ├── App.tsx             # Root component with routing
-│   ├── components/         # React components
-│   │   ├── SettingsTab.tsx
-│   │   ├── SkillsTab.tsx
-│   │   ├── FieldSelector.tsx
-│   │   └── ...
-│   └── styles.css          # Tailwind CSS
-└── shared/                 # Shared utilities
-    ├── types.ts            # TypeScript types
-    ├── schemas.ts          # Zod validation schemas
-    ├── i18n.ts             # Internationalization
-    ├── translations/       # Translation files
-    └── messages.ts         # Message contracts
-```
-
 ## 🛠️ Development
 
 ### Prerequisites
@@ -239,12 +203,6 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guid
 5. Submit a PR
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed instructions.
-
-## 📖 Documentation
-
-- [Changelog](CHANGELOG.md) - Version history and release notes
-- [Contributing Guide](CONTRIBUTING.md) - How to contribute
-- [License](LICENSE) - GPL-3.0
 
 ## ❓ FAQ
 
@@ -322,17 +280,6 @@ If you find Sireno Assistant useful, please:
 - 💡 Suggest features
 - 🌍 Contribute translations
 - 📢 Share with others
-
-## 🤖 For AI Agents & Contributors
-
-If you're an AI coding assistant or developer working on this project:
-
-- **Contributing Guide**: See [CONTRIBUTING.md](CONTRIBUTING.md)
-- **AI Agent Instructions**: See [`.meta/agents/agents.md`](.meta/agents/agents.md)
-- **Quick Reference**: See [`.meta/agents/quick-reference.md`](.meta/agents/quick-reference.md)
-- **Project Metadata**: The `.meta` folder contains test plans, documentation, and planning files (gitignored)
-
-**Quick tip for AI agents:** Use `.meta` folder for test plans, documentation, releases, and planning. See `.meta/README.md` for details.
 
 ---
 
