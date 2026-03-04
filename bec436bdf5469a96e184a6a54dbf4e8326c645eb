@@ -1,0 +1,25 @@
+packages/web/astro.config.mjs
+  b712ce027812779c 5
+.github/workflows/deploy-website.yml
+  b712ce027812779c 1-75
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.8",
+  "base_commit_sha": "bec436bdf5469a96e184a6a54dbf4e8326c645eb",
+  "prompts": {
+    "b712ce027812779c": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_3a76e2e7dffeHZB7zI1j1Tnm3i",
+        "model": "github-copilot/claude-sonnet-4.5"
+      },
+      "human_author": "Sergio Carracedo <hi@sergiocarracedo.es>",
+      "messages": [],
+      "total_additions": 76,
+      "total_deletions": 0,
+      "accepted_lines": 76,
+      "overriden_lines": 0
+    }
+  }
+}
