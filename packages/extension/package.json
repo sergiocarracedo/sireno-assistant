@@ -10,6 +10,7 @@
     "dev": "vite build --watch --mode development",
     "build": "tsc && vite build --mode production",
     "build:dev": "tsc && vite build --mode development",
+    "build:release": "bash scripts/build-release.sh",
     "preview": "vite preview",
     "test": "vitest run --exclude test/e2e/**",
     "test:watch": "vitest --exclude test/e2e/**",
